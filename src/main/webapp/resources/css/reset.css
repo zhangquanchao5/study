@@ -1,0 +1,315 @@
+@charset "utf-8";
+/* 清除内外边距 */
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements 结构元素 */
+dl, dt, dd, ul, ol, li, /* list elements 列表元素 */
+pre, /* text formatting elements 文本格式元素 */
+fieldset, lengend, button, input, textarea, /* form elements 表单元素 */
+th, td { /* table elements 表格元素 */
+    margin: 0;
+    padding: 0;
+}
+
+/* 设置默认字体 */
+body,
+button, input, select, textarea { /* for ie */
+    /*font: 12px/1 tahoma, helvetica, arial, "宋体", sans-serif;*/
+    font: 12px/1 tahoma, helvetica, arial, "\5b8b\4f53", sans-serif; /* 用 ascii 字符表示，使得在任何编码下都无问题 */
+}
+
+h1 { font-size: 18px; /* 18px / 12px = 1.5 */ }
+h2 { font-size: 16px; }
+h3 { font-size: 14px; }
+h4, h5, h6 { font-size: 100%; }
+
+address, cite, dfn, em, var { font-style: normal; } /* 将斜体扶正 */
+code, kbd, pre, samp, tt { font-family: "courier new", courier, monospace; } /* 统一等宽字体 */
+small { font-size: 12px; } /* 小于 12px 的中文很难阅读，让 small 正常化 */
+
+/* 重置列表元素 */
+ul, ol { list-style: none; }
+
+/* 重置文本格式元素 */
+a { text-decoration: none;  }
+a:hover { text-decoration: none; }
+
+abbr[title], acronym[title] { /* 注：1.ie6 不支持 abbr; 2.这里用了属性选择符，ie6 下无效果 */
+    border-bottom: 1px dotted;
+    cursor: help;
+}
+
+q:before, q:after { content: ''; }
+
+/* 重置表单元素 */
+legend { color: #000; } /* for ie6 */
+fieldset, img { border: none; } /* img 搭车：让链接里的 img 无边框 */
+/* 注：optgroup 无法扶正 */
+button, input, select, textarea {
+    font-size: 100%; /* 使得表单元素在 ie 下能继承字体大小 */
+}
+/* 重置表格元素 */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* 重置 hr */
+hr {
+    border: none;
+    height: 1px;
+}
+
+/* 让非ie浏览器默认也显示垂直滚动条，防止因滚动条引起的闪烁 */
+.clearfix:before, .clearfix:after {
+    content:"";
+    display:table;
+}
+.clearfix:after{
+    clear:both;
+    overflow:hidden;
+}
+.clearfix{
+    *zoom:1;
+}
+body,input{
+    font-family: "Microsoft YaHei",Arial,Helvetica,sans-serif,"黑体";
+}
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+
+    color: #c6c4c4;
+
+}
+
+input:-moz-placeholder, textarea:-moz-placeholder {
+
+    color: #c6c4c4;
+
+}
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+
+    color:#c6c4c4;
+
+}
+
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+
+    color:#c6c4c4;
+
+}
+
+/*header*/
+.header{
+    width: 100%;
+    height: 145px;
+    background-color: #0593d3;
+}
+.headerCont{
+    margin: 0 auto;
+    width: 1182px;
+}
+.headerCont a{
+    color: #ffffff;
+}
+.h_c_top{
+    float: right;
+    margin-top: 15px;
+    height: 18px;
+    line-height: 18px;
+}
+.h_c_top li{
+    float: left;
+    height: 18px;
+    line-height: 18px;
+}
+.h_c_top li a{
+    font-size: 12px;
+}
+.top_border{
+    height: 18px;
+    margin-left: 29px;
+    margin-right: 22px;
+    width: 1px;
+    background-color: #ffffff;
+}
+.h_c_center{
+    margin-top: 15px;
+    width: 100%;
+    height: 49px;
+}
+.h_c_center li{
+    float: left;
+}
+.h_c_center_logo{
+    margin-left: 7px;
+}
+.h_c_center_city{
+    margin-top: 11px;
+    padding-left: 11px;
+    margin-left: 50px;
+    margin-right: 111px;
+    height: 35px;
+    font-size: 12px;
+    border-left: solid 1px #ffffff;
+}
+.h_c_center_city .fontBold{
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+.h_c_center_search{
+    width: 780px;
+    height: 48px;
+    background-color: #ffffff;
+}
+.searchInput{
+    float: left;
+    display: block;
+    outline: none;
+    background: none;
+    border: none;
+    width: 730px;
+    height: 48px;
+    text-indent: 14px;
+    font-size: 18px;
+}
+.searchIcon{
+    float: left;
+    display: block;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-top: 18px;
+    padding-right: 23px;
+    padding-bottom: 13px;
+}
+.h_c_bottom_nav{
+    width: 100%;
+    height: 48px;
+    line-height: 48px;
+}
+.rightNotice{
+    float: right;
+    font-size: 12px;
+    margin-right: 9px;
+}
+.rightNotice span{
+    color: #f90101;
+}
+.rightNotice b{
+    font-weight: bold;
+}
+.leftNav {
+    margin-left: 2px;
+}
+.leftNav li{
+    float: left;
+    font-size: 14px;
+    margin-right: 62px;
+}
+.leftNav li a{
+    display: block;
+    cursor: pointer;
+}
+.leftNav li.hotIcon{
+    width: 80px;
+    height: 48px;
+    background-image: url("../images/hotIcon.png");
+    background-repeat: no-repeat;
+    background-position: right;
+    background-position-y: 14px;
+}
+.main{
+    margin: 0 auto;
+    width: 1176px;
+}
+/*bottom*/
+.bottom{
+    margin-top: 30px;
+    width: 100%;
+    height: 248px;
+    background-color: #0593d3;
+}
+.linkFriends,.companyMsg{
+    margin: 0 auto;
+    width: 1182px;
+    height: auto;
+}
+.linkFriends{
+    height: 100px;
+    border-bottom: solid 1px #50b4e0;
+}
+.linkFriends ul {
+    padding-top: 9px;
+    padding-left: 56px;
+    padding-right: 40px;
+}
+.linkFriends ul li{
+    float: left;
+    margin-right: 59px;
+    margin-top: 17px;
+}
+.linkFriends ul li a{
+    color: #cce2f2;
+}
+.companyMsg,.companyMsg a{
+    color: #75cff7;
+    font-size: 12px;
+}
+.companyMsg{
+    text-align: center;
+    margin-top: 22px;
+    /*width: 335px;*/
+}
+.companyMsg .aboutComp a{
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 3px;
+    padding-right: 13px;
+    border-right: solid 1px #75cff7;
+}
+.aboutComp a.borderNone{
+    border: none;
+}
+.companyMsg p{
+    text-align: center;
+    margin-top: 22px;
+}
+/*right fixed*/
+.rightFixedBox{
+    position: fixed;
+    right: 0px;top: 286px;
+}
+.rightFixedBox li{
+    cursor: pointer;
+    margin-bottom: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 16px;
+    height: 125px;
+    background-color: #0593d3;
+    color: #ffffff;
+    font-size: 14px;
+    word-wrap:break-word;
+}
+.rightFixedBox li p
+{
+    padding-left: 3px;
+}
+.rightFixedBox li img{
+    display: block;
+    padding-top: 15px;
+    margin-bottom: 12px;
+}
+/*弹出层背部阴影*/
+#screen {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 100;
+    background-color: #666;
+    opacity: 0.5;
+    filter: alpha(opacity = 50);
+    -moz-opacity: 0.5;
+}
