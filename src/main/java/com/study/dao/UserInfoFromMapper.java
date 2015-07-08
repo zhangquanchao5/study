@@ -1,4 +1,4 @@
-package com.study.dao.xml;
+package com.study.dao;
 
 import com.study.model.UserInfoFrom;
 
