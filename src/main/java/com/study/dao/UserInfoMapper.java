@@ -12,7 +12,7 @@ public interface UserInfoMapper {
 
     UserInfo selectByPrimaryKey(Integer id);
 
-     UserInfo selectByMobile(String mobile);
+    UserInfo selectByMobile(String mobile);
 
     int updateByPrimaryKeySelective(UserInfo record);
 

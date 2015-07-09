@@ -11,4 +11,6 @@ public interface IApIUserService {
     public UserInfo findByMobile(String mobile);
 
     public void saveUser(ApiUserBean apiUserBean);
+
+    public void updateUserToken(UserInfo userInfo);
 }
