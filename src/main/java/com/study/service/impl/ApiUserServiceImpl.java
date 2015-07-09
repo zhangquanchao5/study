@@ -45,4 +45,8 @@ public class ApiUserServiceImpl implements IApIUserService {
 
         userInfoFromMapper.insert(userInfoFrom);
     }
+
+    public void updateUserToken(UserInfo userInfo){
+        userInfoMapper.updateByPrimaryKeySelective(userInfo);
+    }
 }

@@ -11,6 +11,15 @@ public class ApiResponseMessage {
     private String code;
     private Object data;
     private List datas;
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     /**
      * Instantiates a new Ajax response message.
