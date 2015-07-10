@@ -13,4 +13,20 @@ public class PrefixCode {
      * token map key定义
      */
     public static final String API_TOKEN_MAP="APITOKEN";
+
+    /**
+     * cookie  前缀
+     */
+    public static final String API_COOKIE_PRE="COOKIE";
+
+    /**
+     * action 验证
+     */
+    public static final String API_ACTION_LOGINOUT="logout";
+
+    /**
+     * action 验证
+     */
+    public static final String API_ACTION_AUTH="authTicket";
+
 }

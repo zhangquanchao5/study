@@ -5,8 +5,7 @@ import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
 
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
-import org.apache.logging.log4j.Level;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.log4j.Level;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;

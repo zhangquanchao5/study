@@ -1,6 +1,6 @@
 package com.study.common;
 
-import org.apache.logging.log4j.Level;
+import org.apache.log4j.Level;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 

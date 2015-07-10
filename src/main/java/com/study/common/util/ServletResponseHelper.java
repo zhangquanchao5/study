@@ -2,7 +2,7 @@ package com.study.common.util;
 
 
 import com.study.common.StudyLogger;
-import org.apache.logging.log4j.Level;
+import org.apache.log4j.Level;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

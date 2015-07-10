@@ -1,15 +1,17 @@
 package com.study.common;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 
 /**
  * The type Lifeccp logger.
  */
 public final class StudyLogger {
 
-    private static final org.apache.logging.log4j.Logger BUSINESS = LogManager.getLogger("businessLog");
-    private static final org.apache.logging.log4j.Logger SYSTEM = LogManager.getLogger("systemLog");
+    private static final Logger BUSINESS = LogManager.getLogger("businessLog");
+    private static final Logger SYSTEM = LogManager.getLogger("systemLog");
 
     private StudyLogger() {
     }
@@ -74,42 +76,5 @@ public final class StudyLogger {
         recSysLog(Level.INFO, msg);
     }
 
-    /*public static void recBusinessLog(String operateId, String actionId, String msg) {
-        BUSINESS.info("operateId  " + operateId + " actionId  " + actionId + " msg  " + msg);
-    }
-
-    public static void recBusinessLog(String msg, String... args) {
-        StringBuilder sb = new StringBuilder();
-        for (String arg : args) {
-            sb.append(" {} ");
-        }
-        BUSINESS.info(msg + sb.toString(), args);
-    }
-
-    public static void recSysLog(Level level, String msg, Throwable throwable) {
-        if (level == Level.DEBUG) {
-            SYSTEM.debug(msg, throwable);
-            return;
-        } else if (level == Level.ERROR) {
-            SYSTEM.error(msg);
-            return;
-        }
-        SYSTEM.info(msg, throwable);
-    }
-
-    public static void recSysLog(Level level, String msg) {
-        if (level == Level.DEBUG) {
-            SYSTEM.debug(msg);
-            return;
-        } else if (level == Level.ERROR) {
-            SYSTEM.error(msg);
-            return;
-        }
-        SYSTEM.info(msg);
-    }
-
-    public static void recSysLog(String msg) {
-        recSysLog(Level.INFO, msg);
-    }*/
 
 }
