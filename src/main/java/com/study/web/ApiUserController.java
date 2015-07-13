@@ -74,7 +74,7 @@ public class ApiUserController extends BaseController {
                 return;
             }
 
-            //判断密码是否正确
+            //判断密码是否正确22
            if(!StringUtil.getMD5Str(loginBean.getUserPassword()).equals(userInfo.getPassword())) {
                message.setCode(ErrorCode.ERROR);
                message.setMsg(ErrorCode.USER_PWD_ERROR);
