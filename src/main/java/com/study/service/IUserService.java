@@ -10,4 +10,9 @@ public interface IUserService {
     UserInfo findByUserName(String userName);
 
     UserInfo fingById(Integer userId);
+
+    public UserInfo findByMobile(String mobile);
+
+    void saveUserInfo(UserInfo userInfo);
+
 }

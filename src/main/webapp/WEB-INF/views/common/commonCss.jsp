@@ -14,8 +14,11 @@
 <meta content="" name="author" />
 <!-- end: META -->
 <!-- start: MAIN CSS -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/reset.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/validator/jquery.validator.css">
+
 
 <!-- start: CSS REQUIRED FOR THIS PAGE ONLY -->
 <!-- end: CSS REQUIRED FOR THIS PAGE ONLY -->

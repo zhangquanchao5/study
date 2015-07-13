@@ -42,7 +42,7 @@ public class ApiUserController extends BaseController {
             UserInfo userInfo = iApIUserService.findByMobile(apiUserBean.getMobile());
             if (userInfo != null) {
                 message.setCode(ErrorCode.ERROR);
-                message.setMsg(ErrorCode.USER_MOBILE_EXITS);
+                message.setMsg(ErrorCode.USER_EXITS);
                 ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
                 return;
             }

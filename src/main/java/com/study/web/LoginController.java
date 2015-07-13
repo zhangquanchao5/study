@@ -5,7 +5,7 @@ import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
-import com.study.common.apibean.ApiResponseMessage;
+import com.study.common.bean.AjaxResponseMessage;
 import com.study.common.oss.DESUtils;
 import com.study.common.oss.LoginOutResponse;
 import com.study.common.oss.Ticket;
@@ -41,20 +41,20 @@ public class LoginController extends BaseController {
     @RequestMapping(value ="/loginUp",method = RequestMethod.POST)
     public void login(UserInfo userInfoModel, HttpServletResponse response) {
 
-        ApiResponseMessage message = new ApiResponseMessage();
+        AjaxResponseMessage message = new AjaxResponseMessage();
         try {
             UserInfo userInfo = iUserService.findByUserName(userInfoModel.getUserName());
             if (userInfo == null) {
-                message.setCode(ErrorCode.ERROR);
-                message.setMsg(ErrorCode.USER_NOT_EXITS);
+                message.setSuccess(false);
+                message.setCode(ErrorCode.USER_NOT_EXITS);
                 ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
                 return;
             }
 
             //判断密码是否正确
             if(!StringUtil.getMD5Str(userInfoModel.getPassword()).equals(userInfo.getPassword())) {
-                message.setCode(ErrorCode.ERROR);
-                message.setMsg(ErrorCode.USER_PWD_ERROR);
+                message.setSuccess(false);
+                message.setCode(ErrorCode.USER_PWD_ERROR);
                 ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
                 return;
             }
@@ -71,10 +71,9 @@ public class LoginController extends BaseController {
             cookie.setPath("/");
             response.addCookie(cookie);
 
-            message.setCode(ErrorCode.SUCCESS);
         } catch (Exception e) {
-            message.setCode(ErrorCode.ERROR);
-            message.setMsg(ErrorCode.SYS_ERROR);
+            message.setSuccess(false);
+            message.setCode(ErrorCode.SYS_ERROR);
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());

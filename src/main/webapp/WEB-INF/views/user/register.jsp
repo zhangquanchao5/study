@@ -37,47 +37,51 @@
         <div class="login_right-top">
             <a href="${pageContext.request.contextPath}/login" class="login_2">登录</a> <a href="${pageContext.request.contextPath}/user/register" class="login_1">&nbsp; |&nbsp;注册</a>
         </div>
+        <form id="registerForm" method="post" autocomplete="off" data-validator-option="{theme:'yellow_top'}">
         <ul>
             <li>
                 <div class="login_right_in1">用 户 名：</div>
-                <div class="login_right_in2"><input type="text" value="请输入用户名，2-18位中英文、数字或下划线！"></div>
+                <div class="login_right_in2"><input type="text" name="userName" id="userName" placeholder="输入用户名" data-rule="required;length[3~15]" data-msg-length="用户名3到15位"></div>
             </li>
             <li style="margin-top:10px">
                 <div class="login_right_in1">用户类型：</div>
-                <div class="login_right_in2"><select>
-                    <option>我是用户</option>
-                    <option>我是机构</option>
-                </select></div>
-            </li>
-            <li style="margin-top:10px">
-                <div class="login_right_in1">手机号码：</div>
-                <div class="login_right_in2"><input type="text" value="请输入正确格式的手机号码"></div>
-            </li>
-            <li style="margin-top:10px">
-                <div class="login_right_in1">密码：</div>
-                <div class="login_right_in2"><input type="text" value="请输入6-16位密码，区分大小写，不能使用空格"></div>
-            </li>
-            <li style="margin-top:10px">
-                <div class="login_right_in1">确认密码：</div>
-                <div class="login_right_in2"><input type="text" value="请重复输入密码"></div>
-            </li>
-            <li style="margin-top:10px">
-                <div class="login_right_in1">验证码：</div>
-                <div class="login_right_in2"><input type="text" value="" style="width:200px"></div>
-                <div><input type="button" style="margin-left:20px; width:80px; height:30px" value="获取验证码">
+                <div style="font-size: small">
+                    <fieldset>
+                    <input type="radio" name="source" value="1" data-rule="checked"  data-msg-checked="请选择注册用户类型">&nbsp;系统&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" name="source" value="0" >&nbsp;平台
+                    </fieldset>
                 </div>
             </li>
             <li style="margin-top:10px">
-                <div><input name="" type="checkbox" value="" style="margin-left:80px"></div>
-                <div style="margin-left:5px; line-height:36px">我已阅读并同意遵守 《有你学用户服务协议》</div>
+                <div class="login_right_in1">手机号码：</div>
+                <div class="login_right_in2"><input type="text" name="mobile" id="mobile" placeholder="输入手机号码" data-rule="手机号码:required;mobile"></div>
             </li>
             <li style="margin-top:10px">
-                <div><a href="#" style="margin-left:80px"><img
-                        src="${pageContext.request.contextPath}/resources/images/button.jpg"></a></div>
+                <div class="login_right_in1">密码：</div>
+                <div class="login_right_in2"><input type="text" name="password" id="password" placeholder="输入密码" data-rule="密码:required;length[6~15]" data-msg-length="密码6到15位"></div>
+            </li>
+            <li style="margin-top:10px">
+                <div class="login_right_in1">确认密码：</div>
+                <div class="login_right_in2"><input type="text"  name="againPwd" id="againPwd"  placeholder="输入确认密码" data-rule="确认密码:required;length[6~15];match(password)" data-msg-length="确认密码6到15位"></div>
+            </li>
+            <li style="margin-top:10px">
+                <div class="login_right_in1">验证码：</div>
+                <div class="login_right_in2"><input type="text"  name="valCode" id="valCode" data-rule="验证码:required;length[6];"  data-msg-length="验证码6位" placeholder="输入验证码" style="width:200px"></div>
+                <div><input type="button" style="margin-left:20px; width:80px; height:30px" onclick="getCode()" value="获取验证码">
+                </div>
+            </li>
+            <li style="margin-top:10px">
+                <div><input name="agree" type="checkbox" value="" data-rule="checked" style="margin-left:80px"  data-msg-checked="请同意服务协议"></div>
+                <div style="margin-left:5px; line-height:36px">我已阅读并同意遵守 《有你学用户服务协议》</div>
+            </li>
+            <li style="margin-top:10px;margin-left:80px">
+                <div>
+                    <div style="width: 317px;height: 40px"><button id="registerUp" type="button" class="btn btn-success btn-block" >注册</button></div>
+                </div>
             </li>
 
         </ul>
-
+        </form>
     </div>
 
 </div>
@@ -87,5 +91,7 @@
 </div>
 
 <jsp:include page="../common/commonJS.jsp"/>
+<script src="${pageContext.request.contextPath}/resources/js/user/register.js"></script>
+
 </body>
 </html>

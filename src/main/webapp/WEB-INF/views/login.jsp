@@ -34,30 +34,30 @@
         <img src="${pageContext.request.contextPath}/resources/images/longin_1.jpg" style="margin:103px 0 0 40px;">
     </div>
 
-    <div class="login_right">
+    <form class="login_right"  id="loginForm" method="post" autocomplete="off" data-validator-option="{theme:'yellow_top'}">
         <div class="login_right-top">
             <a href="login.jsp" class="login_1">登录&nbsp; |&nbsp;</a> <a href="${pageContext.request.contextPath}/user/register" class="login_2">注册</a>
         </div>
         <ul>
             <li>
                 <div class="login_right_in1">用 户 名：</div>
-                <div class="login_right_in2"><input name="" type="text"></div>
+                <div class="login_right_in2"><input name="userName"  id="userName"  placeholder="输入用户名" type="text" data-rule="required;" ></div>
             </li>
             <li style="margin-top:20px">
                 <div class="login_right_in1">密码：</div>
-                <div class="login_right_in2"><input name="" type="text"></div>
+                <div class="login_right_in2"><input name="password" id="password"  placeholder="输入密码" type="text" data-rule="required;length[6~15]"   data-msg-length="密码是6到15位"></div>
             </li>
-            <li style="margin-top:20px">
-                <div><input name="" type="checkbox" value="" style="margin-left:80px"></div>
-                <div style="margin-left:5px; line-height:36px">自动登录</div>
-            </li>
-            <li style="margin-top:10px">
-                <div><a href="#" style="margin-left:80px"><img
-                        src="${pageContext.request.contextPath}/resources/images/button.jpg"></a></div>
-                <div style="margin-left:25px; line-height:36px"><a href="#" class="login_3">忘记密码？</a></div>
+            <%--<li style="margin-top:20px">--%>
+                <%--<div><input name="" type="checkbox" value="" style="margin-left:80px"></div>--%>
+                <%--<div style="margin-left:5px; line-height:36px">自动登录</div>--%>
+            <%--</li>--%>
+            <li style="margin-top:25px;margin-left:80px">
+                <div style="width: 317px;height: 40px"><button id="loginUp" type="button" class="btn btn-success btn-block" >登录</button></div>
+                <div style="margin-left:25px; line-height:36px"><a href="${pageContext.request.contextPath}/user/forget" class="login_3">忘记密码？</a></div>
             </li>
 
         </ul>
+        </form>
     </div>
 </div>
 
@@ -66,5 +66,7 @@
 </div>
 
 <jsp:include page="common/commonJS.jsp"/>
+<script src="${pageContext.request.contextPath}/resources/js/user/login.js"></script>
+
 </body>
 </html>

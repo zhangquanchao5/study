@@ -23,4 +23,14 @@ public class UserServiceImpl implements IUserService{
     public UserInfo fingById(Integer userId) {
         return userInfoMapper.selectByPrimaryKey(userId);
     }
+
+    public UserInfo findByMobile(String mobile){
+        return userInfoMapper.selectByMobile(mobile);
+    }
+
+    public void saveUserInfo(UserInfo userInfo){
+        userInfoMapper.insert(userInfo);
+    }
+
+
 }

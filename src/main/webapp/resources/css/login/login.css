@@ -43,3 +43,7 @@
     font-size: 18px;
     color: #ffffff;
 }
+
+#loginForm .n-invalid {
+    border: 1px solid #f00;
+}
