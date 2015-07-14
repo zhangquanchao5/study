@@ -7,6 +7,9 @@ import com.study.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by huichao on 2015/7/13.
  */
@@ -18,5 +21,13 @@ public class UserFromServiceImpl implements IUserFromService{
     @Override
     public void saveUserFrom(UserInfoFrom userInfoFrom) {
         userInfoFromMapper.insert(userInfoFrom);
+    }
+
+    public UserInfoFrom findByOpenIdAndFrom(String openId,String from){
+        Map<String,String> map=new HashMap<String, String>();
+        map.put("openid",openId);
+        map.put("from",from);
+
+        return userInfoFromMapper.findByOpenIdAndFrom(map);
     }
 }

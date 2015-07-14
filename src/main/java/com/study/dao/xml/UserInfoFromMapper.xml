@@ -14,6 +14,12 @@
     values (#{userId,jdbcType=INTEGER}, #{from,jdbcType=TINYINT}, #{openId,jdbcType=VARCHAR}, 
       #{ex1,jdbcType=VARCHAR}, #{ex2,jdbcType=VARCHAR})
   </insert>
+
+  <select id="findByOpenIdAndFrom" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select * from user_info_from
+    where open_id = #{openid} and  comefrom= #{from}
+  </select>
+
   <insert id="insertSelective" parameterType="com.study.model.UserInfoFrom" >
     insert into user_info_from
     <trim prefix="(" suffix=")" suffixOverrides="," >

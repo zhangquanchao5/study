@@ -1,8 +1,10 @@
 package com.study.common;
 
 import org.apache.log4j.Level;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -462,6 +464,25 @@ public final class StringUtil {
 
 		return code.toString();
 	}
+
+	// 将 s 进行 BASE64 编码
+	public static String getBASE64(String s) {
+		if (s == null) return null;
+		return (new sun.misc.BASE64Encoder()).encode(s.getBytes());
+	}
+
+	// 将 BASE64 编码的字符串 s 进行解码
+	public static String getFromBASE64(String s) {
+		if (s == null) return null;
+		BASE64Decoder decoder = new BASE64Decoder();
+		try {
+			byte[] b = decoder.decodeBuffer(s);
+			return new String(b);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 
 
 }

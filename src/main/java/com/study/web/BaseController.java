@@ -3,6 +3,7 @@ package com.study.web;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
 
+import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import org.apache.log4j.Level;
@@ -75,6 +76,27 @@ public class BaseController {
         return p;
     }
 
+    /**
+     * 获取认证
+     * @param request
+     * @return
+     */
+    protected String[] getAuthHeader(HttpServletRequest request){
+        String auth = request.getHeader("Authorization");
+        String encode= StringUtil.getFromBASE64(auth);
+        StudyLogger.recBusinessLog("auth:"+auth+"-----------"+encode);
+        return encode.split(SplitCode.SPLIT_EQULE);
+    }
+
+
+    /**
+     * 获取platform
+     * @param request
+     * @return
+     */
+    protected String getPlatformHeader(HttpServletRequest request) {
+        return request.getHeader("platform");
+    }
     /**
      * Print logger.
      *

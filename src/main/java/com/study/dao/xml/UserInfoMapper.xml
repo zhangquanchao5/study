@@ -38,6 +38,13 @@
     where mobile = #{mobile,jdbcType=VARCHAR} and status=0
   </select>
 
+  <select id="findByEMail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where user_mail = #{email,jdbcType=VARCHAR} and status=0
+  </select>
+
   <select id="findByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
@@ -164,7 +171,7 @@
       <if test="password != null" >
         password = #{password,jdbcType=VARCHAR},
       </if>
-      <if test="mobile != null" >
+      <if test="mobile != null and mobile!=''" >
         mobile = #{mobile,jdbcType=VARCHAR},
       </if>
       <if test="userMail != null" >
@@ -188,13 +195,13 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="name != null" >
+      <if test="name != null and name!=''" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="nick != null" >
+      <if test="nick != null and nick!=''" >
         nick = #{nick,jdbcType=VARCHAR},
       </if>
-      <if test="address != null" >
+      <if test="address != null and address != ''" >
         address = #{address,jdbcType=VARCHAR},
       </if>
     </set>

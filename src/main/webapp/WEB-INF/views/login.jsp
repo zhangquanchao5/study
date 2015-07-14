@@ -35,6 +35,7 @@
     </div>
 
     <form class="login_right"  id="loginForm" method="post" autocomplete="off" data-validator-option="{theme:'yellow_top'}">
+        <input type="hidden" name="gotoURL" value="${param.gotoURL }" />
         <div class="login_right-top">
             <a href="login.jsp" class="login_1">登录&nbsp; |&nbsp;</a> <a href="${pageContext.request.contextPath}/user/register" class="login_2">注册</a>
         </div>

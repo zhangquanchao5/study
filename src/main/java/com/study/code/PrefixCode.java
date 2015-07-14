@@ -41,4 +41,9 @@ public class PrefixCode {
      * mobile bind
      */
     public static final String API_MOBILE_BIND="MBIND";
+
+    /**
+     * file
+     */
+    public static final String FILE_PATH="/img";
 }

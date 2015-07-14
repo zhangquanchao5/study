@@ -12,6 +12,10 @@ public interface IApIUserService {
 
     public UserInfo findByMobile(String mobile);
 
+    public UserInfo findByUserName(String userName);
+
+    public UserInfo findByEMail(String email);
+
     public UserInfo findById(Integer userId);
 
     public UserInfo findByToken(String token);

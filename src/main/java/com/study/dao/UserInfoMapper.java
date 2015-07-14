@@ -22,4 +22,7 @@ public interface UserInfoMapper {
     int updatePwd(UserInfo record);
 
      UserInfo findByToken(String token);
+
+
+     UserInfo findByEMail(String email);
 }

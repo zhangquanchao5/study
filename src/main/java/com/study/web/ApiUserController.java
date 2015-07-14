@@ -64,46 +64,7 @@ public class ApiUserController extends BaseController {
 //    }
 
 
-//    /**
-//     * loginout
-//     */
-//    @RequestMapping(value = "/loginout",method = RequestMethod.POST)
-//    public void loginOut(@RequestBody LoginBean loginBean,HttpServletResponse response) {
-//
-//        ApiResponseMessage message = new ApiResponseMessage();
-//        try {
-//            //现在用户名和手机号一样，直接查找手机号
-//            UserInfo userInfo = iApIUserService.findByMobile(loginBean.getIdentity());
-//            if (userInfo == null) {
-//                message.setCode(ErrorCode.ERROR);
-//                message.setMsg(ErrorCode.USER_NOT_EXITS);
-//                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-//                return;
-//            }
-//
-//            //判断密码是否正确
-//            if(!loginBean.getUserPassword().equals(userInfo.getPassword())) {
-//                message.setCode(ErrorCode.ERROR);
-//                message.setMsg(ErrorCode.USER_PWD_ERROR);
-//                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-//                return;
-//            }
-//
-//            iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString());
-//            //更新数据库token保存做备份
-//            UserInfo userInfoTemp=new UserInfo();
-//            userInfoTemp.setId(userInfo.getId());
-//            userInfoTemp.setToken("");
-//
-//            iApIUserService.updateUserToken(userInfoTemp);
-//            message.setCode(ErrorCode.SUCCESS);
-//        } catch (Exception e) {
-//            message.setCode(ErrorCode.ERROR);
-//            message.setMsg(ErrorCode.SYS_ERROR);
-//            printLogger(e);
-//        }
-//        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-//    }
+
 //
 //    @RequestMapping("/tokenVerify/{userId}/{token}")
 //    public void tokenVerify(@PathVariable("userId") Integer userId, @PathVariable("token") String token,HttpServletResponse response) {
