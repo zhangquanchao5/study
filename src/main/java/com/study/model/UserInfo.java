@@ -9,11 +9,11 @@ public class UserInfo {
 
     private String password;
 
-    private String mobile;
+    private String mobile="";
 
     private String userMail;
 
-    private String headImg;
+    private String icon="";
 
     private Byte source;
 
@@ -24,6 +24,12 @@ public class UserInfo {
     private Byte status;
 
     private Date createTime;
+
+    private String name="";
+
+    private String nick="";
+
+    private String address="";
 
     public Integer getId() {
         return id;
@@ -65,12 +71,12 @@ public class UserInfo {
         this.userMail = userMail == null ? null : userMail.trim();
     }
 
-    public String getHeadImg() {
-        return headImg;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setHeadImg(String headImg) {
-        this.headImg = headImg == null ? null : headImg.trim();
+    public void setIcon(String icon) {
+        this.icon = icon == null ? null : icon.trim();
     }
 
     public Byte getSource() {
@@ -111,5 +117,29 @@ public class UserInfo {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick == null ? null : nick.trim();
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address == null ? null : address.trim();
     }
 }

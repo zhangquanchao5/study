@@ -63,6 +63,7 @@
             <mvc:exclude-mapping path="/user/register"/>
             <mvc:exclude-mapping path="/index"/>
             <mvc:exclude-mapping path="/api"/>
+            <mvc:exclude-mapping path="/pub"/>
             <mvc:exclude-mapping path="/ssoAuth"/>
             <mvc:exclude-mapping path="/resources/**"/>
             <mvc:exclude-mapping path="/loginUp"/>

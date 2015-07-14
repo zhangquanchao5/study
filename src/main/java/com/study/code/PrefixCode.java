@@ -29,4 +29,16 @@ public class PrefixCode {
      */
     public static final String API_ACTION_AUTH="authTicket";
 
+    /**
+     * mobile regesiter
+     */
+    public static final String API_MOBILE_REGISTER="MRE";
+    /**
+     * mobile update password
+     */
+    public static final String API_MOBILE_UPDATE="MUP";
+    /**
+     * mobile bind
+     */
+    public static final String API_MOBILE_BIND="MBIND";
 }

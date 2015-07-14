@@ -7,16 +7,19 @@
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="mobile" property="mobile" jdbcType="VARCHAR" />
     <result column="user_mail" property="userMail" jdbcType="VARCHAR" />
-    <result column="head_img" property="headImg" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
     <result column="source" property="source" jdbcType="TINYINT" />
     <result column="gender" property="gender" jdbcType="TINYINT" />
     <result column="token" property="token" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="nick" property="nick" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_name, password, mobile, user_mail, head_img, source, gender, token, status, 
-    create_time
+    id, user_name, password, mobile, user_mail, icon, source, gender, token, status, 
+    create_time, name, nick, address
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -24,7 +27,10 @@
     from user_info
     where id = #{id,jdbcType=INTEGER}
   </select>
-
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
   <select id="selectByMobile" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
@@ -39,19 +45,24 @@
     where user_name = #{userName,jdbcType=VARCHAR} and status=0
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from user_info
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="com.study.model.UserInfo" >
+  <select id="findByToken" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where token = #{token,jdbcType=VARCHAR} and status=0
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.study.model.UserInfo" >
     insert into user_info (id, user_name, password, 
-      mobile, user_mail, head_img, 
+      mobile, user_mail, icon, 
       source, gender, token, 
-      status, create_time)
+      status, create_time, name, 
+      nick, address)
     values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{mobile,jdbcType=VARCHAR}, #{userMail,jdbcType=VARCHAR}, #{headImg,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{userMail,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
       #{source,jdbcType=TINYINT}, #{gender,jdbcType=TINYINT}, #{token,jdbcType=VARCHAR}, 
-      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP})
+      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{name,jdbcType=VARCHAR}, 
+      #{nick,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.UserInfo" >
     insert into user_info
@@ -71,8 +82,8 @@
       <if test="userMail != null" >
         user_mail,
       </if>
-      <if test="headImg != null" >
-        head_img,
+      <if test="icon != null" >
+        icon,
       </if>
       <if test="source != null" >
         source,
@@ -88,6 +99,15 @@
       </if>
       <if test="createTime != null" >
         create_time,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="nick != null" >
+        nick,
+      </if>
+      <if test="address != null" >
+        address,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -106,8 +126,8 @@
       <if test="userMail != null" >
         #{userMail,jdbcType=VARCHAR},
       </if>
-      <if test="headImg != null" >
-        #{headImg,jdbcType=VARCHAR},
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
       </if>
       <if test="source != null" >
         #{source,jdbcType=TINYINT},
@@ -123,6 +143,15 @@
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nick != null" >
+        #{nick,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -141,8 +170,8 @@
       <if test="userMail != null" >
         user_mail = #{userMail,jdbcType=VARCHAR},
       </if>
-      <if test="headImg != null" >
-        head_img = #{headImg,jdbcType=VARCHAR},
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
       </if>
       <if test="source != null" >
         source = #{source,jdbcType=TINYINT},
@@ -159,6 +188,15 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nick != null" >
+        nick = #{nick,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -168,12 +206,21 @@
       password = #{password,jdbcType=VARCHAR},
       mobile = #{mobile,jdbcType=VARCHAR},
       user_mail = #{userMail,jdbcType=VARCHAR},
-      head_img = #{headImg,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
       source = #{source,jdbcType=TINYINT},
       gender = #{gender,jdbcType=TINYINT},
       token = #{token,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      name = #{name,jdbcType=VARCHAR},
+      nick = #{nick,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updatePwd" parameterType="com.study.model.UserInfo" >
+    update user_info
+    set  password = #{password,jdbcType=VARCHAR}
+    where mobile = #{mobile,jdbcType=VARCHAR}
   </update>
 </mapper>

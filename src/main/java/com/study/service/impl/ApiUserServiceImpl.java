@@ -3,8 +3,11 @@ package com.study.service.impl;
 import com.study.code.EntityCode;
 import com.study.common.StringUtil;
 import com.study.common.apibean.ApiUserBean;
+import com.study.common.apibean.request.PwdResetRequest;
+import com.study.dao.AccountMapper;
 import com.study.dao.UserInfoFromMapper;
 import com.study.dao.UserInfoMapper;
+import com.study.model.Account;
 import com.study.model.UserInfo;
 import com.study.model.UserInfoFrom;
 import com.study.service.IApIUserService;
@@ -25,9 +28,24 @@ public class ApiUserServiceImpl implements IApIUserService {
     @Autowired
     private UserInfoFromMapper userInfoFromMapper;
 
+    @Autowired
+    private AccountMapper accountMapper;
+
     public UserInfo findByMobile(String mobile){
         return userInfoMapper.selectByMobile(mobile);
     }
+
+    @Override
+    public UserInfo findById(Integer userId) {
+        return userInfoMapper.selectByPrimaryKey(userId);
+    }
+
+    @Override
+    public void updateUser(UserInfo userInfo) {
+        userInfoMapper.updateByPrimaryKeySelective(userInfo);
+    }
+
+
 
     public   void saveUser(ApiUserBean apiUserBean){
         UserInfo userInfo=new UserInfo();
@@ -48,5 +66,21 @@ public class ApiUserServiceImpl implements IApIUserService {
 
     public void updateUserToken(UserInfo userInfo){
         userInfoMapper.updateByPrimaryKeySelective(userInfo);
+    }
+
+    public void updateUserPwd(PwdResetRequest pwdResetRequest){
+        UserInfo userInfo=new UserInfo();
+        userInfo.setPassword(StringUtil.getMD5Str(pwdResetRequest.getNewPassword()));
+        userInfo.setMobile(pwdResetRequest.getUserPhone());
+
+        userInfoMapper.updatePwd(userInfo);
+    }
+
+    public UserInfo findByToken(String token){
+        return userInfoMapper.findByToken(token);
+    }
+
+    public Account findAccountByUserId(Integer userId){
+       return accountMapper.selectByUserId(userId);
     }
 }

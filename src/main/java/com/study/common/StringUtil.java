@@ -379,6 +379,89 @@ public final class StringUtil {
 	}
 
 
+	public static String generateTextCode(int type, int length, String exChars) {
+		if (length <= 0) {
+			return "";
+		}
+		StringBuffer code = new StringBuffer();
+		int i = 0;
+		Random r = new Random();
+
+		switch (type) {
+			case 0:
+				while (i < length) {
+					int t = r.nextInt(10);
+					if ((exChars == null) || (exChars.indexOf(t) < 0)) {
+						code.append(t);
+						i++;
+					}
+				}
+				break;
+			case 1:
+				while (i < length) {
+					int t = r.nextInt(123);
+					if (((t >= 97) || ((t >= 65) && (t <= 90)))
+							&& ((exChars == null) || (exChars.indexOf((char) t) < 0))) {
+						code.append((char) t);
+						i++;
+					}
+				}
+				break;
+			case 2:
+				while (i < length) {
+					int t = r.nextInt(123);
+					if (((t >= 97) || ((t >= 65) && (t <= 90)) || ((t >= 48) && (t <= 57)))
+							&& ((exChars == null) || (exChars.indexOf((char) t) < 0))) {
+						code.append((char) t);
+						i++;
+					}
+				}
+				break;
+			case 3:
+				while (i < length) {
+					int t = r.nextInt(91);
+					if (((t >= 65) || ((t >= 48) && (t <= 57)))
+							&& ((exChars == null) || (exChars.indexOf((char) t) < 0))) {
+						code.append((char) t);
+						i++;
+					}
+				}
+				break;
+			case 4:
+				while (i < length) {
+					int t = r.nextInt(123);
+					if (((t >= 97) || ((t >= 48) && (t <= 57)))
+							&& ((exChars == null) || (exChars.indexOf((char) t) < 0))) {
+						code.append((char) t);
+						i++;
+					}
+				}
+				break;
+			case 5:
+				while (i < length) {
+					int t = r.nextInt(91);
+					if ((t >= 65)
+							&& ((exChars == null) || (exChars.indexOf((char) t) < 0))) {
+						code.append((char) t);
+						i++;
+					}
+				}
+				break;
+			case 6:
+				while (i < length) {
+					int t = r.nextInt(123);
+					if ((t >= 97)
+							&& ((exChars == null) || (exChars.indexOf((char) t) < 0))) {
+						code.append((char) t);
+						i++;
+					}
+
+				}
+
+		}
+
+		return code.toString();
+	}
 
 
 }

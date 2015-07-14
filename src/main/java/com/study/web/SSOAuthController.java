@@ -29,9 +29,10 @@ public class SSOAuthController extends BaseController {
     private IRedisService iRedisService;
 
     @RequestMapping(value ="")
-    public void authTicket(@RequestParam String action,@RequestParam String cookieName, HttpServletResponse response) {
+    public void authTicket(@RequestParam String action,@RequestParam String cookieName,HttpServletResponse response) {
 
         LoginOutResponse loginOutResponse=new LoginOutResponse();
+
         try {
             StudyLogger.recBusinessLog("authTicket:" + cookieName+"---action:"+action);
             if(cookieName==null||"".equals(cookieName)){
