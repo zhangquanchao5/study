@@ -25,7 +25,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.study.model.AccountDepositHistory" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into account_deposit_history (id, userId, account_id, 
@@ -36,7 +36,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.AccountDepositHistory" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into account_deposit_history

@@ -19,14 +19,14 @@
     select
     <include refid="Base_Column_List" />
     from account_bill_type
-    where code = #{code,jdbcType=STRING}
+    where code = #{code,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from account_bill_type
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.study.model.AccountBillType" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into account_bill_type (id, name, code
@@ -35,7 +35,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.AccountBillType" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into account_bill_type
