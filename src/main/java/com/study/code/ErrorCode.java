@@ -5,15 +5,26 @@ package com.study.code;
  */
 public class ErrorCode {
 
-    public static final String ERROR="1001";
-    public static final String SUCCESS="200";
+    public static final String ERROR="000";
+    public static final String SUCCESS="001";
     public static final String SYS_ERROR="999";
 
     public static final String SUCCESS_CN="处理成功";
     public static final String ERROR_CN="处理失败";
     public static final String SYS_ERROR_CN="系统未知错误";
 
-
+    /**
+     * 处理成功
+     */
+    public static final String PROCESS_SUCC="200";
+    /**
+     * 处理失败
+     */
+    public static final String PROCESS_FAIL="1001";
+    /**
+     * 参数不完整
+     */
+    public static final String PARAMETER_NOT_ENOUGH="1002";
 
     /**
      * 存在此账号

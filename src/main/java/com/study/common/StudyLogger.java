@@ -76,5 +76,12 @@ public final class StudyLogger {
         recSysLog(Level.INFO, msg);
     }
 
-
+    /**
+     * Rec sys log.
+     *
+     * @param throwable the throwable
+     */
+    public static void recSysLog(Throwable throwable) {
+        SYSTEM.error(throwable.getMessage(), throwable);
+    }
 }

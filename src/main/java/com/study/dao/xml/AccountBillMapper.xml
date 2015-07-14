@@ -19,6 +19,18 @@
     from account_bill
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByAccountId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from account_bill
+    where account_id = #{accountId}
+  </select>
+  <select id="selectByAccountIdAndBillType" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from account_bill
+    where account_id = #{accountId} and bill_type_id=#{billTypeId}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from account_bill
     where id = #{id,jdbcType=INTEGER}

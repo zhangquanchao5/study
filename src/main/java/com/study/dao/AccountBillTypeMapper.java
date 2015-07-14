@@ -14,4 +14,6 @@ public interface AccountBillTypeMapper {
     int updateByPrimaryKeySelective(AccountBillType record);
 
     int updateByPrimaryKey(AccountBillType record);
+
+    AccountBillType selectByCode(String code);
 }
