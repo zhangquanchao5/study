@@ -27,8 +27,8 @@
     delete from account
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.study.model.Account" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+  <insert id="insert" parameterType="com.study.model.Account" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into account (id, user_id, balance, 

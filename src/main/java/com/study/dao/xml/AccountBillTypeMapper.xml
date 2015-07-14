@@ -19,7 +19,7 @@
     select
     <include refid="Base_Column_List" />
     from account_bill_type
-    where code = #{code,jdbcType=STRING}
+    where code = #{code,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from account_bill_type

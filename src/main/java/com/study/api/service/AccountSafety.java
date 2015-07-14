@@ -10,6 +10,7 @@ import com.study.model.AccountBill;
 import com.study.model.AccountBillType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class AccountSafety {
     @Autowired
     private AccountBillMapper accountBillMapper;
 
-    public AccountBill updateForDeposit(Integer userId, AccountBillType billType, Long amount){
+    public AccountBill updateForDeposit(@RequestBody Integer userId, AccountBillType billType, Long amount){
         synchronized (lockObj){
             Account account = accountMapper.selectByUserId(userId);
             //初次新建账户

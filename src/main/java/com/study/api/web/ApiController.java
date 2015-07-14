@@ -1,6 +1,7 @@
 package com.study.api.web;
 
 import com.alibaba.fastjson.JSON;
+import com.study.api.bean.AccountInfoReq;
 import com.study.api.bean.AccountInfoResp;
 import com.study.api.bean.DepositAndWithdrawReq;
 import com.study.api.exception.BalanceNotEnoughException;
@@ -27,12 +28,13 @@ public class ApiController {
     @Autowired
     private ApiAccountService apiAccountService;
 
-    @RequestMapping("/accountinfo")
-    @ResponseBody ApiResponseMessage getAccountSnapshoot(Integer id){
+    @RequestMapping(value = "/accountinfo", method = RequestMethod.POST)
+    private @ResponseBody
+    ApiResponseMessage getAccountSnapshoot(@RequestBody AccountInfoReq req){
         ApiResponseMessage message = new ApiResponseMessage();
-        StudyLogger.recBusinessLog("userid:" + id);
+        StudyLogger.recBusinessLog("userid:" + req.getId());
         try {
-            AccountInfoResp resp = apiAccountService.getAccountInfo(id);
+            AccountInfoResp resp = apiAccountService.getAccountInfo(req.getId());
             message.setCode(ErrorCode.PROCESS_SUCC);
             message.setMsg(messageUtil.getMessage("msg.process.succ"));
             message.setData(resp);
