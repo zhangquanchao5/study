@@ -16,6 +16,7 @@ import com.study.common.apibean.request.RegisterMobileRequest;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.apibean.response.LoginResponse;
 import com.study.common.apibean.response.RegisterMobileResponse;
+import com.study.common.util.MessageUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
 import com.study.service.IApIUserService;
@@ -46,6 +47,8 @@ public class ApiPubController extends BaseController {
     private IRedisService iRedisService;
     @Autowired
     private IApIUserService iApIUserService;
+    @Autowired
+    private MessageUtil messageUtil;
     /**
      * 发送手机验证码
      */
@@ -62,10 +65,10 @@ public class ApiPubController extends BaseController {
                 UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
                 if(userInfo!=null){
                     mobileBean.setCode(ErrorCode.USER_EXITS);
-                    mobileBean.setMessage(ErrorCode.USER_EXITS_CN);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                 }else{
                     mobileBean.setCode(ErrorCode.SUCCESS);
-                    mobileBean.setMessage(ErrorCode.SUCCESS_CN);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     String code=StringUtil.generateTextCode(0, 6, null);
                     mobileBean.setVerifyCode(code);
                     //SEND MOBILE
@@ -75,10 +78,10 @@ public class ApiPubController extends BaseController {
                 UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
                 if(userInfo!=null){
                     mobileBean.setCode(ErrorCode.USER_EXITS);
-                    mobileBean.setMessage(ErrorCode.USER_EXITS_CN);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                 }else{
                     mobileBean.setCode(ErrorCode.SUCCESS);
-                    mobileBean.setMessage(ErrorCode.SUCCESS_CN);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     String code=StringUtil.generateTextCode(0, 6, null);
                     mobileBean.setVerifyCode(code);
                     //SEND MOBILE
@@ -88,10 +91,10 @@ public class ApiPubController extends BaseController {
                 UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
                 if(userInfo==null){
                     mobileBean.setCode(ErrorCode.USER_NOT_EXITS);
-                    mobileBean.setMessage(ErrorCode.USER_NOT_EXITS_CN);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
                 }else{
                     mobileBean.setCode(ErrorCode.SUCCESS);
-                    mobileBean.setMessage(ErrorCode.SUCCESS_CN);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     String code=StringUtil.generateTextCode(0, 6, null);
                     mobileBean.setVerifyCode(code);
                     //SEND MOBILE
@@ -100,7 +103,7 @@ public class ApiPubController extends BaseController {
             }
         } catch (Exception e) {
             mobileBean.setCode(ErrorCode.ERROR);
-            mobileBean.setMessage(ErrorCode.ERROR_CN);
+            mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(mobileBean).toString());
@@ -129,16 +132,16 @@ public class ApiPubController extends BaseController {
                 iApIUserService.saveUser(apiUserBean);
                 UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile());
                 registerMobileResponse.setCode(ErrorCode.SUCCESS);
-                registerMobileResponse.setMessage(ErrorCode.SUCCESS_CN);
+                registerMobileResponse.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 registerMobileResponse.setContent(userInfo);
                 iRedisService.deleteOneKey(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
             }else{
                 registerMobileResponse.setCode(ErrorCode.USER_CODE_ERROR);
-                registerMobileResponse.setMessage(ErrorCode.USER_CODE_ERROR_CN);
+                registerMobileResponse.setMessage(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
             }
         } catch (Exception e) {
             registerMobileResponse.setCode(ErrorCode.ERROR);
-            registerMobileResponse.setMessage(ErrorCode.ERROR_CN);
+            registerMobileResponse.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(registerMobileResponse).toString());
@@ -193,7 +196,7 @@ public class ApiPubController extends BaseController {
                 iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), token);
 
                 commonResponse.setCode(ErrorCode.SUCCESS);
-                commonResponse.setMsg(ErrorCode.SUCCESS_CN);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 LoginResponse loginResponse=new LoginResponse();
                 loginResponse.setToken(token);
                 loginResponse.setInvalidTime(64800l);
@@ -230,7 +233,7 @@ public class ApiPubController extends BaseController {
 
             iApIUserService.updateUserToken(userInfoTemp);
             message.setCode(ErrorCode.SUCCESS);
-            message.setMsg(ErrorCode.SUCCESS_CN);
+            message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             message.setData(iApIUserService.findById(userInfoTemp.getId()));
         } catch (Exception e) {
             message.setCode(ErrorCode.ERROR);
@@ -264,10 +267,10 @@ public class ApiPubController extends BaseController {
                 FileUtils.writeByteArrayToFile(new File(dir, filename), file.getBytes());
                 message.setData(dir+File.separator+filename);
                 message.setCode(ErrorCode.SUCCESS);
-                message.setMsg(ErrorCode.SUCCESS_CN);
+                message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             }else{
                 message.setCode(ErrorCode.ERROR);
-                message.setMsg(ErrorCode.ERROR_CN);
+                message.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             }
 
         } catch (Exception e) {

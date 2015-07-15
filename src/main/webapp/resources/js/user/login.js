@@ -11,7 +11,11 @@ $(document).ready(function() {
             cache:false,
             success : function(responseJson) {
                 if(responseJson.success){
-                        window.location.href =$contentPath+"/index";
+                        if(responseJson.code!=null&&responseJson.code!=""){
+                            window.location.href =responseJson.code;
+                        }else{
+                            window.location.href =$contentPath+"/index";
+                        }
                 }else{
                     if(responseJson.code=="2002"){
                         bootbox.alert("用户名不存在!");

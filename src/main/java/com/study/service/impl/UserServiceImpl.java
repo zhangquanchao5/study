@@ -32,5 +32,9 @@ public class UserServiceImpl implements IUserService{
         userInfoMapper.insert(userInfo);
     }
 
+    public void updateUserInfo(UserInfo userInfo){
+        userInfoMapper.updateByPrimaryKeySelective(userInfo);
+    }
+
 
 }

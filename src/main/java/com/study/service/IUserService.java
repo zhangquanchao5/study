@@ -15,4 +15,6 @@ public interface IUserService {
 
     void saveUserInfo(UserInfo userInfo);
 
+    void updateUserInfo(UserInfo userInfo);
+
 }

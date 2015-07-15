@@ -9,6 +9,8 @@ import com.study.common.bean.AjaxResponseMessage;
 import com.study.common.oss.DESUtils;
 import com.study.common.oss.LoginOutResponse;
 import com.study.common.oss.Ticket;
+import com.study.common.session.LoginUser;
+import com.study.common.session.SessionInfo;
 import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -39,7 +42,7 @@ public class LoginController extends BaseController {
     private IRedisService iRedisService;
 
     @RequestMapping(value ="/loginUp",method = RequestMethod.POST)
-    public void login(UserInfo userInfoModel, HttpServletResponse response) {
+    public void login(UserInfo userInfoModel,HttpServletRequest request, HttpServletResponse response) {
 
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
@@ -71,6 +74,14 @@ public class LoginController extends BaseController {
             cookie.setPath("/");
             response.addCookie(cookie);
 
+            SessionInfo sessionInfo=new SessionInfo(userInfo);
+            LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
+
+            String gotoURL = request.getParameter("gotoURL");
+            if (gotoURL != null)
+            {
+               message.setCode(gotoURL);
+            }
         } catch (Exception e) {
             message.setSuccess(false);
             message.setCode(ErrorCode.SYS_ERROR);

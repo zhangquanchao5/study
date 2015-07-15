@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -78,6 +79,21 @@ public class UserController extends BaseController {
             iUserFromService.saveUserFrom(userInfoFrom);
 
 
+        } catch (Exception e) {
+            message.setSuccess(false);
+            message.setCode(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+
+    @RequestMapping(value = "/updateUp", method = RequestMethod.POST)
+    public void updateUp(UserInfo userInfoModel, HttpServletResponse response) {
+
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+            iUserService.saveUserInfo(userInfoModel);
         } catch (Exception e) {
             message.setSuccess(false);
             message.setCode(ErrorCode.SYS_ERROR);
@@ -164,5 +180,50 @@ public class UserController extends BaseController {
 
         return "index";
     }
+
+
+
+    @RequestMapping(value = "/resetPwdByEmail")
+    public void resetPwdByEmail(@RequestParam String email, HttpServletResponse response) {
+
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+
+        } catch (Exception e) {
+            message.setSuccess(false);
+            message.setCode(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+    @RequestMapping(value = "/activeEmail")
+    public void activeEmail(@RequestParam String email, HttpServletResponse response) {
+
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+
+        } catch (Exception e) {
+            message.setSuccess(false);
+            message.setCode(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+    @RequestMapping(value = "/updateEmail")
+    public void updateEmail(@RequestParam String email, HttpServletResponse response) {
+
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+
+        } catch (Exception e) {
+            message.setSuccess(false);
+            message.setCode(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
 
 }

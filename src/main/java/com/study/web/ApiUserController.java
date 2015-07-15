@@ -11,6 +11,7 @@ import com.study.common.apibean.LoginBean;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.apibean.response.UserInfoUpdateResponse;
+import com.study.common.util.MessageUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.Account;
 import com.study.model.UserInfo;
@@ -36,6 +37,8 @@ public class ApiUserController extends BaseController {
     private IApIUserService iApIUserService;
     @Autowired
     private IRedisService iRedisService;
+    @Autowired
+    private MessageUtil messageUtil;
 //    /**
 //     * Register save.
 //     */
@@ -107,15 +110,15 @@ public class ApiUserController extends BaseController {
             if(code!=null&&!"".equals(code)&&code.equals(pwdResetRequest.getVerifyCode())){
                 iApIUserService.updateUserPwd(pwdResetRequest);
                 commonResponse.setCode(ErrorCode.SUCCESS);
-                commonResponse.setMsg(ErrorCode.SUCCESS_CN);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 iRedisService.deleteOneKey(PrefixCode.API_MOBILE_UPDATE + pwdResetRequest.getUserPhone());
             }else{
                 commonResponse.setCode(ErrorCode.USER_CODE_ERROR);
-                commonResponse.setMsg(ErrorCode.USER_CODE_ERROR_CN);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
             }
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
-            commonResponse.setMsg(ErrorCode.ERROR_CN);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
@@ -147,11 +150,11 @@ public class ApiUserController extends BaseController {
 
             UserInfo userInfo=iApIUserService.findById(updateUser.getId());
             userInfoUpdateResponse.setCode(ErrorCode.SUCCESS);
-            userInfoUpdateResponse.setMsg(ErrorCode.SUCCESS_CN);
+            userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             userInfoUpdateResponse.setData(userInfo);
         } catch (Exception e) {
             userInfoUpdateResponse.setCode(ErrorCode.ERROR);
-            userInfoUpdateResponse.setMsg(ErrorCode.ERROR_CN);
+            userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(userInfoUpdateResponse).toString());
@@ -176,11 +179,11 @@ public class ApiUserController extends BaseController {
                 userInfo=iApIUserService.findByToken(userInfoRequest.getToken());
             }
             commonResponse.setCode(ErrorCode.SUCCESS);
-            commonResponse.setMsg(ErrorCode.SUCCESS_CN);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             commonResponse.setData(userInfo);
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
-            commonResponse.setMsg(ErrorCode.ERROR_CN);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
@@ -201,11 +204,11 @@ public class ApiUserController extends BaseController {
 
             Account account=iApIUserService.findAccountByUserId(userInfoRequest.getId());
             commonResponse.setCode(ErrorCode.SUCCESS);
-            commonResponse.setMsg(ErrorCode.SUCCESS_CN);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             commonResponse.setData(account);
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
-            commonResponse.setMsg(ErrorCode.ERROR_CN);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
@@ -231,15 +234,15 @@ public class ApiUserController extends BaseController {
 
                 iApIUserService.updateUser(userInfoUpdate);
                 commonResponse.setCode(ErrorCode.SUCCESS);
-                commonResponse.setMsg(ErrorCode.SUCCESS_CN);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             }else{
                 commonResponse.setCode(ErrorCode.USER_PWD_ERROR);
-                commonResponse.setMsg(ErrorCode.USER_PWD_ERROR_CN);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_PWD_ERROR_CN"));
             }
 
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
-            commonResponse.setMsg(ErrorCode.ERROR_CN);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
@@ -268,16 +271,16 @@ public class ApiUserController extends BaseController {
 
                 iApIUserService.updateUser(userUpdate);
                 commonResponse.setCode(ErrorCode.SUCCESS);
-                commonResponse.setMsg(ErrorCode.SUCCESS_CN);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 iRedisService.deleteOneKey(PrefixCode.API_MOBILE_UPDATE + userBindRequest.getUserPhone());
             }else{
                 commonResponse.setCode(ErrorCode.USER_CODE_ERROR);
-                commonResponse.setMsg(ErrorCode.USER_CODE_ERROR_CN);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
             }
 
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
-            commonResponse.setMsg(ErrorCode.ERROR_CN);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
