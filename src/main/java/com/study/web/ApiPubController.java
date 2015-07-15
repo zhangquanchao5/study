@@ -125,20 +125,27 @@ public class ApiPubController extends BaseController {
           //  apiUserBean.setUserName(mobileRequest.getUserPhone());
             apiUserBean.setMobile(mobileRequest.getUserPhone());
             apiUserBean.setPassword(mobileRequest.getPasswd());
-
-            //判断注册码是否有效
-            String code=iRedisService.get(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
-            if(code!=null&&!"".equals(code)&&code.equals(mobileRequest.getVerifyCode())){
-                iApIUserService.saveUser(apiUserBean);
-                UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile());
-                registerMobileResponse.setCode(ErrorCode.SUCCESS);
-                registerMobileResponse.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                registerMobileResponse.setContent(userInfo);
-                iRedisService.deleteOneKey(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
+            //判断是否用户名注册
+            UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone());
+            if(isExist!=null){
+                registerMobileResponse.setCode(ErrorCode.USER_EXITS);
+                registerMobileResponse.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
             }else{
-                registerMobileResponse.setCode(ErrorCode.USER_CODE_ERROR);
-                registerMobileResponse.setMessage(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
+                //判断注册码是否有效
+                String code=iRedisService.get(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
+                if(code!=null&&!"".equals(code)&&code.equals(mobileRequest.getVerifyCode())){
+                    iApIUserService.saveUser(apiUserBean);
+                    UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile());
+                    registerMobileResponse.setCode(ErrorCode.SUCCESS);
+                    registerMobileResponse.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                    registerMobileResponse.setContent(userInfo);
+                    iRedisService.deleteOneKey(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
+                }else{
+                    registerMobileResponse.setCode(ErrorCode.USER_CODE_ERROR);
+                    registerMobileResponse.setMessage(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
+                }
             }
+
         } catch (Exception e) {
             registerMobileResponse.setCode(ErrorCode.ERROR);
             registerMobileResponse.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));

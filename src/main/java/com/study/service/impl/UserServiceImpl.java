@@ -36,5 +36,9 @@ public class UserServiceImpl implements IUserService{
         userInfoMapper.updateByPrimaryKeySelective(userInfo);
     }
 
+    public UserInfo findByEMail(String email){
+       return  userInfoMapper.findByEMail(email);
+    }
+
 
 }
