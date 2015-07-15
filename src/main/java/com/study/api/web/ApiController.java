@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by Star on 2015/7/9.
  */
 @Controller
+@RequestMapping("/api")
 public class ApiController {
 
     @Autowired
