@@ -13,6 +13,7 @@ import com.study.code.ErrorCode;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.ApiResponseMessage;
 import com.study.common.util.MessageUtil;
+import com.study.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping("/api")
-public class ApiController {
+public class ApiController extends BaseController {
 
     @Autowired
     private MessageUtil messageUtil;

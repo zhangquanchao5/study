@@ -84,7 +84,7 @@ public class BaseController {
     protected String[] getAuthHeader(HttpServletRequest request){
         String auth = request.getHeader("Authorization");
         String encode= StringUtil.getFromBASE64(auth);
-        StudyLogger.recBusinessLog("auth:"+auth+"-----------"+encode);
+        StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
         return encode.split(SplitCode.SPLIT_EQULE);
     }
 
@@ -95,6 +95,7 @@ public class BaseController {
      * @return
      */
     protected String getPlatformHeader(HttpServletRequest request) {
+        StudyLogger.recBusinessLog("platform:"+request.getHeader("platform"));
         return request.getHeader("platform");
     }
     /**

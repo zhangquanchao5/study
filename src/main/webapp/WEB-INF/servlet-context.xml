@@ -57,10 +57,8 @@
         <mvc:interceptor>
             <!-- 需拦截的地址 -->
             <mvc:mapping path="/**" />
-            <mvc:exclude-mapping path="/"/>
             <mvc:exclude-mapping path="/login"/>
             <mvc:exclude-mapping path="/user/register"/>
-            <mvc:exclude-mapping path="/index"/>
             <mvc:exclude-mapping path="/api/**"/>
             <mvc:exclude-mapping path="/pub/**"/>
             <mvc:exclude-mapping path="/ssoAuth"/>
@@ -79,7 +77,7 @@
           p:basenames="WEB-INF/i18n/messages" p:fallbackToSystemLocale="false"/>
 
     <mvc:view-controller path="/login" view-name="login"/>
-    <mvc:view-controller path="/" view-name="login"/>
+    <mvc:view-controller path="/" view-name="index"/>
     <mvc:view-controller path="/index" view-name="index"/>
     <mvc:view-controller path="/user/register" view-name="user/register"/>
     <!--<mvc:view-controller path="/index" view-name="index"/>-->

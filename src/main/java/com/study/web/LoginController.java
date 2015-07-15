@@ -74,6 +74,9 @@ public class LoginController extends BaseController {
             cookie.setPath("/");
             response.addCookie(cookie);
 
+            if(StringUtil.isEmpty(userInfo.getUserName())){
+                userInfo.setUserName(userInfo.getMobile());
+            }
             SessionInfo sessionInfo=new SessionInfo(userInfo);
             LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
 
@@ -90,29 +93,47 @@ public class LoginController extends BaseController {
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 
-
-    @RequestMapping(value ="/loginOut")
-    public void loginOut(@RequestParam String cookieName, HttpServletResponse response) {
-
-        LoginOutResponse loginOutResponse=new LoginOutResponse();
-        try {
-            StudyLogger.recBusinessLog("loginOut:"+cookieName);
-            if(cookieName==null||"".equals(cookieName)){
-                loginOutResponse.setError("true");
-                loginOutResponse.setErrorInfo("Ticket can not be empty!");
-                StudyLogger.recBusinessLog("loginOut error:" + cookieName);
-            }else{
-                String decodedTicket = DESUtils.decrypt(cookieName, PropertiesUtil.getString("sso.secretKey"));
-                iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + decodedTicket);
-                loginOutResponse.setError("false");
-                StudyLogger.recBusinessLog("loginOut ok:" + cookieName);
-            }
-        } catch (Exception e) {
-            loginOutResponse.setError("true");
+    @RequestMapping(value ="/logout")
+    public String loginOut(HttpServletRequest request, HttpServletResponse response) {
+        try{
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null)
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals(PropertiesUtil.getString("sso.cookieName"))) {
+                        String decodedTicket = DESUtils.decrypt(cookie.getValue(), PropertiesUtil.getString("sso.secretKey"));
+                        iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + decodedTicket);
+                        break;
+                    }
+                }
+            LoginUser.getCurrentSession().invalidate();
+        }catch (Exception e){
             printLogger(e);
         }
-        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(loginOutResponse).toString());
+        return "login";
     }
+
+//    @RequestMapping(value ="/loginOut")
+//    public void loginOut(@RequestParam String cookieName, HttpServletResponse response) {
+//
+//        LoginOutResponse loginOutResponse=new LoginOutResponse();
+//        try {
+//            StudyLogger.recBusinessLog("loginOut:"+cookieName);
+//            if(cookieName==null||"".equals(cookieName)){
+//                loginOutResponse.setError("true");
+//                loginOutResponse.setErrorInfo("Ticket can not be empty!");
+//                StudyLogger.recBusinessLog("loginOut error:" + cookieName);
+//            }else{
+//                String decodedTicket = DESUtils.decrypt(cookieName, PropertiesUtil.getString("sso.secretKey"));
+//                iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + decodedTicket);
+//                loginOutResponse.setError("false");
+//                StudyLogger.recBusinessLog("loginOut ok:" + cookieName);
+//            }
+//        } catch (Exception e) {
+//            loginOutResponse.setError("true");
+//            printLogger(e);
+//        }
+//        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(loginOutResponse).toString());
+//    }
 
 
 

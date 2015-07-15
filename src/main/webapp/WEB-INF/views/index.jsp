@@ -25,7 +25,7 @@
 
 <div class="login_height">
 
-  欢迎界面，ok
+  欢迎界面,登陆成功
 </div>
 
 <div class="bottom">
