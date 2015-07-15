@@ -3,9 +3,11 @@ package com.study.web;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
 
+import com.study.code.PrefixCode;
 import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
+import com.study.service.IRedisService;
 import org.apache.log4j.Level;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
@@ -88,6 +90,19 @@ public class BaseController {
         return encode.split(SplitCode.SPLIT_EQULE);
     }
 
+    /**
+     * api判断token是否有效
+     */
+    protected  boolean isAuthToken(IRedisService iRedisService,HttpServletRequest request){
+        String auth = request.getHeader("Authorization");
+        String encode= StringUtil.getFromBASE64(auth);
+        StudyLogger.recBusinessLog("platform:"+request.getHeader("platform"));
+        StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
+        if(iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
+            return true;
+        }
+        return  false;
+    }
 
     /**
      * 获取platform
