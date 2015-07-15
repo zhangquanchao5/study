@@ -50,7 +50,7 @@ public class ApiPubController extends BaseController {
     @Autowired
     private MessageUtil messageUtil;
     /**
-     * 发送手机验证码
+     * 1发送手机验证码
      */
     @RequestMapping(value = "/getCode")
     public void getCode(HttpServletRequest request, HttpServletResponse response) {
