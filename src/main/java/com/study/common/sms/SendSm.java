@@ -1,5 +1,6 @@
 package com.study.common.sms;
 
+import com.study.common.util.PropertiesUtil;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.NameValuePair;
@@ -26,8 +27,8 @@ public class SendSm {
         SmsResponse smsResponse=new SmsResponse();
 
         NameValuePair[] data = {//提交短信
-                new NameValuePair("account", "cf_songzhe"),
-                new NameValuePair("password", "soooner123"), //密码可以使用明文密码或使用32位MD5加密
+                new NameValuePair("account", PropertiesUtil.getString("SEND.USERNAME")),
+                new NameValuePair("password",PropertiesUtil.getString("SEND.PWD")), //密码可以使用明文密码或使用32位MD5加密
                 //new NameValuePair("password", util.StringUtil.MD5Encode("密码")),
                 new NameValuePair("mobile", mobile),
                 new NameValuePair("content", content),
