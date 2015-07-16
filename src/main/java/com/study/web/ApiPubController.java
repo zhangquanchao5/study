@@ -16,6 +16,8 @@ import com.study.common.apibean.request.RegisterMobileRequest;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.apibean.response.LoginResponse;
 import com.study.common.apibean.response.RegisterMobileResponse;
+import com.study.common.sms.SendSm;
+import com.study.common.sms.SmsResponse;
 import com.study.common.util.MessageUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
@@ -34,6 +36,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Base64;
 
 /**
@@ -67,12 +70,19 @@ public class ApiPubController extends BaseController {
                     mobileBean.setCode(ErrorCode.USER_EXITS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                 }else{
-                    mobileBean.setCode(ErrorCode.SUCCESS);
-                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     String code=StringUtil.generateTextCode(0, 6, null);
-                    mobileBean.setVerifyCode(code);
                     //SEND MOBILE
-                    iRedisService.set(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone(), code, 300);
+                    SmsResponse smsResponse=SendSm.sendSms(mobileRequest.getUserPhone(), messageUtil.getMessage("MSG.SMSSEND.CONTENT").replace("#CODE", code));
+                    System.out.println(smsResponse.getCode() + ":" + smsResponse.getMsg() + ":" + smsResponse.getSmsid());
+                    if(smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                        mobileBean.setCode(ErrorCode.SUCCESS);
+                        mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                        mobileBean.setVerifyCode(code);
+                        iRedisService.set(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone(), code, 300);
+                    }else{
+                        mobileBean.setCode(ErrorCode.ERROR);
+                        mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
+                    }
                 }
             }else if(mobileRequest.getType()== EntityCode.MOBILE_BIND_UPDATE){
                 UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
@@ -80,12 +90,18 @@ public class ApiPubController extends BaseController {
                     mobileBean.setCode(ErrorCode.USER_EXITS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                 }else{
-                    mobileBean.setCode(ErrorCode.SUCCESS);
-                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     String code=StringUtil.generateTextCode(0, 6, null);
-                    mobileBean.setVerifyCode(code);
                     //SEND MOBILE
-                    iRedisService.set(PrefixCode.API_MOBILE_BIND+ mobileRequest.getUserPhone(), code, 300);
+                    SmsResponse smsResponse=SendSm.sendSms(mobileRequest.getUserPhone(), messageUtil.getMessage("MSG.SMSSEND.CONTENT").replace("#CODE", code));
+                    if(smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                        mobileBean.setCode(ErrorCode.SUCCESS);
+                        mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                        mobileBean.setVerifyCode(code);
+                        iRedisService.set(PrefixCode.API_MOBILE_BIND + mobileRequest.getUserPhone(), code, 300);
+                    }else{
+                        mobileBean.setCode(ErrorCode.ERROR);
+                        mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
+                    }
                 }
             }else if(mobileRequest.getType()== EntityCode.MOBILE_GET_PASSWORD){
                 UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
@@ -93,12 +109,18 @@ public class ApiPubController extends BaseController {
                     mobileBean.setCode(ErrorCode.USER_NOT_EXITS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
                 }else{
-                    mobileBean.setCode(ErrorCode.SUCCESS);
-                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     String code=StringUtil.generateTextCode(0, 6, null);
-                    mobileBean.setVerifyCode(code);
                     //SEND MOBILE
-                    iRedisService.set(PrefixCode.API_MOBILE_UPDATE  + mobileRequest.getUserPhone(), code, 300);
+                    SmsResponse smsResponse=SendSm.sendSms(mobileRequest.getUserPhone(), messageUtil.getMessage("MSG.SMSSEND.CONTENT").replace("#CODE", code));
+                    if(smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                        mobileBean.setCode(ErrorCode.SUCCESS);
+                        mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                        mobileBean.setVerifyCode(code);
+                        iRedisService.set(PrefixCode.API_MOBILE_UPDATE  + mobileRequest.getUserPhone(), code, 300);
+                    }else{
+                        mobileBean.setCode(ErrorCode.ERROR);
+                        mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -259,8 +281,8 @@ public class ApiPubController extends BaseController {
         CommonResponse message = new CommonResponse();
         try {
             //现在用户名和手机号一样，直接查找手机号
-            String[] auth=getAuthHeader(request);
-            StudyLogger.recBusinessLog("/pub/up:" + auth.toString());
+//            String[] auth=getAuthHeader(request);
+//            StudyLogger.recBusinessLog("/pub/up:" + auth.toString());
             if(!file.isEmpty()){
                 ServletContext sc = request.getSession().getServletContext();
                 String dir = sc.getRealPath(PrefixCode.FILE_PATH);
@@ -292,12 +314,17 @@ public class ApiPubController extends BaseController {
     /**
      * 图片处理 上传
      */
-    @RequestMapping(value = "/up/img/{file}")
+    @RequestMapping(value = "/up/img/{file:.*}")
     public void img(@PathVariable("file") String name,@RequestParam String w,@RequestParam String h, HttpServletRequest request,HttpServletResponse response) {
         try{
-            StudyLogger.recBusinessLog("/up/img" +name);
-            byte[] img= ImageUtil.resizeOUT(new File(request.getSession().getServletContext().getRealPath(PrefixCode.FILE_PATH), name),Integer.parseInt(w),Integer.parseInt(h),0.8f,true);
-            response.getWriter().write(new String(img,"UTF-8"));
+            StudyLogger.recBusinessLog("/up/img/" + name);
+            byte[] img= ImageUtil.resizeOUT(new File(request.getSession().getServletContext().getRealPath(PrefixCode.FILE_PATH), name), Integer.parseInt(w), Integer.parseInt(h), 1f, true);
+
+            response.setContentType("image/jpeg");
+            OutputStream stream = response.getOutputStream();
+            stream.write(img);
+            stream.flush();
+            stream.close();
         }catch (Exception e){
             printLogger(e);
         }

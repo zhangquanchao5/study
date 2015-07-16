@@ -47,8 +47,8 @@ public class UserController extends BaseController {
     private IRedisService iRedisService;
 
     @RequestMapping(value = "/registerUp", method = RequestMethod.POST)
-    public void registerUp(UserInfo userInfoModel, HttpServletResponse response) {
-
+    public void registerUp(UserInfo userInfoModel,@RequestParam String valCode, HttpServletResponse response) {
+        System.out.println("sysour:"+valCode);
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
             UserInfo userInfo = iUserService.findByUserName(userInfoModel.getUserName());
@@ -67,18 +67,24 @@ public class UserController extends BaseController {
                 return;
             }
 
-            userInfoModel.setPassword(StringUtil.getMD5Str(userInfoModel.getPassword()));
-            userInfoModel.setCreateTime(new Date());
-            userInfoModel.setStatus(EntityCode.USER_VALIDATE);
-            iUserService.saveUserInfo(userInfoModel);
+            //判断注册码是否有效
+            String code=iRedisService.get(PrefixCode.API_MOBILE_REGISTER +userInfoModel.getMobile());
+            if(code!=null&&!"".equals(code)&&code.equals(valCode)){
+                iRedisService.deleteOneKey(PrefixCode.API_MOBILE_REGISTER + userInfoModel.getMobile());
+                userInfoModel.setPassword(StringUtil.getMD5Str(userInfoModel.getPassword()));
+                userInfoModel.setCreateTime(new Date());
+                userInfoModel.setStatus(EntityCode.USER_VALIDATE);
+                iUserService.saveUserInfo(userInfoModel);
 
-            UserInfoFrom userInfoFrom = new UserInfoFrom();
-            userInfoFrom.setUserId(userInfoModel.getId());
-            userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
+                UserInfoFrom userInfoFrom = new UserInfoFrom();
+                userInfoFrom.setUserId(userInfoModel.getId());
+                userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
 
-            iUserFromService.saveUserFrom(userInfoFrom);
-
-
+                iUserFromService.saveUserFrom(userInfoFrom);
+            }else{
+                message.setSuccess(false);
+                message.setCode(ErrorCode.USER_CODE_ERROR);
+            }
         } catch (Exception e) {
             message.setSuccess(false);
             message.setCode(ErrorCode.SYS_ERROR);

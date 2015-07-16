@@ -112,29 +112,6 @@ public class LoginController extends BaseController {
         return "login";
     }
 
-//    @RequestMapping(value ="/loginOut")
-//    public void loginOut(@RequestParam String cookieName, HttpServletResponse response) {
-//
-//        LoginOutResponse loginOutResponse=new LoginOutResponse();
-//        try {
-//            StudyLogger.recBusinessLog("loginOut:"+cookieName);
-//            if(cookieName==null||"".equals(cookieName)){
-//                loginOutResponse.setError("true");
-//                loginOutResponse.setErrorInfo("Ticket can not be empty!");
-//                StudyLogger.recBusinessLog("loginOut error:" + cookieName);
-//            }else{
-//                String decodedTicket = DESUtils.decrypt(cookieName, PropertiesUtil.getString("sso.secretKey"));
-//                iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + decodedTicket);
-//                loginOutResponse.setError("false");
-//                StudyLogger.recBusinessLog("loginOut ok:" + cookieName);
-//            }
-//        } catch (Exception e) {
-//            loginOutResponse.setError("true");
-//            printLogger(e);
-//        }
-//        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(loginOutResponse).toString());
-//    }
-
 
 
 }

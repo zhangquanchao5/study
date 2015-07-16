@@ -6,6 +6,8 @@
 <script src="<%=request.getContextPath()%>/resources/plugins/validator/local/zh_CN.js"></script>
 <script src="${pageContext.request.contextPath}/resources/plugins/bootbox/bootbox.js"></script>
 <script src="${pageContext.request.contextPath}/resources/plugins/form/jquery.form.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/util.js"></script>
+
 <script>
     $contentPath='<%=request.getContextPath()%>';
 </script>
