@@ -254,6 +254,7 @@ public class ApiPubController extends BaseController {
             //现在用户名和手机号一样，直接查找手机号
             String[] auth=getAuthHeader(request);
             StudyLogger.recBusinessLog("/pub/logout:" + auth.toString());
+
             iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, auth[0]);
             //更新数据库token保存做备份
             UserInfo userInfoTemp=new UserInfo();
@@ -281,8 +282,8 @@ public class ApiPubController extends BaseController {
         CommonResponse message = new CommonResponse();
         try {
             //现在用户名和手机号一样，直接查找手机号
-//            String[] auth=getAuthHeader(request);
-//            StudyLogger.recBusinessLog("/pub/up:" + auth.toString());
+          //  String[] auth=getAuthHeader(request);
+          //  StudyLogger.recBusinessLog("/pub/up:" + auth.toString());
             if(!file.isEmpty()){
                 ServletContext sc = request.getSession().getServletContext();
                 String dir = sc.getRealPath(PrefixCode.FILE_PATH);

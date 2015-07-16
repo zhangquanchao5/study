@@ -132,26 +132,32 @@ public class ApiUserController extends BaseController {
 
         UserInfoUpdateResponse userInfoUpdateResponse = new UserInfoUpdateResponse();
         try {
-            String json=this.getParameter(request);
-            StudyLogger.recBusinessLog("/user/updateInfo:" + json);
+            if(isAuthToken(iRedisService,request)){
+                String json=this.getParameter(request);
+                StudyLogger.recBusinessLog("/user/updateInfo:" + json);
 
-            UserInfoUpdateRequest userInfoUpdateRequest= JSON.parseObject(json, UserInfoUpdateRequest.class);
-            UserInfo updateUser=new UserInfo();
-            updateUser.setNick(userInfoUpdateRequest.getNickname());
-            updateUser.setIcon(userInfoUpdateRequest.getIcon());
-            updateUser.setAddress(userInfoUpdateRequest.getAddress());
-            updateUser.setName(userInfoUpdateRequest.getRealName());
-            if(userInfoUpdateRequest.getGender()!=null&&!"".equals(userInfoUpdateRequest.getGender())){
-                updateUser.setGender(Byte.parseByte(userInfoUpdateRequest.getGender()));
+                UserInfoUpdateRequest userInfoUpdateRequest= JSON.parseObject(json, UserInfoUpdateRequest.class);
+                UserInfo updateUser=new UserInfo();
+                updateUser.setNick(userInfoUpdateRequest.getNickname());
+                updateUser.setIcon(userInfoUpdateRequest.getIcon());
+                updateUser.setAddress(userInfoUpdateRequest.getAddress());
+                updateUser.setName(userInfoUpdateRequest.getRealName());
+                if(userInfoUpdateRequest.getGender()!=null&&!"".equals(userInfoUpdateRequest.getGender())){
+                    updateUser.setGender(Byte.parseByte(userInfoUpdateRequest.getGender()));
+                }
+                updateUser.setId(userInfoUpdateRequest.getId());
+
+                iApIUserService.updateUser(updateUser);
+
+                UserInfo userInfo=iApIUserService.findById(updateUser.getId());
+                userInfoUpdateResponse.setCode(ErrorCode.SUCCESS);
+                userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                userInfoUpdateResponse.setData(userInfo);
+            }else{
+                userInfoUpdateResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
-            updateUser.setId(userInfoUpdateRequest.getId());
 
-            iApIUserService.updateUser(updateUser);
-
-            UserInfo userInfo=iApIUserService.findById(updateUser.getId());
-            userInfoUpdateResponse.setCode(ErrorCode.SUCCESS);
-            userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            userInfoUpdateResponse.setData(userInfo);
         } catch (Exception e) {
             userInfoUpdateResponse.setCode(ErrorCode.ERROR);
             userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
@@ -168,19 +174,25 @@ public class ApiUserController extends BaseController {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
-            String json=this.getParameter(request);
-            StudyLogger.recBusinessLog("/user/info:" + json);
+            if(isAuthToken(iRedisService,request)){
+                String json=this.getParameter(request);
+                StudyLogger.recBusinessLog("/user/info:" + json);
 
-            UserInfoRequest userInfoRequest= JSON.parseObject(json, UserInfoRequest.class);
-            UserInfo userInfo=null;
-            if(userInfoRequest.getId()!=null){
-                userInfo=iApIUserService.findById(userInfoRequest.getId());
+                UserInfoRequest userInfoRequest= JSON.parseObject(json, UserInfoRequest.class);
+                UserInfo userInfo=null;
+                if(userInfoRequest.getId()!=null){
+                    userInfo=iApIUserService.findById(userInfoRequest.getId());
+                }else{
+                    userInfo=iApIUserService.findByToken(userInfoRequest.getToken());
+                }
+                commonResponse.setCode(ErrorCode.SUCCESS);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                commonResponse.setData(userInfo);
             }else{
-                userInfo=iApIUserService.findByToken(userInfoRequest.getToken());
+                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
-            commonResponse.setCode(ErrorCode.SUCCESS);
-            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            commonResponse.setData(userInfo);
+
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
             commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
@@ -197,15 +209,21 @@ public class ApiUserController extends BaseController {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
-            String json=this.getParameter(request);
-            StudyLogger.recBusinessLog("/user/accountinfo:" + json);
+            if(isAuthToken(iRedisService,request)){
+                String json=this.getParameter(request);
+                StudyLogger.recBusinessLog("/user/accountinfo:" + json);
 
-            UserInfoRequest userInfoRequest= JSON.parseObject(json, UserInfoRequest.class);
+                UserInfoRequest userInfoRequest= JSON.parseObject(json, UserInfoRequest.class);
 
-            Account account=iApIUserService.findAccountByUserId(userInfoRequest.getId());
-            commonResponse.setCode(ErrorCode.SUCCESS);
-            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            commonResponse.setData(account);
+                Account account=iApIUserService.findAccountByUserId(userInfoRequest.getId());
+                commonResponse.setCode(ErrorCode.SUCCESS);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                commonResponse.setData(account);
+            }else{
+                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
+
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
             commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
@@ -222,23 +240,29 @@ public class ApiUserController extends BaseController {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
-            String json=this.getParameter(request);
-            StudyLogger.recBusinessLog("/user/modifyPwd:" + json);
+            if(isAuthToken(iRedisService, request)){
+                String json=this.getParameter(request);
+                StudyLogger.recBusinessLog("/user/modifyPwd:" + json);
 
-            UserPwdChangeRequest userPwdChangeRequest= JSON.parseObject(json, UserPwdChangeRequest.class);
-            UserInfo userInfo=iApIUserService.findById(userPwdChangeRequest.getId());
-            if(userInfo.getPassword().equals(StringUtil.getMD5Str(userPwdChangeRequest.getOldPassword()))){
-                UserInfo userInfoUpdate=new UserInfo();
-                userInfoUpdate.setId(userInfo.getId());
-                userInfoUpdate.setPassword(StringUtil.getMD5Str(userPwdChangeRequest.getNewPassword()));
+                UserPwdChangeRequest userPwdChangeRequest= JSON.parseObject(json, UserPwdChangeRequest.class);
+                UserInfo userInfo=iApIUserService.findById(userPwdChangeRequest.getId());
+                if(userInfo.getPassword().equals(StringUtil.getMD5Str(userPwdChangeRequest.getOldPassword()))){
+                    UserInfo userInfoUpdate=new UserInfo();
+                    userInfoUpdate.setId(userInfo.getId());
+                    userInfoUpdate.setPassword(StringUtil.getMD5Str(userPwdChangeRequest.getNewPassword()));
 
-                iApIUserService.updateUser(userInfoUpdate);
-                commonResponse.setCode(ErrorCode.SUCCESS);
-                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                    iApIUserService.updateUser(userInfoUpdate);
+                    commonResponse.setCode(ErrorCode.SUCCESS);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                }else{
+                    commonResponse.setCode(ErrorCode.USER_PWD_ERROR);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_PWD_ERROR_CN"));
+                }
             }else{
-                commonResponse.setCode(ErrorCode.USER_PWD_ERROR);
-                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_PWD_ERROR_CN"));
+                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
+
 
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);

@@ -22,7 +22,7 @@ public class SendSm {
     public synchronized static SmsResponse sendSms(String mobile,String content){
         HttpClient client = new HttpClient();
         PostMethod method = new PostMethod(Url);
-        client.getParams().setContentCharset("gbk");
+        client.getParams().setContentCharset("utf-8");
         method.setRequestHeader("ContentType", "application/x-www-form-urlencoded;charset=UTF-8");
         SmsResponse smsResponse=new SmsResponse();
 
@@ -60,10 +60,7 @@ public class SendSm {
         return smsResponse;
     }
 
-    public  static void main(String [] args){
-        SmsResponse smsResponse=sendSms("15201175465","您的校验码是：【123456】。请不要把校验码泄露给其他人。如非本人操作，可不用理会！");
-        System.out.println(smsResponse.getCode()+":"+smsResponse.getMsg()+":"+smsResponse.getSmsid());
-    }
+
 
 
 }
