@@ -8,7 +8,7 @@ import com.study.api.exception.BalanceNotEnoughException;
 import com.study.api.exception.ParameterNotEnoughException;
 import com.study.api.exception.ProcessFailureException;
 import com.study.api.exception.UserNotExitsException;
-import com.study.api.service.ApiAccountService;
+import com.study.service.impl.api.ApiAccountService;
 import com.study.code.ErrorCode;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.ApiResponseMessage;
@@ -30,7 +30,7 @@ public class ApiController extends BaseController {
     @Autowired
     private ApiAccountService apiAccountService;
 
-    @RequestMapping(value = "/accountinfo", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/accountinfo", method = RequestMethod.POST)
     private @ResponseBody
     ApiResponseMessage getAccountSnapshoot(@RequestBody AccountInfoReq req){
         ApiResponseMessage message = new ApiResponseMessage();

@@ -1,9 +1,14 @@
-WELCOME STUDY
-#1.接口除了pub开头的接口，其他对外app接口都加前缀api,方便后台过滤。比如http://ip:port/api/user/info
-#2.采用http header 参数,web登陆后直接写cookie，子系统都需要添加filter，还需要redirect 附带token？另外，h5是不是也属于写cookie,h5不写cookie就生成token也保证不了统一登录？只有ios活andriod登陆互斥就行。
-#3.所有接口参数首字母都是小写。
-#4.qq一键登录需要注册和审核，然后给我应用id和key。
-#5.基于邮箱的接口暂时没法做，没有页面，注册也没有填写邮箱.
-#6.系统错误参数补充（999:系统出现未知错误，9999：token失效）
+# WELCOME STUDY
+
+## 2015-07-17
+1. 接口除了pub开头的接口，其他对外app接口都加前缀api,方便后台过滤。比如http://ip:port/api/user/info
+2. 采用http header 参数,web登陆后直接写cookie，子系统都需要添加filter，还需要redirect 附带token？另外，h5是不是也属于写cookie,h5不写cookie就生成token也保证不了统一登录？只有ios活andriod登陆互斥就行。
+3. 所有接口参数首字母都是小写。
+4. qq一键登录需要注册和审核，然后给我应用id和key。
+5. 基于邮箱的接口暂时没法做，没有页面，注册也没有填写邮箱.
+6. 系统错误参数补充（999:系统出现未知错误，9999：token失效）
+7. 订单是否属于这期（账户扣款涉及到交易号，即订单号）。
+8. 目前pdf有三大业务系统接口，本期完成的客户管理系统，是否都做？（因为支付和充值卡，分属于支付系统和充值卡系统）
+9. 确认文档中的优惠劵相关接口（个人理解不用做）
 
 
