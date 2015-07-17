@@ -99,6 +99,11 @@ public class BaseController {
         StudyLogger.recBusinessLog("platform:"+request.getHeader("platform"));
         StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
         if(iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
+            String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));
+            String[] codes=code.split(SplitCode.SPLIT_SHU);
+            if(System.currentTimeMillis()>(Long.parseLong(codes[2])+Long.parseLong(codes[1])*60*1000)){
+                return false;
+            }
             return true;
         }
         return  false;

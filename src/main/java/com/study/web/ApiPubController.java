@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
+import com.study.code.SplitCode;
 import com.study.common.DateUtil;
 import com.study.common.ImageUtil;
 import com.study.common.StringUtil;
@@ -19,6 +20,7 @@ import com.study.common.apibean.response.RegisterMobileResponse;
 import com.study.common.sms.SendSm;
 import com.study.common.sms.SmsResponse;
 import com.study.common.util.MessageUtil;
+import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
 import com.study.service.IApIUserService;
@@ -38,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.Base64;
+import java.util.UUID;
 
 /**
  * Created by huichao on 2015/7/13.
@@ -214,7 +217,7 @@ public class ApiPubController extends BaseController {
                 commonResponse.setMsg(ErrorCode.USER_PWD_ERROR);
             }else{
 
-                String token=Base64.getEncoder().encodeToString((System.currentTimeMillis()+"|"+64800).getBytes());
+                String token=StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + System.currentTimeMillis());
                 //更新数据库token保存做备份
                 UserInfo userInfoTemp=new UserInfo();
                 userInfoTemp.setId(userInfo.getId());
@@ -228,7 +231,7 @@ public class ApiPubController extends BaseController {
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 LoginResponse loginResponse=new LoginResponse();
                 loginResponse.setToken(token);
-                loginResponse.setInvalidTime(64800l);
+                loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
                 loginResponse.setUser(userInfo);
 
                 commonResponse.setData(loginResponse);
