@@ -96,6 +96,17 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     color:#c6c4c4;
 
 }
+select{
+    -webkit-appearance: none;
+    border-radius: 0px;
+    -wekit-border-radius:0px;
+    -moz-border-radius:0px;
+    background:none;
+    border-color: #d7d7d7;
+}
+input,select{
+    text-indent: 5px;
+}
 
 /*header*/
 .header{
@@ -312,4 +323,46 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     opacity: 0.5;
     filter: alpha(opacity = 50);
     -moz-opacity: 0.5;
+}
+.popbox{
+    width: 494px;
+    height: 272px;
+    padding: 23px 0px 13px 17px;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    z-index: 120;
+}
+.popbox_top{
+    position: relative;
+}
+.closeBtn{
+    position: absolute;
+    right: 6px;
+    top: -19px;
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+    background-image: url("../images/closeBtn.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+}
+.choice_del{
+    font-size: 14px;
+    color: #09d;
+    height: 60px;
+}
+.choice_del img{
+    float: left;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+.choice_del span{
+    float: left;
+    margin-top: 2px;
+}
+.del_marginTop{
+    margin-top: 15px;
 }

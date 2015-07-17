@@ -14,7 +14,7 @@ $(document).ready(function() {
                         if(responseJson.code!=null&&responseJson.code!=""){
                             window.location.href =responseJson.code;
                         }else{
-                            window.location.href =$contentPath+"/index";
+                            window.location.href =$contentPath+"/account/accountManagement";
                         }
                 }else{
                     if(responseJson.code=="2002"){

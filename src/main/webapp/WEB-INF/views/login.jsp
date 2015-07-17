@@ -46,7 +46,7 @@
             </li>
             <li style="margin-top:20px">
                 <div class="login_right_in1">密码：</div>
-                <div class="login_right_in2"><input name="password" id="password"  placeholder="输入密码" type="text" data-rule="required;length[6~15]"   data-msg-length="密码是6到15位"></div>
+                <div class="login_right_in2"><input name="password" id="password"  placeholder="输入密码" type="password" data-rule="required;length[6~15]"   data-msg-length="密码是6到15位"></div>
             </li>
             <%--<li style="margin-top:20px">--%>
                 <%--<div><input name="" type="checkbox" value="" style="margin-left:80px"></div>--%>
