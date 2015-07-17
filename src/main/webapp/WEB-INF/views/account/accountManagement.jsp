@@ -27,7 +27,7 @@ To change this template use File | Settings | File Templates.
                 <div class="a_m_main_topMain">
                     <p class="a_m_main_topMainRight">
                         <a href="#">添加邮箱</a>
-                        <a href="#">修改手机</a>
+                        <a  href="${pageContext.request.contextPath}/account/securityTouble"  target="_blank" >修改手机</a>
                     </p>
                     <dl class="a_m_main_topMainLeft left">
                         <dt><img src="${pageContext.request.contextPath}/resources/images/imgs07.jpg"/></dt>
