@@ -8,7 +8,7 @@
 2. 采用http header 参数,web登陆后直接写cookie，子系统都需要添加filter，还需要redirect
  附带token？另外，h5是不是也属于写cookie,h5不写cookie就生成token也保证不了统一登录？只有ios活andriod登陆互斥就行。
 
-re：h5也当做普通的web吧 ，也写cookie（这点我和军海去确认吧，h5有本地存储，所以不用cookie也可以存token）。 只有ios和andriod 互斥。
+re：h5按照app一样处理，返回token，h5的应用自己处理（h5有本地存储，所以不用cookie也可以存token）。 只有ios和andriod 互斥。
 
 3. 所有接口参数首字母都是小写。
 
