@@ -218,14 +218,17 @@ public class ApiPubController extends BaseController {
             }else{
 
                 String token=StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + System.currentTimeMillis());
-                //更新数据库token保存做备份
-                UserInfo userInfoTemp=new UserInfo();
-                userInfoTemp.setId(userInfo.getId());
-                userInfoTemp.setToken(token);
-
-                iApIUserService.updateUserToken(userInfoTemp);
-
-                iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), token);
+                //更新数据库token保存做备份,不做数据库备份
+//                UserInfo userInfoTemp=new UserInfo();
+//                userInfoTemp.setId(userInfo.getId());
+//                userInfoTemp.setToken(token);
+//
+//                iApIUserService.updateUserToken(userInfoTemp);
+                if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
+                    iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), token);
+                }else{
+                    iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), token);
+                }
 
                 commonResponse.setCode(ErrorCode.SUCCESS);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
@@ -258,16 +261,20 @@ public class ApiPubController extends BaseController {
             String[] auth=getAuthHeader(request);
             StudyLogger.recBusinessLog("/pub/logout:" + auth.toString());
 
-            iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, auth[0]);
+            if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
+                iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, auth[0]);
+            }else{
+                iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, auth[0]);
+            }
             //更新数据库token保存做备份
-            UserInfo userInfoTemp=new UserInfo();
-            userInfoTemp.setId(Integer.parseInt(auth[0]));
-            userInfoTemp.setToken("");
-
-            iApIUserService.updateUserToken(userInfoTemp);
+//            UserInfo userInfoTemp=new UserInfo();
+//            userInfoTemp.setId(Integer.parseInt(auth[0]));
+//            userInfoTemp.setToken("");
+//
+//            iApIUserService.updateUserToken(userInfoTemp);
             message.setCode(ErrorCode.SUCCESS);
             message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            message.setData(iApIUserService.findById(userInfoTemp.getId()));
+            message.setData(iApIUserService.findById(Integer.parseInt(auth[0])));
         } catch (Exception e) {
             message.setCode(ErrorCode.ERROR);
             message.setMsg(ErrorCode.SYS_ERROR);

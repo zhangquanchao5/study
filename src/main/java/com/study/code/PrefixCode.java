@@ -15,6 +15,11 @@ public class PrefixCode {
     public static final String API_TOKEN_MAP="APITOKEN";
 
     /**
+     * h5token map key定义
+     */
+    public static final String API_H5_TOKEN_MAP="H5TOKEN";
+
+    /**
      * cookie  前缀
      */
     public static final String API_COOKIE_PRE="COOKIE";
@@ -41,6 +46,11 @@ public class PrefixCode {
      * mobile bind
      */
     public static final String API_MOBILE_BIND="MBIND";
+
+    /**
+     * h5 head
+     */
+    public static final String API_HEAD_H5="h5";
 
     /**
      * file
