@@ -201,36 +201,36 @@ public class ApiUserController extends BaseController {
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
     }
 
-    /**
-     * 获取账户信息
-     */
-    @RequestMapping(value = "/accountinfo")
-    public void accountinfo(HttpServletRequest request, HttpServletResponse response) {
-
-        CommonResponse commonResponse = new CommonResponse();
-        try {
-            if(isAuthToken(iRedisService,request)){
-                String json=this.getParameter(request);
-                StudyLogger.recBusinessLog("/user/accountinfo:" + json);
-
-                UserInfoRequest userInfoRequest= JSON.parseObject(json, UserInfoRequest.class);
-
-                Account account=iApIUserService.findAccountByUserId(userInfoRequest.getId());
-                commonResponse.setCode(ErrorCode.SUCCESS);
-                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                commonResponse.setData(account);
-            }else{
-                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
-                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
-            }
-
-        } catch (Exception e) {
-            commonResponse.setCode(ErrorCode.ERROR);
-            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
-            printLogger(e);
-        }
-        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
-    }
+//    /**
+//     * 获取账户信息
+//     */
+//    @RequestMapping(value = "/accountinfo")
+//    public void accountinfo(HttpServletRequest request, HttpServletResponse response) {
+//
+//        CommonResponse commonResponse = new CommonResponse();
+//        try {
+//            if(isAuthToken(iRedisService,request)){
+//                String json=this.getParameter(request);
+//                StudyLogger.recBusinessLog("/user/accountinfo:" + json);
+//
+//                UserInfoRequest userInfoRequest= JSON.parseObject(json, UserInfoRequest.class);
+//
+//                Account account=iApIUserService.findAccountByUserId(userInfoRequest.getId());
+//                commonResponse.setCode(ErrorCode.SUCCESS);
+//                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+//                commonResponse.setData(account);
+//            }else{
+//                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+//                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+//            }
+//
+//        } catch (Exception e) {
+//            commonResponse.setCode(ErrorCode.ERROR);
+//            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+//            printLogger(e);
+//        }
+//        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+//    }
 
     /**
      * 用户修改密码
