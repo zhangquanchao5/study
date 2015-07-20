@@ -108,6 +108,8 @@ public class BaseController {
                 }
                 return true;
             }
+        }else if(getParameter(request).equals(PrefixCode.API_HEAD_WEB)){
+            return true;
         }else{
             if(iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
                 String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));

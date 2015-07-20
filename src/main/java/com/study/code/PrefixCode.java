@@ -53,6 +53,11 @@ public class PrefixCode {
     public static final String API_HEAD_H5="h5";
 
     /**
+     * web head
+     */
+    public static final String API_HEAD_WEB="web";
+
+    /**
      * file
      */
     public static final String FILE_PATH="/img";
