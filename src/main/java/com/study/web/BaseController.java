@@ -7,8 +7,10 @@ import com.study.code.PrefixCode;
 import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
+import com.study.common.util.MessageUtil;
 import com.study.service.IRedisService;
 import org.apache.log4j.Level;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -25,6 +27,8 @@ import java.util.Date;
  */
 public class BaseController {
 
+    @Autowired
+    public MessageUtil messageUtil;
 
     /**
      * The constant MAPPING.
