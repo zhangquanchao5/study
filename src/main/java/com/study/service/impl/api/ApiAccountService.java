@@ -66,12 +66,12 @@ public class ApiAccountService {
         return new AccountInfoResp(account.getId(), account.getUserId(), books, account.getCreateTime().getTime());
     }
 
-    public void saveForDeposit(DepositAndWithdrawReq req) throws Exception{
-        if(null == req.getUserId() || null == req.getAccountBIllType() || null == req.getAmount() || req.getAmount() <= 0){
+    public void saveForDeposit(Integer userId, DepositAndWithdrawReq req) throws Exception{
+        if(null == userId || null == req.getAccountBIllType() || null == req.getAmount() || req.getAmount() <= 0){
             throw new ParameterNotEnoughException(messageUtil.getMessage("msg.parameter.notEnough"));
         }
 
-        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(req.getUserId());
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(userId);
         if(null == userInfo){
             throw new UserNotExitsException(messageUtil.getMessage("msg.user.notExits"));
         }
