@@ -49,10 +49,16 @@ public class LoginController extends BaseController {
         try {
             UserInfo userInfo = iUserService.findByUserName(userInfoModel.getUserName());
             if (userInfo == null) {
-                message.setSuccess(false);
-                message.setCode(ErrorCode.USER_NOT_EXITS);
-                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-                return;
+                userInfo=iUserService.findByMobile(userInfoModel.getUserName());
+                if(userInfo==null){
+                    userInfo=iUserService.findByEMail(userInfoModel.getUserName());
+                    if(userInfo==null){
+                        message.setSuccess(false);
+                        message.setCode(ErrorCode.USER_NOT_EXITS);
+                        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                        return;
+                    }
+                }
             }
 
             //判断密码是否正确
