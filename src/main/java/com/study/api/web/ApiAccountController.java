@@ -74,7 +74,7 @@ public class ApiAccountController extends BaseController {
         DepositAndWithdrawReq depositAndWithdrawReq = JSON.parseObject(strJson, DepositAndWithdrawReq.class);
         try {
             if (isAuthToken(iRedisService, request)) {
-                apiAccountService.saveForDeposit(getAuthHeader().getUserId(), depositAndWithdrawReq);
+                apiAccountService.saveForDeposit(getAuthHeader(request).getUserId(), depositAndWithdrawReq);
                 message.setCode(ErrorCode.PROCESS_SUCC);
                 message.setMsg(messageUtil.getMessage("msg.process.succ"));
             } else {
