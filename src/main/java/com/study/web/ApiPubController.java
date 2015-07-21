@@ -5,11 +5,11 @@ import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
 import com.study.code.SplitCode;
-import com.study.common.DateUtil;
 import com.study.common.ImageUtil;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.ApiUserBean;
+import com.study.common.apibean.AuthHeaderBean;
 import com.study.common.apibean.MobileBean;
 import com.study.common.apibean.request.LoginRequest;
 import com.study.common.apibean.request.MobileRequest;
@@ -19,7 +19,6 @@ import com.study.common.apibean.response.LoginResponse;
 import com.study.common.apibean.response.RegisterMobileResponse;
 import com.study.common.sms.SendSm;
 import com.study.common.sms.SmsResponse;
-import com.study.common.util.MessageUtil;
 import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
@@ -53,8 +52,6 @@ public class ApiPubController extends BaseController {
     private IRedisService iRedisService;
     @Autowired
     private IApIUserService iApIUserService;
-    @Autowired
-    private MessageUtil messageUtil;
     /**
      * 1发送手机验证码
      */
@@ -258,13 +255,13 @@ public class ApiPubController extends BaseController {
         CommonResponse message = new CommonResponse();
         try {
             //现在用户名和手机号一样，直接查找手机号
-            String[] auth=getAuthHeader(request);
-            StudyLogger.recBusinessLog("/pub/logout:" + auth.toString());
+            AuthHeaderBean authHeaderBean = getAuthHeader(request);
+            StudyLogger.recBusinessLog("/pub/logout:" + authHeaderBean.toString());
 
             if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
-                iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, auth[0]);
+                iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, authHeaderBean.getUserId().toString());
             }else{
-                iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, auth[0]);
+                iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, authHeaderBean.getUserId().toString());
             }
             //更新数据库token保存做备份
 //            UserInfo userInfoTemp=new UserInfo();
@@ -274,7 +271,7 @@ public class ApiPubController extends BaseController {
 //            iApIUserService.updateUserToken(userInfoTemp);
             message.setCode(ErrorCode.SUCCESS);
             message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            message.setData(iApIUserService.findById(Integer.parseInt(auth[0])));
+            message.setData(iApIUserService.findById(authHeaderBean.getUserId()));
         } catch (Exception e) {
             message.setCode(ErrorCode.ERROR);
             message.setMsg(ErrorCode.SYS_ERROR);

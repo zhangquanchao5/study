@@ -7,9 +7,11 @@ import com.study.common.apibean.request.PwdResetRequest;
 import com.study.dao.AccountMapper;
 import com.study.dao.UserInfoFromMapper;
 import com.study.dao.UserInfoMapper;
+import com.study.dao.UserSecurityMapper;
 import com.study.model.Account;
 import com.study.model.UserInfo;
 import com.study.model.UserInfoFrom;
+import com.study.model.UserSecurity;
 import com.study.service.IApIUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ public class ApiUserServiceImpl implements IApIUserService {
 
     @Autowired
     private AccountMapper accountMapper;
+    @Autowired
+    private UserSecurityMapper userSecurityMapper;
 
     public UserInfo findByMobile(String mobile){
         return userInfoMapper.selectByMobile(mobile);
@@ -69,7 +73,14 @@ public class ApiUserServiceImpl implements IApIUserService {
         userInfoFrom.setUserId(userInfo.getId());
         userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
 
+
+
         userInfoFromMapper.insert(userInfoFrom);
+
+        UserSecurity userSecurity = new UserSecurity();
+        userSecurity.setUserId(userInfo.getId());
+        userSecurity.setCreateTime(new Date());
+        userSecurityMapper.insert(userSecurity);
     }
 
     public void updateUserToken(UserInfo userInfo){

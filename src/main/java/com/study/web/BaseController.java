@@ -7,6 +7,7 @@ import com.study.code.PrefixCode;
 import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
+import com.study.common.apibean.AuthHeaderBean;
 import com.study.common.util.MessageUtil;
 import com.study.common.oss.DESUtils;
 import com.study.common.util.PropertiesUtil;
@@ -89,18 +90,22 @@ public class BaseController {
      * @param request
      * @return
      */
-    protected String[] getAuthHeader(HttpServletRequest request){
+    protected AuthHeaderBean getAuthHeader(HttpServletRequest request){
+        AuthHeaderBean authHeaderBean = new AuthHeaderBean();
         String auth = request.getHeader("Authorization");
         if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
             String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-            StudyLogger.recBusinessLog("auth:["+auth+"] encode["+decodedTicket+"]");
-            return decodedTicket.split(SplitCode.SPLIT_EQULE);
+            StudyLogger.recBusinessLog("auth:[" + auth + "] encode[" + decodedTicket + "]");
+            String[] webs = decodedTicket.split(SplitCode.SPLIT_EQULE);
+            authHeaderBean.setUserId(Integer.parseInt(webs[0]));
         }else{
             String encode= StringUtil.getFromBASE64(auth);
             StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
-            return encode.split(SplitCode.SPLIT_EQULE);
-        }
+            String[] strs = encode.split(SplitCode.SPLIT_EQULE);
+            authHeaderBean.setUserId(Integer.parseInt(strs[0]));
 
+        }
+        return authHeaderBean;
     }
 
     /**

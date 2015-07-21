@@ -3,9 +3,11 @@ package com.study.service.impl.api;
 import com.study.api.bean.AccountBook;
 import com.study.api.bean.AccountInfoResp;
 import com.study.api.bean.DepositAndWithdrawReq;
+import com.study.api.bean.PayPasswordReq;
 import com.study.api.exception.ParameterNotEnoughException;
 import com.study.api.exception.ProcessFailureException;
 import com.study.api.exception.UserNotExitsException;
+import com.study.common.StringUtil;
 import com.study.common.util.MessageUtil;
 import com.study.dao.*;
 import com.study.model.*;
@@ -36,6 +38,8 @@ public class ApiAccountService {
     private AccountDepositHistoryMapper accountDepositHistoryMapper;
     @Autowired
     private AccountWithdrawalHistoryMapper accountWithdrawalHistoryMapper;
+    @Autowired
+    private UserSecurityMapper userSecurityMapper;
 
     public AccountInfoResp getAccountInfo(Integer userId) throws Exception {
         if(null == userId){
@@ -125,5 +129,14 @@ public class ApiAccountService {
         withdrawalHistory.setCreateTime(new Date());
         withdrawalHistory.setCreateUser(0);
         accountWithdrawalHistoryMapper.insert(withdrawalHistory);
+    }
+
+    public void updatePayPassword(Integer userId, String newPayPassword) throws Exception{
+        UserSecurity userSecurity = userSecurityMapper.selectByUserId(userId);
+        if(null == userSecurity || null == newPayPassword || newPayPassword.trim().length() <= 0){
+            throw new ParameterNotEnoughException(messageUtil.getMessage("msg.parameter.notEnough"));
+        }
+        userSecurity.setPayPassword(StringUtil.getMD5Str(newPayPassword));
+        userSecurityMapper.updateByPrimaryKey(userSecurity);
     }
 }
