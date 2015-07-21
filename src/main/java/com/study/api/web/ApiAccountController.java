@@ -65,7 +65,7 @@ public class ApiAccountController extends BaseController {
         return message;
     }
 
-    @RequestMapping(value = "/account/deposit", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/coupon/receiveCash", method = RequestMethod.POST, headers = "Accept=application/json")
     private
     @ResponseBody
     ApiResponseMessage deposit(@RequestBody String strJson, HttpServletRequest request) {
@@ -74,7 +74,7 @@ public class ApiAccountController extends BaseController {
         DepositAndWithdrawReq depositAndWithdrawReq = JSON.parseObject(strJson, DepositAndWithdrawReq.class);
         try {
             if (isAuthToken(iRedisService, request)) {
-                apiAccountService.saveForDeposit(depositAndWithdrawReq);
+                apiAccountService.saveForDeposit(getAuthHeader(request).getUserId(), depositAndWithdrawReq);
                 message.setCode(ErrorCode.PROCESS_SUCC);
                 message.setMsg(messageUtil.getMessage("msg.process.succ"));
             } else {
@@ -146,7 +146,7 @@ public class ApiAccountController extends BaseController {
     @ResponseBody
     ApiResponseMessage update(@RequestBody String strJson, HttpServletRequest request) {
         ApiResponseMessage message = new ApiResponseMessage();
-        StudyLogger.recBusinessLog("account deposit:" + strJson);
+        StudyLogger.recBusinessLog("account paypwd:" + strJson);
         PayPasswordReq payPasswordReq = JSON.parseObject(strJson, PayPasswordReq.class);
         try {
             if (isAuthToken(iRedisService, request)) {

@@ -8,7 +8,6 @@ public class DepositAndWithdrawReq {
     private Integer userId;
     private String accountBIllType;
     private Integer amount;
-    private String token;
 
     public Integer getUserId() {
         return userId;
@@ -32,13 +31,5 @@ public class DepositAndWithdrawReq {
 
     public void setAmount(Integer amount) {
         this.amount = amount;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }
