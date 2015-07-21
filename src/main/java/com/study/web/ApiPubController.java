@@ -217,7 +217,7 @@ public class ApiPubController extends BaseController {
                 commonResponse.setMsg(ErrorCode.USER_PWD_ERROR);
             }else{
 
-                String token=StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + System.currentTimeMillis());
+                String token=StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + SplitCode.SPLIT_SHU+System.currentTimeMillis());
                 //更新数据库token保存做备份,不做数据库备份
 //                UserInfo userInfoTemp=new UserInfo();
 //                userInfoTemp.setId(userInfo.getId());

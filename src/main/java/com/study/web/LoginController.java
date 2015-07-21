@@ -3,6 +3,7 @@ package com.study.web;
 import com.alibaba.fastjson.JSON;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
+import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.bean.AjaxResponseMessage;
@@ -62,9 +63,8 @@ public class LoginController extends BaseController {
                 return;
             }
 
-            String ticketKey = UUID.randomUUID().toString().replace("-", "");
+            String ticketKey=userInfo.getId()+SplitCode.SPLIT_EQULE+PropertiesUtil.getString("sso.cookieName") + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + System.currentTimeMillis();
             String encodedticketKey = DESUtils.encrypt(ticketKey, PropertiesUtil.getString("sso.secretKey"));
-
             iRedisService.set(PrefixCode.API_COOKIE_PRE + ticketKey, userInfo.getId().toString(), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
 
             Cookie cookie = new Cookie(PropertiesUtil.getString("sso.cookieName"), encodedticketKey);

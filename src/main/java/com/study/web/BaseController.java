@@ -7,6 +7,8 @@ import com.study.code.PrefixCode;
 import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
+import com.study.common.oss.DESUtils;
+import com.study.common.util.PropertiesUtil;
 import com.study.service.IRedisService;
 import org.apache.log4j.Level;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -85,13 +87,21 @@ public class BaseController {
      */
     protected String[] getAuthHeader(HttpServletRequest request){
         String auth = request.getHeader("Authorization");
-        String encode= StringUtil.getFromBASE64(auth);
-        StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
-        return encode.split(SplitCode.SPLIT_EQULE);
+        if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
+            String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
+            StudyLogger.recBusinessLog("auth:["+auth+"] encode["+decodedTicket+"]");
+            return decodedTicket.split(SplitCode.SPLIT_EQULE);
+        }else{
+            String encode= StringUtil.getFromBASE64(auth);
+            StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
+            return encode.split(SplitCode.SPLIT_EQULE);
+        }
+
     }
 
     /**
      * api判断token是否有效
+     * 此处都有有效期，如果app没有效期，则不判断失效时间
      */
     protected  boolean isAuthToken(IRedisService iRedisService,HttpServletRequest request){
         String auth = request.getHeader("Authorization");
@@ -99,7 +109,7 @@ public class BaseController {
         StudyLogger.recBusinessLog("platform:"+request.getHeader("platform"));
         StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
 
-        if(getParameter(request).equals(PrefixCode.API_HEAD_H5)){
+        if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
             if(iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
                 String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));
                 String[] codes=code.split(SplitCode.SPLIT_SHU);
@@ -108,8 +118,12 @@ public class BaseController {
                 }
                 return true;
             }
-        }else if(getParameter(request).equals(PrefixCode.API_HEAD_WEB)){
-            return true;
+        }else if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
+            String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
+            if(iRedisService.get(PrefixCode.API_COOKIE_PRE+decodedTicket)!=null){
+                return true;
+            }
+            return false;
         }else{
             if(iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
                 String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));
