@@ -63,7 +63,7 @@ public class LoginController extends BaseController {
                 return;
             }
 
-            String ticketKey=userInfo.getId()+SplitCode.SPLIT_EQULE+PropertiesUtil.getString("sso.cookieName") + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + System.currentTimeMillis();
+            String ticketKey=userInfo.getId()+SplitCode.SPLIT_EQULE+PropertiesUtil.getString("sso.cookieName") + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + SplitCode.SPLIT_SHU+ System.currentTimeMillis();
             String encodedticketKey = DESUtils.encrypt(ticketKey, PropertiesUtil.getString("sso.secretKey"));
             iRedisService.set(PrefixCode.API_COOKIE_PRE + ticketKey, userInfo.getId().toString(), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
 
