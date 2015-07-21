@@ -74,13 +74,11 @@ public class UserController extends BaseController {
                 userInfoModel.setPassword(StringUtil.getMD5Str(userInfoModel.getPassword()));
                 userInfoModel.setCreateTime(new Date());
                 userInfoModel.setStatus(EntityCode.USER_VALIDATE);
-                iUserService.saveUserInfo(userInfoModel);
 
                 UserInfoFrom userInfoFrom = new UserInfoFrom();
-                userInfoFrom.setUserId(userInfoModel.getId());
                 userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
 
-                iUserFromService.saveUserFrom(userInfoFrom);
+                iUserService.saveUserInfo(userInfoModel, userInfoFrom);
             }else{
                 message.setSuccess(false);
                 message.setCode(ErrorCode.USER_CODE_ERROR);
@@ -99,7 +97,7 @@ public class UserController extends BaseController {
 
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
-            iUserService.saveUserInfo(userInfoModel);
+            iUserService.updateUserInfo(userInfoModel);
         } catch (Exception e) {
             message.setSuccess(false);
             message.setCode(ErrorCode.SYS_ERROR);
@@ -153,16 +151,12 @@ public class UserController extends BaseController {
                     userInfo.setIcon(userInfoBean.getAvatar().getAvatarURL100());
                     userInfo.setNick(userInfoBean.getNickname());
                     //性别没保存
-                    iUserService.saveUserInfo(userInfo);
-
                     userInfoFromTemp=new UserInfoFrom();
-                    userInfoFromTemp.setUserId(userInfo.getId());
                     userInfoFromTemp.setOpenId(openID);
                     userInfoFromTemp.setEx1(accessToken);
                     userInfoFromTemp.setEx2(tokenExpireIn + "");
                     userInfoFromTemp.setFrom(EntityCode.USER_FROM_QQ);
-
-                    iUserFromService.saveUserFrom(userInfoFromTemp);
+                    iUserService.saveUserInfo(userInfo, userInfoFromTemp);
                 }
 
                 String ticketKey = UUID.randomUUID().toString().replace("-", "");
