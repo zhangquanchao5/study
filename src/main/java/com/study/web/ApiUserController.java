@@ -11,7 +11,10 @@ import com.study.common.apibean.LoginBean;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.apibean.response.UserInfoUpdateResponse;
+import com.study.common.apibean.response.ValidateResponse;
+import com.study.common.oss.DESUtils;
 import com.study.common.util.MessageUtil;
+import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.Account;
 import com.study.model.UserInfo;
@@ -67,7 +70,6 @@ public class ApiUserController extends BaseController {
 //    }
 
 
-
 //
 //    @RequestMapping("/tokenVerify/{userId}/{token}")
 //    public void tokenVerify(@PathVariable("userId") Integer userId, @PathVariable("token") String token,HttpServletResponse response) {
@@ -100,19 +102,19 @@ public class ApiUserController extends BaseController {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
-            String json=this.getParameter(request);
+            String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/user/resetPwd:" + json);
 
-            PwdResetRequest pwdResetRequest= JSON.parseObject(json, PwdResetRequest.class);
+            PwdResetRequest pwdResetRequest = JSON.parseObject(json, PwdResetRequest.class);
 
             //判断注册码是否有效
-            String code=iRedisService.get(PrefixCode.API_MOBILE_UPDATE + pwdResetRequest.getUserPhone());
-            if(code!=null&&!"".equals(code)&&code.equals(pwdResetRequest.getVerifyCode())){
+            String code = iRedisService.get(PrefixCode.API_MOBILE_UPDATE + pwdResetRequest.getUserPhone());
+            if (code != null && !"".equals(code) && code.equals(pwdResetRequest.getVerifyCode())) {
                 iApIUserService.updateUserPwd(pwdResetRequest);
                 commonResponse.setCode(ErrorCode.SUCCESS);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 iRedisService.deleteOneKey(PrefixCode.API_MOBILE_UPDATE + pwdResetRequest.getUserPhone());
-            }else{
+            } else {
                 commonResponse.setCode(ErrorCode.USER_CODE_ERROR);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
             }
@@ -132,28 +134,28 @@ public class ApiUserController extends BaseController {
 
         UserInfoUpdateResponse userInfoUpdateResponse = new UserInfoUpdateResponse();
         try {
-            if(isAuthToken(iRedisService,request)){
-                String json=this.getParameter(request);
+            if (isAuthToken(iRedisService, request)) {
+                String json = this.getParameter(request);
                 StudyLogger.recBusinessLog("/user/updateInfo:" + json);
 
-                UserInfoUpdateRequest userInfoUpdateRequest= JSON.parseObject(json, UserInfoUpdateRequest.class);
-                UserInfo updateUser=new UserInfo();
+                UserInfoUpdateRequest userInfoUpdateRequest = JSON.parseObject(json, UserInfoUpdateRequest.class);
+                UserInfo updateUser = new UserInfo();
                 updateUser.setNick(userInfoUpdateRequest.getNickname());
                 updateUser.setIcon(userInfoUpdateRequest.getIcon());
                 updateUser.setAddress(userInfoUpdateRequest.getAddress());
                 updateUser.setName(userInfoUpdateRequest.getRealName());
-                if(userInfoUpdateRequest.getGender()!=null&&!"".equals(userInfoUpdateRequest.getGender())){
+                if (userInfoUpdateRequest.getGender() != null && !"".equals(userInfoUpdateRequest.getGender())) {
                     updateUser.setGender(Byte.parseByte(userInfoUpdateRequest.getGender()));
                 }
                 updateUser.setId(userInfoUpdateRequest.getId());
 
                 iApIUserService.updateUser(updateUser);
 
-                UserInfo userInfo=iApIUserService.findById(updateUser.getId());
+                UserInfo userInfo = iApIUserService.findById(updateUser.getId());
                 userInfoUpdateResponse.setCode(ErrorCode.SUCCESS);
                 userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 userInfoUpdateResponse.setData(userInfo);
-            }else{
+            } else {
                 userInfoUpdateResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
@@ -167,6 +169,55 @@ public class ApiUserController extends BaseController {
     }
 
     /**
+     * 用户信息校验
+     */
+    @RequestMapping(value = "/validate")
+    public void validate(HttpServletRequest request, HttpServletResponse response) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+
+            String json = this.getParameter(request);
+            StudyLogger.recBusinessLog("/user/validate:" + json);
+            UserInfo userInfo = null;
+
+            UserInfoRequest userInfoRequest = JSON.parseObject(json, UserInfoRequest.class);
+            Object token = iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP, userInfoRequest.getId().toString());
+
+            if (token != null && token.toString().equals(userInfoRequest.getToken())) {
+                userInfo = iApIUserService.findById(userInfoRequest.getId());
+            } else {
+                token = iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, userInfoRequest.getId().toString());
+                if (token != null && token.toString().equals(userInfoRequest.getToken())) {
+                    userInfo = iApIUserService.findById(userInfoRequest.getId());
+                } else {
+                    String decodedTicket = DESUtils.decrypt(StringUtil.getFromBASE64(userInfoRequest.getToken()), PropertiesUtil.getString("sso.secretKey"));
+                    if (!StringUtil.isEmpty(decodedTicket)&&iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket) != null && userInfoRequest.getId().equals((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket))) {
+                        userInfo = iApIUserService.findById(userInfoRequest.getId());
+                    }
+                }
+            }
+
+            ValidateResponse validateResponse = new ValidateResponse();
+            if (userInfo != null) {
+                validateResponse.setResult(true);
+                validateResponse.setInfo(userInfo);
+            } else {
+                validateResponse.setResult(false);
+            }
+
+            commonResponse.setCode(ErrorCode.SUCCESS);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+            commonResponse.setData(validateResponse);
+
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+    /**
      * 获取用户信息
      */
     @RequestMapping(value = "/info")
@@ -174,21 +225,21 @@ public class ApiUserController extends BaseController {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
-            if(isAuthToken(iRedisService,request)){
-                String json=this.getParameter(request);
+            if (isAuthToken(iRedisService, request)) {
+                String json = this.getParameter(request);
                 StudyLogger.recBusinessLog("/user/info:" + json);
 
-                UserInfoRequest userInfoRequest= JSON.parseObject(json, UserInfoRequest.class);
-                UserInfo userInfo=null;
-                if(userInfoRequest.getId()!=null){
-                    userInfo=iApIUserService.findById(userInfoRequest.getId());
-                }else{
-                    userInfo=iApIUserService.findByToken(userInfoRequest.getToken());
+                UserInfoRequest userInfoRequest = JSON.parseObject(json, UserInfoRequest.class);
+                UserInfo userInfo = null;
+                if (userInfoRequest.getId() != null) {
+                    userInfo = iApIUserService.findById(userInfoRequest.getId());
+                } else {
+                    userInfo = iApIUserService.findByToken(userInfoRequest.getToken());
                 }
                 commonResponse.setCode(ErrorCode.SUCCESS);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 commonResponse.setData(userInfo);
-            }else{
+            } else {
                 commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
@@ -240,25 +291,25 @@ public class ApiUserController extends BaseController {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
-            if(isAuthToken(iRedisService, request)){
-                String json=this.getParameter(request);
+            if (isAuthToken(iRedisService, request)) {
+                String json = this.getParameter(request);
                 StudyLogger.recBusinessLog("/user/modifyPwd:" + json);
 
-                UserPwdChangeRequest userPwdChangeRequest= JSON.parseObject(json, UserPwdChangeRequest.class);
-                UserInfo userInfo=iApIUserService.findById(userPwdChangeRequest.getId());
-                if(userInfo.getPassword().equals(StringUtil.getMD5Str(userPwdChangeRequest.getOldPassword()))){
-                    UserInfo userInfoUpdate=new UserInfo();
+                UserPwdChangeRequest userPwdChangeRequest = JSON.parseObject(json, UserPwdChangeRequest.class);
+                UserInfo userInfo = iApIUserService.findById(userPwdChangeRequest.getId());
+                if (userInfo.getPassword().equals(StringUtil.getMD5Str(userPwdChangeRequest.getOldPassword()))) {
+                    UserInfo userInfoUpdate = new UserInfo();
                     userInfoUpdate.setId(userInfo.getId());
                     userInfoUpdate.setPassword(StringUtil.getMD5Str(userPwdChangeRequest.getNewPassword()));
 
                     iApIUserService.updateUser(userInfoUpdate);
                     commonResponse.setCode(ErrorCode.SUCCESS);
                     commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                }else{
+                } else {
                     commonResponse.setCode(ErrorCode.USER_PWD_ERROR);
                     commonResponse.setMsg(messageUtil.getMessage("MSG.USER_PWD_ERROR_CN"));
                 }
-            }else{
+            } else {
                 commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
@@ -280,15 +331,15 @@ public class ApiUserController extends BaseController {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
-            String json=this.getParameter(request);
+            String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/user/changeMobile:" + json);
 
-            UserBindRequest userBindRequest= JSON.parseObject(json, UserBindRequest.class);
+            UserBindRequest userBindRequest = JSON.parseObject(json, UserBindRequest.class);
 
             //判断注册码是否有效
-            String code=iRedisService.get(PrefixCode.API_MOBILE_BIND + userBindRequest.getUserPhone());
-            if(code!=null&&!"".equals(code)&&code.equals(userBindRequest.getVerifyCode())){
-                UserInfo userUpdate=new UserInfo();
+            String code = iRedisService.get(PrefixCode.API_MOBILE_BIND + userBindRequest.getUserPhone());
+            if (code != null && !"".equals(code) && code.equals(userBindRequest.getVerifyCode())) {
+                UserInfo userUpdate = new UserInfo();
                 userUpdate.setId(userBindRequest.getId());
                 userUpdate.setMobile(userBindRequest.getUserPhone());
                 userUpdate.setPassword(StringUtil.getMD5Str(userBindRequest.getNewPassword()));
@@ -297,7 +348,7 @@ public class ApiUserController extends BaseController {
                 commonResponse.setCode(ErrorCode.SUCCESS);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 iRedisService.deleteOneKey(PrefixCode.API_MOBILE_UPDATE + userBindRequest.getUserPhone());
-            }else{
+            } else {
                 commonResponse.setCode(ErrorCode.USER_CODE_ERROR);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
             }

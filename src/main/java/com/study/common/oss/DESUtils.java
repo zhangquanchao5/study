@@ -48,7 +48,7 @@ public class DESUtils {
 		} catch (Exception e) {
 			outStr = "default";
 			System.err.println("3DESΩ‚√‹ ß∞‹£°Ω‚√‹ƒ⁄»›[" + inStr + "]");
-			e.printStackTrace();
+		//	e.printStackTrace();
 		}
 		return outStr;
 	}

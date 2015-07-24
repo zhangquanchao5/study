@@ -181,9 +181,9 @@ public class ApiPubController extends BaseController {
      */
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public void login(HttpServletRequest request,HttpServletResponse response) {
-
         CommonResponse commonResponse = new CommonResponse();
         try {
+
             //判断mobile死否为空
             String json=this.getParameter(request);
             StudyLogger.recBusinessLog("/pub/login:" + json);
@@ -221,7 +221,7 @@ public class ApiPubController extends BaseController {
 //                userInfoTemp.setToken(token);
 //
 //                iApIUserService.updateUserToken(userInfoTemp);
-                if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
+                if(!StringUtil.isEmpty(getPlatformHeader(request))&&getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
                     iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), token);
                 }else{
                     iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), token);
