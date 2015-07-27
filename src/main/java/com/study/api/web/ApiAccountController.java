@@ -144,7 +144,7 @@ public class ApiAccountController extends BaseController {
         return message;
     }
 
-    @RequestMapping(value = "/account/paypwd", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/user/changePwd", method = RequestMethod.POST, headers = "Accept=application/json")
     private
     @ResponseBody
     ApiResponseMessage update(@RequestBody String strJson, HttpServletRequest request) {
