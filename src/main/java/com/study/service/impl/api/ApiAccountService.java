@@ -1,12 +1,11 @@
 package com.study.service.impl.api;
 
-import com.study.api.bean.AccountBook;
-import com.study.api.bean.AccountInfoResp;
-import com.study.api.bean.DepositAndWithdrawReq;
-import com.study.api.bean.PayPasswordReq;
-import com.study.api.exception.ParameterNotEnoughException;
-import com.study.api.exception.ProcessFailureException;
-import com.study.api.exception.UserNotExitsException;
+import com.study.common.apibean.response.AccountBook;
+import com.study.common.apibean.response.AccountInfoResp;
+import com.study.common.apibean.request.DepositAndWithdrawReq;
+import com.study.exception.ParameterNotEnoughException;
+import com.study.exception.ProcessFailureException;
+import com.study.exception.UserNotExitsException;
 import com.study.common.StringUtil;
 import com.study.common.util.MessageUtil;
 import com.study.dao.*;

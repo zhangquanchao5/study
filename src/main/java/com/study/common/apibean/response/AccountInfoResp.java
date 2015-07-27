@@ -1,4 +1,4 @@
-package com.study.api.bean;
+package com.study.common.apibean.response;
 
 import java.util.List;
 

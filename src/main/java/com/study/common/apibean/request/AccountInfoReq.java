@@ -1,4 +1,4 @@
-package com.study.api.bean;
+package com.study.common.apibean.request;
 
 /**
  * Created by Star on 2015/7/14.

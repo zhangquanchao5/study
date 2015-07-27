@@ -1,6 +1,6 @@
 package com.study.service.impl.api;
 
-import com.study.api.exception.BalanceNotEnoughException;
+import com.study.exception.BalanceNotEnoughException;
 import com.study.common.StudyLogger;
 import com.study.common.util.MessageUtil;
 import com.study.dao.AccountBillMapper;

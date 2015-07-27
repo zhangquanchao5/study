@@ -1,4 +1,4 @@
-package com.study.api.exception;
+package com.study.exception;
 
 import com.study.code.ErrorCode;
 
