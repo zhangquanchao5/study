@@ -9,6 +9,7 @@ import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
 import com.study.common.StringUtil;
+import com.study.common.apibean.response.CommonResponse;
 import com.study.common.bean.AjaxResponseMessage;
 import com.study.common.oss.DESUtils;
 import com.study.common.util.PropertiesUtil;
@@ -183,47 +184,7 @@ public class UserController extends BaseController {
 
 
 
-    @RequestMapping(value = "/resetPwdByEmail")
-    public void resetPwdByEmail(@RequestParam String email, HttpServletResponse response) {
 
-        AjaxResponseMessage message = new AjaxResponseMessage();
-        try {
-
-        } catch (Exception e) {
-            message.setSuccess(false);
-            message.setCode(ErrorCode.SYS_ERROR);
-            printLogger(e);
-        }
-        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-    }
-
-    @RequestMapping(value = "/activeEmail")
-    public void activeEmail(@RequestParam String email, HttpServletResponse response) {
-
-        AjaxResponseMessage message = new AjaxResponseMessage();
-        try {
-
-        } catch (Exception e) {
-            message.setSuccess(false);
-            message.setCode(ErrorCode.SYS_ERROR);
-            printLogger(e);
-        }
-        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-    }
-
-    @RequestMapping(value = "/updateEmail")
-    public void updateEmail(@RequestParam String email, HttpServletResponse response) {
-
-        AjaxResponseMessage message = new AjaxResponseMessage();
-        try {
-
-        } catch (Exception e) {
-            message.setSuccess(false);
-            message.setCode(ErrorCode.SYS_ERROR);
-            printLogger(e);
-        }
-        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-    }
 
 
 }

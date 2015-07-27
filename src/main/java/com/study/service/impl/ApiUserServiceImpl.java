@@ -4,6 +4,8 @@ import com.study.code.EntityCode;
 import com.study.common.StringUtil;
 import com.study.common.apibean.ApiUserBean;
 import com.study.common.apibean.request.PwdResetRequest;
+import com.study.common.bean.Mail;
+import com.study.common.util.PropertiesUtil;
 import com.study.dao.AccountMapper;
 import com.study.dao.UserInfoFromMapper;
 import com.study.dao.UserInfoMapper;
@@ -14,6 +16,7 @@ import com.study.model.UserInfoFrom;
 import com.study.model.UserSecurity;
 import com.study.service.IApIUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -101,5 +104,20 @@ public class ApiUserServiceImpl implements IApIUserService {
 
     public Account findAccountByUserId(Integer userId){
        return accountMapper.selectByUserId(userId);
+    }
+
+    @Override
+    @Async
+    public void sendEmail(final String mainBody, final String subject,
+                          final String sendTo, final String sendFrom,
+                          final String nick, final String password) throws Exception {
+        Mail mail = new Mail(PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.SMTP.HOST"));
+        mail.setNeedAuth(true);
+        mail.setBody(mainBody);
+        mail.setTo(sendTo);
+        mail.setFrom(sendFrom, nick);
+        mail.setNamePass(sendFrom, password);
+        mail.setSubject(subject);
+        mail.send();
     }
 }

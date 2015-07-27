@@ -1,6 +1,8 @@
 package com.study.service.impl;
 
 import com.study.code.EntityCode;
+import com.study.common.bean.Mail;
+import com.study.common.util.PropertiesUtil;
 import com.study.dao.UserInfoFromMapper;
 import com.study.dao.UserInfoMapper;
 import com.study.dao.UserSecurityMapper;
@@ -9,6 +11,7 @@ import com.study.model.UserInfoFrom;
 import com.study.model.UserSecurity;
 import com.study.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -56,6 +59,8 @@ public class UserServiceImpl implements IUserService{
     public void updateUserInfo(UserInfo userInfo){
         userInfoMapper.updateByPrimaryKeySelective(userInfo);
     }
+
+
 
     public UserInfo findByEMail(String email){
        return  userInfoMapper.findByEMail(email);

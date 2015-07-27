@@ -20,4 +20,7 @@ public interface IUserService {
 
     void updateUserInfo(UserInfo userInfo);
 
+
+
+
 }

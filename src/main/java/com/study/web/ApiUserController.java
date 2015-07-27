@@ -1,13 +1,12 @@
 package com.study.web;
 
 import com.alibaba.fastjson.JSON;
+import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
+import com.study.common.Encrypt;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
-import com.study.common.apibean.ApiResponseMessage;
-import com.study.common.apibean.ApiUserBean;
-import com.study.common.apibean.LoginBean;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.apibean.response.UserInfoUpdateResponse;
@@ -20,12 +19,16 @@ import com.study.model.Account;
 import com.study.model.UserInfo;
 import com.study.service.IApIUserService;
 import com.study.service.IRedisService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
@@ -191,7 +194,7 @@ public class ApiUserController extends BaseController {
                     userInfo = iApIUserService.findById(userInfoRequest.getId());
                 } else {
                     String decodedTicket = DESUtils.decrypt(StringUtil.getFromBASE64(userInfoRequest.getToken()), PropertiesUtil.getString("sso.secretKey"));
-                    if (!StringUtil.isEmpty(decodedTicket)&&iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket) != null && userInfoRequest.getId().equals((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket))) {
+                    if (!StringUtil.isEmpty(decodedTicket) && iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket) != null && userInfoRequest.getId().equals((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket))) {
                         userInfo = iApIUserService.findById(userInfoRequest.getId());
                     }
                 }
@@ -356,6 +359,235 @@ public class ApiUserController extends BaseController {
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
             commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+    @RequestMapping("/mail")
+    public void mail(@RequestParam String uid, @RequestParam String mid, @RequestParam String sid, @RequestParam Integer sit, HttpServletResponse response, HttpServletRequest request) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+                Object obj = iRedisService.get(PrefixCode.API_MAIL_CONNACT + Encrypt.doDecrypt(uid));
+                if (sit == EntityCode.EMAIL_ACTIVE) {
+                    if (obj == null) {
+                        commonResponse.setCode(ErrorCode.ERROR);
+                        commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+                    } else {
+                        if (obj.toString().equals(sid)) {
+                            UserInfo userInfo = new UserInfo();
+                            userInfo.setId(Integer.parseInt(Encrypt.doDecrypt(uid)));
+                            userInfo.setUserMail(Encrypt.doDecrypt(mid));
+
+                            iApIUserService.updateUser(userInfo);
+                            commonResponse.setCode(ErrorCode.SUCCESS);
+                            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+
+                            iRedisService.deleteOneKey(PrefixCode.API_MAIL_CONNACT + Encrypt.doDecrypt(uid));
+                        } else {
+                            commonResponse.setCode(ErrorCode.ERROR);
+                            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+                        }
+                    }
+                } else if (sit == EntityCode.EMAIL_PWD) {
+                    if (obj == null) {
+                        commonResponse.setCode(ErrorCode.ERROR);
+                        commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+                    } else {
+                        if (obj.toString().equals(sid)) {
+                            UserInfo u=iApIUserService.findByEMail(Encrypt.doDecrypt(mid));
+                            if(u!=null){
+                                UserInfo userInfo = new UserInfo();
+                                userInfo.setId(Integer.parseInt(Encrypt.doDecrypt(uid)));
+                                userInfo.setPassword(StringUtil.getMD5Str("000000"));
+
+                                iApIUserService.updateUser(userInfo);
+                                commonResponse.setCode(ErrorCode.SUCCESS);
+                                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                                iRedisService.deleteOneKey(PrefixCode.API_MAIL_CONNACT + Encrypt.doDecrypt(uid));
+                            } else {
+                                commonResponse.setCode(ErrorCode.ERROR);
+                                commonResponse.setMsg(ErrorCode.USER_NOT_EXITS);
+                            }
+                        } else {
+                            commonResponse.setCode(ErrorCode.ERROR);
+                            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+                        }
+                    }
+                } else {
+                    commonResponse.setCode(ErrorCode.ERROR);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+                }
+
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.SYS_ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.SYS_ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+    /**
+     * sit=1 重置密码 2激活邮箱
+     * 重置密码
+     *
+     * @param response
+     * @param request
+     */
+    @RequestMapping(value = "/resetPwdByEmail")
+    public void resetPwdByEmail(HttpServletResponse response, HttpServletRequest request) {
+
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            String json = this.getParameter(request);
+            StudyLogger.recBusinessLog("/user/resetPwdByEmail:" + json);
+
+            EmailRequest emailRequest = JSON.parseObject(json, EmailRequest.class);
+
+            if (getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)) {
+                if (isAuthToken(iRedisService, request)) {
+                    String auth = request.getHeader("Authorization");
+                    String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
+                    Integer userId = Integer.parseInt((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket));
+
+                    UserInfo userInfo = iApIUserService.findByEMail(emailRequest.getEmail());
+                    if (userInfo != null) {
+                        if (userInfo.getId().intValue() == userId.intValue()) {
+                            String random = RandomStringUtils.randomAlphanumeric(32);
+                            String actUrl = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.VERTIFY.URL") +
+                                    "api/user/mail?uid=" + Encrypt.doEncrypt(String.valueOf(userId)) +
+                                    "&mid=" + Encrypt.doEncrypt(emailRequest.getEmail()) +
+                                    "&sid=" + random +
+                                    "&sit=" + EntityCode.EMAIL_PWD;
+                            String message = messageUtil.getMessage("MSG.EMAIL.PWD.SEND").replace("#acturl", actUrl);
+                            String subject = messageUtil.getMessage("MSG.EMAIL.PWD.SEND.SUBJECT");
+                            String sendFrom = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.ACCOUNT");
+                            String mailPwd = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.PASSWORD");
+                            String nick = "SYS USER ADMIN";
+
+                            iApIUserService.sendEmail(message, subject, emailRequest.getEmail(), sendFrom, nick, mailPwd);
+
+                            iRedisService.set(PrefixCode.API_MAIL_CONNACT + userId, random, 30 * 60);
+                            commonResponse.setCode(ErrorCode.SUCCESS);
+                            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                        } else {
+                            commonResponse.setCode(ErrorCode.ERROR);
+                            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+                        }
+                    } else {
+                        commonResponse.setCode(ErrorCode.ERROR);
+                        commonResponse.setMsg(ErrorCode.USER_NOT_EXITS);
+                    }
+                } else {
+                    commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+                }
+            } else {
+                commonResponse.setCode(ErrorCode.ERROR);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            }
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.SYS_ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.SYS_ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+    /**
+     * 激活邮箱
+     *
+     * @param response
+     * @param request
+     */
+    @RequestMapping(value = "/activeEmail")
+    public void activeEmail( HttpServletResponse response, HttpServletRequest request) {
+
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            String json = this.getParameter(request);
+            StudyLogger.recBusinessLog("/user/resetPwdByEmail:" + json);
+
+            EmailRequest emailRequest = JSON.parseObject(json, EmailRequest.class);
+
+            if (getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)) {
+                if (isAuthToken(iRedisService, request)) {
+                    String auth = request.getHeader("Authorization");
+                    String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
+                    Integer userId = Integer.parseInt((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket));
+
+                    String random = RandomStringUtils.randomAlphanumeric(32);
+                    String actUrl = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.VERTIFY.URL") +
+                            "api/user/mail?uid=" + Encrypt.doEncrypt(String.valueOf(userId)) +
+                            "&mid=" + Encrypt.doEncrypt(emailRequest.getEmail()) +
+                            "&sid=" + random +
+                            "&sit=" + EntityCode.EMAIL_ACTIVE;
+                    String message = messageUtil.getMessage("MSG.EMAIL.ACTIVE.SEND").replace("#acturl", actUrl);
+                    String subject = messageUtil.getMessage("MSG.EMAIL.ACTIVE.SEND.SUBJECT");
+                    String sendFrom = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.ACCOUNT");
+                    String mailPwd = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.PASSWORD");
+                    String nick = "SYS USER ADMIN";
+
+                    iApIUserService.sendEmail(message, subject, emailRequest.getEmail(), sendFrom, nick, mailPwd);
+                    iRedisService.set(PrefixCode.API_MAIL_CONNACT + userId, random, Integer.parseInt(PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.TIMEOUT")) * 60);
+
+                    commonResponse.setCode(ErrorCode.SUCCESS);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                } else {
+                    commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+                }
+            } else {
+                commonResponse.setCode(ErrorCode.ERROR);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            }
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.SYS_ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.SYS_ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+    /**
+     * 修改邮箱
+     *
+     * @param response
+     * @param request
+     */
+    @RequestMapping(value = "/changeEmail")
+    public void updateEmail(HttpServletResponse response, HttpServletRequest request) {
+
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            String json = this.getParameter(request);
+            StudyLogger.recBusinessLog("/user/resetPwdByEmail:" + json);
+
+            EmailRequest emailRequest = JSON.parseObject(json, EmailRequest.class);
+            if (getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)) {
+                if (isAuthToken(iRedisService, request)) {
+                    String auth = request.getHeader("Authorization");
+                    String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
+                    Integer userId = Integer.parseInt((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket));
+                    UserInfo userInfo = new UserInfo();
+                    userInfo.setId(userId);
+                    userInfo.setUserMail(emailRequest.getEmail());
+
+                    iApIUserService.updateUser(userInfo);
+
+                    commonResponse.setCode(ErrorCode.SUCCESS);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                } else {
+                    commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+                }
+            } else {
+                commonResponse.setCode(ErrorCode.ERROR);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            }
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.SYS_ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.SYS_ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());

@@ -29,4 +29,8 @@ public interface IApIUserService {
     public void updateUserToken(UserInfo userInfo);
 
     public Account findAccountByUserId(Integer userId);
+
+    void sendEmail(final String mainBody, final String subject,
+                   final String sendTo, final String sendFrom,
+                   final String nick, final String password) throws Exception;
 }

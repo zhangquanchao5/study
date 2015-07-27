@@ -61,4 +61,10 @@ public class PrefixCode {
      * file
      */
     public static final String FILE_PATH="/img";
+
+    /**
+     * mail 密码和邮箱
+     */
+    public static final String API_MAIL_CONNACT="Mail";
+
 }
