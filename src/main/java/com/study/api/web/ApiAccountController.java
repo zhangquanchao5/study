@@ -145,9 +145,7 @@ public class ApiAccountController extends BaseController {
     }
 
     @RequestMapping(value = "/user/changePwd", method = RequestMethod.POST, headers = "Accept=application/json")
-    private
-    @ResponseBody
-    ApiResponseMessage update(@RequestBody String strJson, HttpServletRequest request) {
+    private ApiResponseMessage update(@RequestBody String strJson, HttpServletRequest request) {
         ApiResponseMessage message = new ApiResponseMessage();
         StudyLogger.recBusinessLog("account paypwd:" + strJson);
         PayPasswordReq payPasswordReq = JSON.parseObject(strJson, PayPasswordReq.class);
