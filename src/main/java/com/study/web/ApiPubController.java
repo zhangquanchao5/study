@@ -160,7 +160,15 @@ public class ApiPubController extends BaseController {
                     UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile());
                     registerMobileResponse.setCode(ErrorCode.SUCCESS);
                     registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                    registerMobileResponse.setData(changeUser(userInfo));
+
+                    String token=StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + SplitCode.SPLIT_SHU+System.currentTimeMillis());
+
+                    LoginResponse loginResponse=new LoginResponse();
+                    loginResponse.setToken(token);
+                    loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
+                    loginResponse.setUser(changeUser(userInfo));
+
+                    registerMobileResponse.setData(loginResponse);
                     iRedisService.deleteOneKey(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
                 }else{
                     registerMobileResponse.setCode(ErrorCode.USER_CODE_ERROR);
