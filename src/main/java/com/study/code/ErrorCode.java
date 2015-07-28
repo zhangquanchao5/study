@@ -5,8 +5,8 @@ package com.study.code;
  */
 public class ErrorCode {
 
-    public static final String ERROR="000";
-    public static final String SUCCESS="001";
+    public static final String ERROR="1001";
+    public static final String SUCCESS="200";
     public static final String SYS_ERROR="999";
 
     /**

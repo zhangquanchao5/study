@@ -5,7 +5,7 @@ package com.study.common.oss;
  */
 public class LoginOutResponse {
 
-    private String error;
+    private boolean error;
     private String errorInfo;
     private Object data;
 
@@ -18,12 +18,11 @@ public class LoginOutResponse {
     }
 
 
-
-    public String getError() {
+    public boolean isError() {
         return error;
     }
 
-    public void setError(String error) {
+    public void setError(boolean error) {
         this.error = error;
     }
 
