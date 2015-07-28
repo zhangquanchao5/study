@@ -67,6 +67,8 @@ public class BaseController {
         userResponse.setCt(userInfo.getCreateTime());
         userResponse.setMobile(userInfo.getMobile());
         userResponse.setIcon(userInfo.getIcon());
+        userResponse.setName(userInfo.getName());
+        userResponse.setUserName(userInfo.getUserName());
 
         return  userResponse;
     }

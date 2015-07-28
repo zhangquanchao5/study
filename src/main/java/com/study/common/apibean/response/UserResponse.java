@@ -15,6 +15,7 @@ public class UserResponse implements Serializable {
     private String mobile;
     private String address;
     private Date ct;
+    private String userName;
 
     public Integer getId() {
         return id;
@@ -78,5 +79,13 @@ public class UserResponse implements Serializable {
 
     public void setCt(Date ct) {
         this.ct = ct;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
