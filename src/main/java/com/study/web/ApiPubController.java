@@ -163,12 +163,19 @@ public class ApiPubController extends BaseController {
 
                     String token=StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_SHU + PropertiesUtil.getString("TOKEN.TIME") + SplitCode.SPLIT_SHU+System.currentTimeMillis());
 
+                    //update
                     LoginResponse loginResponse=new LoginResponse();
                     loginResponse.setToken(token);
                     loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
                     loginResponse.setUser(changeUser(userInfo));
 
                     registerMobileResponse.setData(loginResponse);
+                    if(!StringUtil.isEmpty(getPlatformHeader(request))&&getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
+                        iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), token);
+                    }else{
+                        iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), token);
+                    }
+
                     iRedisService.deleteOneKey(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
                 }else{
                     registerMobileResponse.setCode(ErrorCode.USER_CODE_ERROR);

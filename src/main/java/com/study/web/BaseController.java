@@ -61,7 +61,7 @@ public class BaseController {
     public UserResponse changeUser(UserInfo userInfo){
         UserResponse userResponse=new UserResponse();
         userResponse.setId(userInfo.getId());
-        userResponse.setGender(userInfo.getGender()==null?0:new Integer(userInfo.getGender()));
+        userResponse.setGender(userInfo.getGender() == null ? 0 : new Integer(userInfo.getGender()));
         userResponse.setNick(userInfo.getNick());
         userResponse.setAddress(userInfo.getAddress());
         userResponse.setCt(userInfo.getCreateTime());
@@ -135,9 +135,10 @@ public class BaseController {
         StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
 
         if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
+            StudyLogger.recBusinessLog((iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null)+"");
             if(iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
                 String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));
-                String[] codes=code.split(SplitCode.SPLIT_SHU);
+                String[] codes=code.split(SplitCode.SPLIT_ZHUANYI);
                 if(System.currentTimeMillis()>(Long.parseLong(codes[2])+Long.parseLong(codes[1])*60*1000)){
                     return false;
                 }
@@ -152,7 +153,7 @@ public class BaseController {
         }else{
             if(iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
                 String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));
-                String[] codes=code.split(SplitCode.SPLIT_SHU);
+                String[] codes=code.split(SplitCode.SPLIT_ZHUANYI);
                 if(System.currentTimeMillis()>(Long.parseLong(codes[2])+Long.parseLong(codes[1])*60*1000)){
                     return false;
                 }

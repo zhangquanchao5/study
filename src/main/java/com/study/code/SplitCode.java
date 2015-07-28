@@ -8,4 +8,7 @@ public class SplitCode {
     public static final String SPLIT_EQULE="=";
 
     public static final String SPLIT_SHU="|";
+
+    public static final String SPLIT_ZHUANYI="\\|";
+
 }

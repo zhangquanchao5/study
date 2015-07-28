@@ -1,7 +1,6 @@
 package com.study.common;
 
 import org.apache.log4j.Level;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import sun.misc.BASE64Decoder;
@@ -21,21 +20,23 @@ import java.util.regex.Pattern;
  */
 public final class StringUtil {
 
-	private StringUtil(){}
+	private StringUtil() {
+	}
 
 	private static final String PROTOCOL_SUFFIX = "://";
 
 	/**
 	 * 取得下一个编号
+	 *
 	 * @param start 编号的开头 活动start="A"  主题start="T"
 	 * @param maxNo 数据库中当天最后的编号
 	 * @return string string
-     */
-	public static String getNextNo(String start,String maxNo){
+	 */
+	public static String getNextNo(String start, String maxNo) {
 		String no = "";
-		if(StringUtil.isEmpty(maxNo)){
+		if (StringUtil.isEmpty(maxNo)) {
 			no = start + DateUtil.getCrruentTime("yyyyMMdd") + "-001";
-		}else{
+		} else {
 			int n = NumberUtil.parseInt(maxNo.split("-")[1]);
 			n = n + 1;
 			String p = NumberUtil.pad(StringUtil.convertToString(n), 3);
@@ -49,31 +50,32 @@ public final class StringUtil {
 	 *
 	 * @param size the size
 	 * @return the string
-     */
-	public static String randomABC(int size){
+	 */
+	public static String randomABC(int size) {
 
-        StringBuffer buf = new StringBuffer();
-        Random r = new Random() ;
-		for (int i=0;i<size;i++){
-			   char c='a';
-			   c=(char)(c+r.nextInt(26));
-               buf.append(c);
-			  // str=str+c;
+		StringBuffer buf = new StringBuffer();
+		Random r = new Random();
+		for (int i = 0; i < size; i++) {
+			char c = 'a';
+			c = (char) (c + r.nextInt(26));
+			buf.append(c);
+			// str=str+c;
 		}
 		return buf.toString();
 	}
 
 	/**
 	 * format string
+	 *
 	 * @param obj the obj
 	 * @return the string
-     */
-	public static String formatStringTrim(Object obj){
-		if(obj==null){
+	 */
+	public static String formatStringTrim(Object obj) {
+		if (obj == null) {
 			return "";
 		}
 		String temp = obj.toString().trim();
-		if("".equals(temp) || "null".equals(temp)){
+		if ("".equals(temp) || "null".equals(temp)) {
 			return "";
 		}
 		return temp;
@@ -81,11 +83,12 @@ public final class StringUtil {
 
 	/**
 	 * format string
+	 *
 	 * @param obj the obj
 	 * @return the string
-     */
-	public static String convertToString(Object obj){
-		if(obj==null){
+	 */
+	public static String convertToString(Object obj) {
+		if (obj == null) {
 			return "";
 		}
 		return obj.toString().trim();
@@ -96,13 +99,13 @@ public final class StringUtil {
 	 *
 	 * @param obj the obj
 	 * @return the string
-     */
-	public static String formatStringNotTrim(Object obj){
-		if(obj==null){
+	 */
+	public static String formatStringNotTrim(Object obj) {
+		if (obj == null) {
 			return "";
 		}
 		String temp = obj.toString();
-		if("".equals(temp) || "null".equals(temp)){
+		if ("".equals(temp) || "null".equals(temp)) {
 			return "";
 		}
 		return temp;
@@ -110,19 +113,20 @@ public final class StringUtil {
 
 	/**
 	 * 判断字符串数组 String[]是否为空
+	 *
 	 * @param obj the obj
 	 * @return the boolean
-     */
-	public static boolean isStringArrayEmpty(Object obj){
+	 */
+	public static boolean isStringArrayEmpty(Object obj) {
 		boolean value = true;
-		try{
-			if(obj != null){
-				String[] strs = (String[])obj;
-				if(strs.length > 0){
+		try {
+			if (obj != null) {
+				String[] strs = (String[]) obj;
+				if (strs.length > 0) {
 					value = false;
 				}
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			StudyLogger.recSysLog(Level.ERROR, e.getMessage(), e);
 			value = true;
 		}
@@ -134,38 +138,41 @@ public final class StringUtil {
 	 *
 	 * @param obj the obj
 	 * @return the boolean
-     */
-	public static boolean isNotStringArrayEmpty(Object obj){
+	 */
+	public static boolean isNotStringArrayEmpty(Object obj) {
 		return !isStringArrayEmpty(obj);
 	}
 
 	/**
 	 * 判断两个字符串是否相等
+	 *
 	 * @param obj1 the obj 1
 	 * @param obj2 the obj 2
 	 * @return boolean boolean
-     */
-	public static boolean isEquals(Object obj1,Object obj2){
+	 */
+	public static boolean isEquals(Object obj1, Object obj2) {
 		return convertToString(obj1).equals(convertToString(obj2));
 	}
 
 	/**
 	 * 判断两个字符串是否不相等
+	 *
 	 * @param obj1 the obj 1
 	 * @param obj2 the obj 2
 	 * @return boolean boolean
-     */
-	public static boolean isNotEquals(Object obj1,Object obj2){
-		return !isEquals(obj1,obj2);
+	 */
+	public static boolean isNotEquals(Object obj1, Object obj2) {
+		return !isEquals(obj1, obj2);
 	}
 
 	/**
 	 * 判断是否为空
+	 *
 	 * @param obj the obj
 	 * @return the boolean
-     */
-	public static boolean isEmpty(Object obj){
-		if(obj==null){
+	 */
+	public static boolean isEmpty(Object obj) {
+		if (obj == null) {
 			return true;
 		}
 		String temp = obj.toString().trim();
@@ -174,23 +181,25 @@ public final class StringUtil {
 
 	/**
 	 * 判断是否不为空
+	 *
 	 * @param obj the obj
 	 * @return the boolean
-     */
-	public static boolean isNotEmpty(Object obj){
+	 */
+	public static boolean isNotEmpty(Object obj) {
 		return !isEmpty(obj);
 	}
 
 	/**
 	 * 获取唯一数
+	 *
 	 * @return the string
-     */
-	public static String  getDateRandow(){
+	 */
+	public static String getDateRandow() {
 		SimpleDateFormat tempDate = new SimpleDateFormat("yyMMdd" + "" + "hhmmssSS");
 		String datetime = tempDate.format(new java.util.Date());    //12位
-        Random r = new Random() ;
-        int randomInt=r.nextInt(10001);
-		datetime =  datetime+randomInt;
+		Random r = new Random();
+		int randomInt = r.nextInt(10001);
+		datetime = datetime + randomInt;
 		return datetime;
 	}
 
@@ -207,9 +216,10 @@ public final class StringUtil {
 	 * 获取MD5加密串
 	 * create by beeyon
 	 * 2012-07-31
+	 *
 	 * @param value the value
 	 * @return mD 5 str
-     */
+	 */
 	public static String getMD5Str(String value) {
 		MessageDigest md5 = null;
 		try {
@@ -236,11 +246,12 @@ public final class StringUtil {
 
 	/**
 	 * 获取客户端Ip
+	 *
 	 * @param request the request
 	 * @return ip address
-     */
+	 */
 	public static String getIpAddress(HttpServletRequest request) {
-		if (request == null){
+		if (request == null) {
 			return "";
 		}
 		String ip = request.getHeader("x-forwarded-for");
@@ -261,19 +272,19 @@ public final class StringUtil {
 	 *
 	 * @param request the request
 	 * @return the string
-     */
-	public static String getBasePath(HttpServletRequest request){
+	 */
+	public static String getBasePath(HttpServletRequest request) {
 		String basePath = "";
-		if(request==null){
+		if (request == null) {
 			return basePath;
 		}
 		String scheme = request.getScheme();
 		String serverName = request.getServerName();
 		int port = request.getServerPort();
 		String path = request.getContextPath();
-		if(port==80){
+		if (port == 80) {
 			basePath = scheme + PROTOCOL_SUFFIX + serverName + path;
-		}else{
+		} else {
 			basePath = scheme + PROTOCOL_SUFFIX + serverName + ":" + port + path;
 		}
 		return basePath;
@@ -283,21 +294,21 @@ public final class StringUtil {
 	 * Get base path.
 	 *
 	 * @return the string
-     */
-	public static String getBasePath(){
+	 */
+	public static String getBasePath() {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		
+
 		String basePath = "";
-		if(request==null){
+		if (request == null) {
 			return basePath;
 		}
 		String scheme = request.getScheme();
 		String serverName = request.getServerName();
 		int port = request.getServerPort();
 		String path = request.getContextPath();
-		if(port==80){
+		if (port == 80) {
 			basePath = scheme + PROTOCOL_SUFFIX + serverName + path;
-		}else{
+		} else {
 			basePath = scheme + PROTOCOL_SUFFIX + serverName + ":" + port + path;
 		}
 		return basePath;
@@ -305,19 +316,20 @@ public final class StringUtil {
 
 	/**
 	 * 将字符串数组转为字符串
+	 *
 	 * @param statusArray the status array
 	 * @return string array to string
-     */
+	 */
 	public static String getStringArrayToString(String[] statusArray) {
 		String status = "";
-        StringBuffer buf = new StringBuffer();
-		if(statusArray!=null && statusArray.length>0){
-			for(int i=0;i<statusArray.length;i++){
-                buf.append("," + statusArray[i]);
+		StringBuffer buf = new StringBuffer();
+		if (statusArray != null && statusArray.length > 0) {
+			for (int i = 0; i < statusArray.length; i++) {
+				buf.append("," + statusArray[i]);
 				//status =status+ "," + statusArray[i];
 			}
 		}
-		if(isNotEmpty(buf.toString())){
+		if (isNotEmpty(buf.toString())) {
 			status = buf.toString().substring(1);
 		}
 		return status;
@@ -328,17 +340,17 @@ public final class StringUtil {
 	 *
 	 * @param email the email
 	 * @return the hide email prefix
-     */
+	 */
 	public static String getHideEmailPrefix(String email) {
 		String prefix = "";
-        if (null != email) {
-            int index = email.lastIndexOf('@');
-            if (index > 0) {
+		if (null != email) {
+			int index = email.lastIndexOf('@');
+			if (index > 0) {
 				prefix = repeat("*", index).concat(email.substring(index));
-            }
-        }
-        return prefix;
-    }
+			}
+		}
+		return prefix;
+	}
 
 	/**
 	 * Repeat string.
@@ -346,22 +358,22 @@ public final class StringUtil {
 	 * @param src the src
 	 * @param num the num
 	 * @return the string
-     */
+	 */
 	public static String repeat(String src, int num) {
-        StringBuffer s = new StringBuffer();
-        for (int i = 0; i < num; i++){
-            s.append(src);
+		StringBuffer s = new StringBuffer();
+		for (int i = 0; i < num; i++) {
+			s.append(src);
 		}
-        return s.toString();
-    }
+		return s.toString();
+	}
 
 	/**
 	 * Is mobile nO.
 	 *
 	 * @param mobiles the mobiles
 	 * @return the boolean
-     */
-	public static boolean isMobileNO(String mobiles){
+	 */
+	public static boolean isMobileNO(String mobiles) {
 		Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
 		Matcher m = p.matcher(mobiles);
 		return m.matches();
@@ -372,9 +384,9 @@ public final class StringUtil {
 	 *
 	 * @param email the email
 	 * @return the boolean
-     */
-	public static boolean isEmail(String email){
-		String str="^([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)*@([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)+[\\.][A-Za-z]{2,3}([\\.][A-Za-z]{2})?$";
+	 */
+	public static boolean isEmail(String email) {
+		String str = "^([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)*@([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)+[\\.][A-Za-z]{2,3}([\\.][A-Za-z]{2})?$";
 		Pattern p = Pattern.compile(str);
 		Matcher m = p.matcher(email);
 		return m.matches();
@@ -482,6 +494,7 @@ public final class StringUtil {
 			return null;
 		}
 	}
+
 
 
 

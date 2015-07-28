@@ -71,7 +71,7 @@ public class LoginController extends BaseController {
 
             String ticketKey=userInfo.getId()+SplitCode.SPLIT_EQULE+PropertiesUtil.getString("sso.cookieName") + SplitCode.SPLIT_SHU +userInfo.getId()+  SplitCode.SPLIT_SHU+PropertiesUtil.getString("TOKEN.TIME") + SplitCode.SPLIT_SHU+ System.currentTimeMillis();
             String encodedticketKey = DESUtils.encrypt(ticketKey, PropertiesUtil.getString("sso.secretKey"));
-            iRedisService.setObject(PrefixCode.API_COOKIE_PRE + ticketKey,changeUser(userInfo), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
+            iRedisService.setObject(PrefixCode.API_COOKIE_PRE + ticketKey, changeUser(userInfo), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
 
             Cookie cookie = new Cookie(PropertiesUtil.getString("sso.cookieName"), encodedticketKey);
             StudyLogger.recSysLog("sso.cookieName:" + encodedticketKey);
@@ -80,6 +80,13 @@ public class LoginController extends BaseController {
             cookie.setDomain(PropertiesUtil.getString("sso.domainName"));
             cookie.setPath("/");
             response.addCookie(cookie);
+
+            Cookie cookie2 = new Cookie("lifeccp", encodedticketKey);
+            cookie2.setSecure(Boolean.parseBoolean(PropertiesUtil.getString("sso.secure")));//测试而已
+            cookie2.setMaxAge(7 * 24 * 3600);
+            cookie2.setDomain(".lifeccp.com");
+            cookie2.setPath("/");
+            response.addCookie(cookie2);
 
             if(StringUtil.isEmpty(userInfo.getUserName())){
                 userInfo.setUserName(userInfo.getMobile());
@@ -97,6 +104,7 @@ public class LoginController extends BaseController {
             message.setCode(ErrorCode.SYS_ERROR);
             printLogger(e);
         }
+        StudyLogger.recSysLog("login.json"+ JSON.toJSON(message).toString());
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 
