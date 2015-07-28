@@ -7,6 +7,7 @@ import com.study.common.oss.DESUtils;
 import com.study.common.oss.LoginOutResponse;
 import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
+import com.study.model.UserInfo;
 import com.study.service.IRedisService;
 import com.study.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +47,15 @@ public class SSOAuthController extends BaseController {
                     loginOutResponse.setError("false");
                     StudyLogger.recBusinessLog("loginOut ok:" + cookieName);
                 }else if(action.equals(PrefixCode.API_ACTION_AUTH)){
-                    Object obj=iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket);
+                    Object obj=iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket);
                     if(obj==null){
                         StudyLogger.recBusinessLog("authTicket logout "+decodedTicket);
                         loginOutResponse.setError("true");
                     }else{
-                        StudyLogger.recBusinessLog("authTicket ok "+decodedTicket);
+                        StudyLogger.recBusinessLog("authTicket ok " + decodedTicket);
                         loginOutResponse.setError("false");
-                        loginOutResponse.setErrorInfo(obj.toString());
+                        loginOutResponse.setErrorInfo("");
+                        loginOutResponse.setData(obj);
                     }
                 }else{
                     loginOutResponse.setError("true");

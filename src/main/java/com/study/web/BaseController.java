@@ -8,9 +8,11 @@ import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.AuthHeaderBean;
+import com.study.common.apibean.response.UserResponse;
 import com.study.common.util.MessageUtil;
 import com.study.common.oss.DESUtils;
 import com.study.common.util.PropertiesUtil;
+import com.study.model.UserInfo;
 import com.study.service.IRedisService;
 import org.apache.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,18 @@ public class BaseController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
+    public UserResponse changeUser(UserInfo userInfo){
+        UserResponse userResponse=new UserResponse();
+        userResponse.setId(userInfo.getId());
+        userResponse.setGender(userInfo.getGender()==null?0:new Integer(userInfo.getGender()));
+        userResponse.setNick(userInfo.getNick());
+        userResponse.setAddress(userInfo.getAddress());
+        userResponse.setCt(userInfo.getCreateTime());
+        userResponse.setMobile(userInfo.getMobile());
+        userResponse.setIcon(userInfo.getIcon());
+
+        return  userResponse;
+    }
     /**
      * Gets parameter.
      *
@@ -129,7 +143,7 @@ public class BaseController {
             }
         }else if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
             String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-            if(iRedisService.get(PrefixCode.API_COOKIE_PRE+decodedTicket)!=null){
+            if(iRedisService.getObject(PrefixCode.API_COOKIE_PRE+decodedTicket)!=null){
                 return true;
             }
             return false;

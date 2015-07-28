@@ -151,7 +151,7 @@ public class ApiPubController extends BaseController {
             UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone());
             if(isExist!=null){
                 registerMobileResponse.setCode(ErrorCode.USER_EXITS);
-                registerMobileResponse.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
+                registerMobileResponse.setMsg(messageUtil.getMessage("MSG.USER_EXITS_CN"));
             }else{
                 //判断注册码是否有效
                 String code=iRedisService.get(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
@@ -159,18 +159,18 @@ public class ApiPubController extends BaseController {
                     iApIUserService.saveUser(apiUserBean);
                     UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile());
                     registerMobileResponse.setCode(ErrorCode.SUCCESS);
-                    registerMobileResponse.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                    registerMobileResponse.setContent(userInfo);
+                    registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                    registerMobileResponse.setData(changeUser(userInfo));
                     iRedisService.deleteOneKey(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
                 }else{
                     registerMobileResponse.setCode(ErrorCode.USER_CODE_ERROR);
-                    registerMobileResponse.setMessage(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
+                    registerMobileResponse.setMsg(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
                 }
             }
 
         } catch (Exception e) {
             registerMobileResponse.setCode(ErrorCode.ERROR);
-            registerMobileResponse.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
+            registerMobileResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(registerMobileResponse).toString());
@@ -232,7 +232,7 @@ public class ApiPubController extends BaseController {
                 LoginResponse loginResponse=new LoginResponse();
                 loginResponse.setToken(token);
                 loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
-                loginResponse.setUser(userInfo);
+                loginResponse.setUser(changeUser(userInfo));
 
                 commonResponse.setData(loginResponse);
             }
@@ -246,39 +246,6 @@ public class ApiPubController extends BaseController {
     }
 
 
-    /**
-     * loginout
-     */
-    @RequestMapping(value = "/logout",method = RequestMethod.POST)
-    public void logout(HttpServletRequest request,HttpServletResponse response) {
-
-        CommonResponse message = new CommonResponse();
-        try {
-            //现在用户名和手机号一样，直接查找手机号
-            AuthHeaderBean authHeaderBean = getAuthHeader(request);
-            StudyLogger.recBusinessLog("/pub/logout:" + authHeaderBean.toString());
-
-            if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
-                iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, authHeaderBean.getUserId().toString());
-            }else{
-                iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, authHeaderBean.getUserId().toString());
-            }
-            //更新数据库token保存做备份
-//            UserInfo userInfoTemp=new UserInfo();
-//            userInfoTemp.setId(Integer.parseInt(auth[0]));
-//            userInfoTemp.setToken("");
-//
-//            iApIUserService.updateUserToken(userInfoTemp);
-            message.setCode(ErrorCode.SUCCESS);
-            message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            message.setData(iApIUserService.findById(authHeaderBean.getUserId()));
-        } catch (Exception e) {
-            message.setCode(ErrorCode.ERROR);
-            message.setMsg(ErrorCode.SYS_ERROR);
-            printLogger(e);
-        }
-        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-    }
 
     /**
      * up 上传

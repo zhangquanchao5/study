@@ -163,7 +163,7 @@ public class UserController extends BaseController {
                 String ticketKey = UUID.randomUUID().toString().replace("-", "");
                 String encodedticketKey = DESUtils.encrypt(ticketKey, PropertiesUtil.getString("sso.secretKey"));
 
-                iRedisService.set(PrefixCode.API_COOKIE_PRE + ticketKey, userInfoFromTemp.getUserId().toString(), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
+                iRedisService.setObject(PrefixCode.API_COOKIE_PRE + ticketKey,changeUser(iUserService.fingById(userInfoFromTemp.getUserId())), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
 
                 Cookie cookie = new Cookie(PropertiesUtil.getString("sso.cookieName"), encodedticketKey);
                 cookie.setSecure(Boolean.parseBoolean(PropertiesUtil.getString("sso.secure")));// 为true时用于https

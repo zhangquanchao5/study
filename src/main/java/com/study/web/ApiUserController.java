@@ -7,9 +7,11 @@ import com.study.code.PrefixCode;
 import com.study.common.Encrypt;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
+import com.study.common.apibean.AuthHeaderBean;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.apibean.response.UserInfoUpdateResponse;
+import com.study.common.apibean.response.UserResponse;
 import com.study.common.apibean.response.ValidateResponse;
 import com.study.common.oss.DESUtils;
 import com.study.common.util.MessageUtil;
@@ -157,7 +159,7 @@ public class ApiUserController extends BaseController {
                 UserInfo userInfo = iApIUserService.findById(updateUser.getId());
                 userInfoUpdateResponse.setCode(ErrorCode.SUCCESS);
                 userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                userInfoUpdateResponse.setData(userInfo);
+                userInfoUpdateResponse.setData(changeUser(userInfo));
             } else {
                 userInfoUpdateResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
@@ -194,7 +196,7 @@ public class ApiUserController extends BaseController {
                     userInfo = iApIUserService.findById(userInfoRequest.getId());
                 } else {
                     String decodedTicket = DESUtils.decrypt(StringUtil.getFromBASE64(userInfoRequest.getToken()), PropertiesUtil.getString("sso.secretKey"));
-                    if (!StringUtil.isEmpty(decodedTicket) && iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket) != null && userInfoRequest.getId().equals((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket))) {
+                    if (!StringUtil.isEmpty(decodedTicket) && iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket) != null && userInfoRequest.getId().equals(((UserResponse) iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket)).getId().toString())) {
                         userInfo = iApIUserService.findById(userInfoRequest.getId());
                     }
                 }
@@ -203,7 +205,7 @@ public class ApiUserController extends BaseController {
             ValidateResponse validateResponse = new ValidateResponse();
             if (userInfo != null) {
                 validateResponse.setResult(true);
-                validateResponse.setInfo(userInfo);
+                validateResponse.setInfo(changeUser(userInfo));
             } else {
                 validateResponse.setResult(false);
             }
@@ -241,7 +243,7 @@ public class ApiUserController extends BaseController {
                 }
                 commonResponse.setCode(ErrorCode.SUCCESS);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                commonResponse.setData(userInfo);
+                commonResponse.setData(changeUser(userInfo));
             } else {
                 commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
@@ -448,7 +450,7 @@ public class ApiUserController extends BaseController {
                 if (isAuthToken(iRedisService, request)) {
                     String auth = request.getHeader("Authorization");
                     String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-                    Integer userId = Integer.parseInt((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket));
+                    Integer userId = ((UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket)).getId();
 
                     UserInfo userInfo = iApIUserService.findByEMail(emailRequest.getEmail());
                     if (userInfo != null) {
@@ -514,7 +516,7 @@ public class ApiUserController extends BaseController {
                 if (isAuthToken(iRedisService, request)) {
                     String auth = request.getHeader("Authorization");
                     String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-                    Integer userId = Integer.parseInt((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket));
+                    Integer userId = ((UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket)).getId();
 
                     String random = RandomStringUtils.randomAlphanumeric(32);
                     String actUrl = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.VERTIFY.URL") +
@@ -568,7 +570,7 @@ public class ApiUserController extends BaseController {
                 if (isAuthToken(iRedisService, request)) {
                     String auth = request.getHeader("Authorization");
                     String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-                    Integer userId = Integer.parseInt((String) iRedisService.get(PrefixCode.API_COOKIE_PRE + decodedTicket));
+                    Integer userId = ((UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket)).getId();
                     UserInfo userInfo = new UserInfo();
                     userInfo.setId(userId);
                     userInfo.setUserMail(emailRequest.getEmail());
@@ -591,6 +593,41 @@ public class ApiUserController extends BaseController {
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+
+    /**
+     * loginout
+     */
+    @RequestMapping(value = "/logout",method = RequestMethod.POST)
+    public void logout(HttpServletRequest request,HttpServletResponse response) {
+
+        CommonResponse message = new CommonResponse();
+        try {
+            //现在用户名和手机号一样，直接查找手机号
+            AuthHeaderBean authHeaderBean = getAuthHeader(request);
+            StudyLogger.recBusinessLog("/user/logout:" + authHeaderBean.toString());
+
+            if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
+                iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, authHeaderBean.getUserId().toString());
+            }else{
+                iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, authHeaderBean.getUserId().toString());
+            }
+            //更新数据库token保存做备份
+//            UserInfo userInfoTemp=new UserInfo();
+//            userInfoTemp.setId(Integer.parseInt(auth[0]));
+//            userInfoTemp.setToken("");
+//
+//            iApIUserService.updateUserToken(userInfoTemp);
+            message.setCode(ErrorCode.SUCCESS);
+            message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+            message.setData(changeUser(iApIUserService.findById(authHeaderBean.getUserId())));
+        } catch (Exception e) {
+            message.setCode(ErrorCode.ERROR);
+            message.setMsg(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 
 }

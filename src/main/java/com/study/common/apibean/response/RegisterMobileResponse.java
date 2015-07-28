@@ -6,8 +6,8 @@ package com.study.common.apibean.response;
 public class RegisterMobileResponse {
 
     private String code;
-    private String message;
-    private Object content;
+    private String msg;
+    private Object data;
 
 
     public String getCode() {
@@ -18,19 +18,19 @@ public class RegisterMobileResponse {
         this.code = code;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public Object getContent() {
-        return content;
+    public Object getData() {
+        return data;
     }
 
-    public void setContent(Object content) {
-        this.content = content;
+    public void setData(Object data) {
+        this.data = data;
     }
 }
