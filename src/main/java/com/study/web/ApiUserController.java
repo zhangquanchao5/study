@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
+import com.study.code.SplitCode;
 import com.study.common.Encrypt;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
@@ -183,29 +184,24 @@ public class ApiUserController extends BaseController {
 
             String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/user/validate:" + json);
-            UserInfo userInfo = null;
+            UserResponse userInfo = null;
 
             UserInfoRequest userInfoRequest = JSON.parseObject(json, UserInfoRequest.class);
-            Object token = iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP, userInfoRequest.getId().toString());
-
-            if (token != null && token.toString().equals(userInfoRequest.getToken())) {
-                userInfo = iApIUserService.findById(userInfoRequest.getId());
-            } else {
-                token = iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, userInfoRequest.getId().toString());
-                if (token != null && token.toString().equals(userInfoRequest.getToken())) {
-                    userInfo = iApIUserService.findById(userInfoRequest.getId());
-                } else {
-                    String decodedTicket = DESUtils.decrypt(StringUtil.getFromBASE64(userInfoRequest.getToken()), PropertiesUtil.getString("sso.secretKey"));
-                    if (!StringUtil.isEmpty(decodedTicket) && iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket) != null && userInfoRequest.getId().equals(((UserResponse) iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket)).getId().toString())) {
-                        userInfo = iApIUserService.findById(userInfoRequest.getId());
-                    }
-                }
+            String encode=StringUtil.getFromBASE64(userInfoRequest.getAuth_token());
+            String []head=StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]).split(SplitCode.SPLIT_EQULE)[1].split(SplitCode.SPLIT_ZHUANYI);
+            StudyLogger.recBusinessLog("/user/validate params:" + head[0]+"#######"+StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]));
+            if(head[0].equals(PrefixCode.API_HEAD_H5)){
+                userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
+            }else if(head[0].equals(PrefixCode.API_HEAD_WEB)){
+                userInfo=(UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE+encode);
+            }else if(head[0].equals(PrefixCode.API_TOKEN_MAP)){
+                userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
             }
 
             ValidateResponse validateResponse = new ValidateResponse();
             if (userInfo != null) {
                 validateResponse.setResult(true);
-                validateResponse.setInfo(changeUser(userInfo));
+                validateResponse.setInfo(userInfo);
             } else {
                 validateResponse.setResult(false);
             }
@@ -347,7 +343,9 @@ public class ApiUserController extends BaseController {
                 UserInfo userUpdate = new UserInfo();
                 userUpdate.setId(userBindRequest.getId());
                 userUpdate.setMobile(userBindRequest.getUserPhone());
-                userUpdate.setPassword(StringUtil.getMD5Str(userBindRequest.getNewPassword()));
+                if(!StringUtil.isEmpty(userBindRequest.getNewPassword())){
+                    userUpdate.setPassword(StringUtil.getMD5Str(userBindRequest.getNewPassword()));
+                }
 
                 iApIUserService.updateUser(userUpdate);
                 commonResponse.setCode(ErrorCode.SUCCESS);

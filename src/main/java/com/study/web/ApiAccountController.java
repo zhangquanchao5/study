@@ -64,7 +64,7 @@ public class ApiAccountController extends BaseController {
         return message;
     }
 
-    @RequestMapping(value = "/coupon/receiveCash", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/coupon/receiveCash", method = RequestMethod.POST)
     private
     @ResponseBody
     ApiResponseMessage deposit(@RequestBody String strJson, HttpServletRequest request) {
@@ -103,7 +103,7 @@ public class ApiAccountController extends BaseController {
         return message;
     }
 
-    @RequestMapping(value = "/account/withdraw", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/account/withdraw", method = RequestMethod.POST)
     private
     @ResponseBody
     ApiResponseMessage withdraw(@RequestBody String strJson, HttpServletRequest request) {
@@ -143,8 +143,10 @@ public class ApiAccountController extends BaseController {
         return message;
     }
 
-    @RequestMapping(value = "/user/changePwd", method = RequestMethod.POST, headers = "Accept=application/json")
-    private ApiResponseMessage update(@RequestBody String strJson, HttpServletRequest request) {
+    @RequestMapping(value = "/user/changePwd", method = RequestMethod.POST)
+    private
+    @ResponseBody
+    ApiResponseMessage update(@RequestBody String strJson, HttpServletRequest request) {
         ApiResponseMessage message = new ApiResponseMessage();
         StudyLogger.recBusinessLog("account paypwd:" + strJson);
         PayPasswordReq payPasswordReq = JSON.parseObject(strJson, PayPasswordReq.class);

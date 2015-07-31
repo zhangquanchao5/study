@@ -2,6 +2,7 @@ package com.study.web;
 
 import com.alibaba.fastjson.JSON;
 import com.study.code.PrefixCode;
+import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.oss.DESUtils;
 import com.study.common.oss.LoginOutResponse;
@@ -41,7 +42,9 @@ public class SSOAuthController extends BaseController {
                 loginOutResponse.setError(true);
                 loginOutResponse.setErrorInfo("Ticket can not be empty!");
             } else {
-                String decodedTicket = DESUtils.decrypt(cookieName, PropertiesUtil.getString("sso.secretKey"));
+               // String decodedTicket = DESUtils.decrypt(cookieName, PropertiesUtil.getString("sso.secretKey"));
+                String decodedTicket= StringUtil.getFromBASE64(cookieName);
+
                 StudyLogger.recBusinessLog("authTicket ticket:"+decodedTicket);
                 if(action.equals(PrefixCode.API_ACTION_LOGINOUT)){
                     iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + decodedTicket);

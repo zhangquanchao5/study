@@ -5,7 +5,16 @@ package com.study.common.apibean.request;
  */
 public class UserInfoRequest {
     private Integer id;
+    private String auth_token ;
     private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public Integer getId() {
         return id;
@@ -15,11 +24,11 @@ public class UserInfoRequest {
         this.id = id;
     }
 
-    public String getToken() {
-        return token;
+    public String getAuth_token() {
+        return auth_token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAuth_token(String auth_token) {
+        this.auth_token = auth_token;
     }
 }

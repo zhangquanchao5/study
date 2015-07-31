@@ -137,24 +137,24 @@ public class BaseController {
         if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
             StudyLogger.recBusinessLog((iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null)+"");
             if(iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
-                String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));
+                String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[1]));
                 String[] codes=code.split(SplitCode.SPLIT_ZHUANYI);
-                if(System.currentTimeMillis()>(Long.parseLong(codes[2])+Long.parseLong(codes[1])*60*1000)){
+                if(System.currentTimeMillis()>Long.parseLong(codes[2])){
                     return false;
                 }
                 return true;
             }
         }else if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
-            String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-            if(iRedisService.getObject(PrefixCode.API_COOKIE_PRE+decodedTicket)!=null){
+           // String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
+            if(iRedisService.getObject(PrefixCode.API_COOKIE_PRE+auth)!=null){
                 return true;
             }
             return false;
         }else{
             if(iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
-                String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0]));
+                String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[1]));
                 String[] codes=code.split(SplitCode.SPLIT_ZHUANYI);
-                if(System.currentTimeMillis()>(Long.parseLong(codes[2])+Long.parseLong(codes[1])*60*1000)){
+                if(System.currentTimeMillis()>Long.parseLong(codes[2])){
                     return false;
                 }
                 return true;
