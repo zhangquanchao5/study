@@ -6,6 +6,7 @@ package com.study.common.apibean;
 public class AuthHeaderBean {
     private Integer userId;
 
+    private String encode;
     public AuthHeaderBean() {
     }
 
@@ -19,5 +20,13 @@ public class AuthHeaderBean {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getEncode() {
+        return encode;
+    }
+
+    public void setEncode(String encode) {
+        this.encode = encode;
     }
 }

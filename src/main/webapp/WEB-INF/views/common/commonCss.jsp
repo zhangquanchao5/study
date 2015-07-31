@@ -7,7 +7,7 @@
 
 <!-- start: META -->
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-<title>E课堂直播</title>
+<title>有你学</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta content="" name="description" />

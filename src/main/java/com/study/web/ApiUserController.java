@@ -187,29 +187,33 @@ public class ApiUserController extends BaseController {
             UserResponse userInfo = null;
 
             UserInfoRequest userInfoRequest = JSON.parseObject(json, UserInfoRequest.class);
-            String encode=StringUtil.getFromBASE64(userInfoRequest.getAuth_token());
-            String []head=StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]).split(SplitCode.SPLIT_EQULE)[1].split(SplitCode.SPLIT_ZHUANYI);
-            StudyLogger.recBusinessLog("/user/validate params:" + head[0]+"#######"+StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]));
-            if(head[0].equals(PrefixCode.API_HEAD_H5)){
-                userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
-            }else if(head[0].equals(PrefixCode.API_HEAD_WEB)){
-                userInfo=(UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE+encode);
-            }else if(head[0].equals(PrefixCode.API_TOKEN_MAP)){
-                userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
+            if(isAuthToken(iRedisService, request)){
+                String encode=StringUtil.getFromBASE64(userInfoRequest.getAuth_token());
+                String []head=StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]).split(SplitCode.SPLIT_EQULE)[1].split(SplitCode.SPLIT_ZHUANYI);
+                StudyLogger.recBusinessLog("/user/validate params:" + head[0]+"#######"+StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]));
+                if(head[0].equals(PrefixCode.API_HEAD_H5)){
+                    userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
+                }else if(head[0].equals(PrefixCode.API_HEAD_WEB)){
+                    userInfo=(UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE+encode);
+                }else if(head[0].equals(PrefixCode.API_TOKEN_MAP)){
+                    userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
+                }
+
+                ValidateResponse validateResponse = new ValidateResponse();
+                if (userInfo != null) {
+                    validateResponse.setResult(true);
+                    validateResponse.setInfo(userInfo);
+                } else {
+                    validateResponse.setResult(false);
+                }
+
+                commonResponse.setCode(ErrorCode.SUCCESS);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                commonResponse.setData(validateResponse);
+            }else{
+                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
-
-            ValidateResponse validateResponse = new ValidateResponse();
-            if (userInfo != null) {
-                validateResponse.setResult(true);
-                validateResponse.setInfo(userInfo);
-            } else {
-                validateResponse.setResult(false);
-            }
-
-            commonResponse.setCode(ErrorCode.SUCCESS);
-            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            commonResponse.setData(validateResponse);
-
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
             commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
@@ -234,9 +238,11 @@ public class ApiUserController extends BaseController {
                 UserInfo userInfo = null;
                 if (userInfoRequest.getId() != null) {
                     userInfo = iApIUserService.findById(userInfoRequest.getId());
-                } else {
-                    userInfo = iApIUserService.findByToken(userInfoRequest.getToken());
+                }else{
+                    String code=StringUtil.getFromBASE64(userInfoRequest.getToken());
+                    userInfo = iApIUserService.findById(Integer.parseInt(code.split(SplitCode.SPLIT_EQULE)[0]));
                 }
+
                 commonResponse.setCode(ErrorCode.SUCCESS);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 commonResponse.setData(changeUser(userInfo));
@@ -608,18 +614,15 @@ public class ApiUserController extends BaseController {
 
             if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
                 iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, authHeaderBean.getUserId().toString());
+            }else  if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
+                iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE+authHeaderBean.getEncode());
             }else{
                 iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, authHeaderBean.getUserId().toString());
             }
-            //更新数据库token保存做备份
-//            UserInfo userInfoTemp=new UserInfo();
-//            userInfoTemp.setId(Integer.parseInt(auth[0]));
-//            userInfoTemp.setToken("");
-//
-//            iApIUserService.updateUserToken(userInfoTemp);
+
             message.setCode(ErrorCode.SUCCESS);
             message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-            message.setData(changeUser(iApIUserService.findById(authHeaderBean.getUserId())));
+           // message.setData(changeUser(iApIUserService.findById(authHeaderBean.getUserId())));
         } catch (Exception e) {
             message.setCode(ErrorCode.ERROR);
             message.setMsg(ErrorCode.SYS_ERROR);

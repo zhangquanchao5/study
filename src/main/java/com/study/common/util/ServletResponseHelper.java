@@ -55,6 +55,7 @@ public final class ServletResponseHelper {
      */
     public static void outUTF8ToJson(HttpServletResponse response, String resStr) {
         try {
+            StudyLogger.recBusinessLog("result:"+resStr);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json; charset=utf-8");
             response.getWriter().write(resStr);

@@ -89,7 +89,7 @@
 <div class="bottom">
     <jsp:include page="../footer.jsp"/>
 </div>
-
+<div class="clear"></div>
 <jsp:include page="../common/commonJS.jsp"/>
 <script src="${pageContext.request.contextPath}/resources/js/user/register.js"></script>
 

@@ -109,18 +109,19 @@ public class BaseController {
     protected AuthHeaderBean getAuthHeader(HttpServletRequest request){
         AuthHeaderBean authHeaderBean = new AuthHeaderBean();
         String auth = request.getHeader("Authorization");
-        if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
-            String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-            StudyLogger.recBusinessLog("auth:[" + auth + "] encode[" + decodedTicket + "]");
-            String[] webs = decodedTicket.split(SplitCode.SPLIT_EQULE);
-            authHeaderBean.setUserId(Integer.parseInt(webs[0]));
-        }else{
+//        if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
+//            String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
+//            StudyLogger.recBusinessLog("auth:[" + auth + "] encode[" + decodedTicket + "]");
+//            String[] webs = decodedTicket.split(SplitCode.SPLIT_EQULE);
+//            authHeaderBean.setUserId(Integer.parseInt(webs[0]));
+//        }else{
             String encode= StringUtil.getFromBASE64(auth);
-            StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
+            StudyLogger.recBusinessLog("auth:[" + auth + "] encode[" + encode + "]");
             String[] strs = encode.split(SplitCode.SPLIT_EQULE);
             authHeaderBean.setUserId(Integer.parseInt(strs[0]));
+            authHeaderBean.setEncode(strs[1]);
 
-        }
+//        }
         return authHeaderBean;
     }
 
@@ -137,7 +138,7 @@ public class BaseController {
         if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
             StudyLogger.recBusinessLog((iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null)+"");
             if(iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
-                String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[1]));
+                String code= StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]);
                 String[] codes=code.split(SplitCode.SPLIT_ZHUANYI);
                 if(System.currentTimeMillis()>Long.parseLong(codes[2])){
                     return false;
@@ -146,13 +147,13 @@ public class BaseController {
             }
         }else if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
            // String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
-            if(iRedisService.getObject(PrefixCode.API_COOKIE_PRE+auth)!=null){
+            if(iRedisService.getObject(PrefixCode.API_COOKIE_PRE+encode)!=null){
                 return true;
             }
             return false;
         }else{
             if(iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null){
-                String code= StringUtil.getFromBASE64((String)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[1]));
+                String code= StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]);
                 String[] codes=code.split(SplitCode.SPLIT_ZHUANYI);
                 if(System.currentTimeMillis()>Long.parseLong(codes[2])){
                     return false;
