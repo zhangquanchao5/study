@@ -5,8 +5,8 @@
 
 <configuration>
     <typeAliases>
-        <!--<typeAlias alias="domainResponse" type="com.study.common.bean.DomainResponse" />-->
-
+        <typeAlias alias="userPageRequest" type="com.study.common.page.UserPageRequest" />
+        <typeAlias alias="userResponse" type="com.study.common.apibean.response.UserResponse" />
     </typeAliases>
     <mappers>
     </mappers>

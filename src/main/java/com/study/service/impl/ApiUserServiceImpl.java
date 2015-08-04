@@ -1,10 +1,14 @@
 package com.study.service.impl;
 
 import com.study.code.EntityCode;
+import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.apibean.ApiUserBean;
 import com.study.common.apibean.request.PwdResetRequest;
+import com.study.common.apibean.response.UserResponse;
 import com.study.common.bean.Mail;
+import com.study.common.page.UserPageRequest;
+import com.study.common.page.UserPageResponse;
 import com.study.common.util.PropertiesUtil;
 import com.study.dao.AccountMapper;
 import com.study.dao.UserInfoFromMapper;
@@ -20,6 +24,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by huichao on 2015/7/7.
@@ -119,5 +124,28 @@ public class ApiUserServiceImpl implements IApIUserService {
         mail.setNamePass(sendFrom, password);
         mail.setSubject(subject);
         mail.send();
+    }
+
+    public UserPageResponse findPageResponse(UserPageRequest userPageRequest){
+//        if(userPageRequest.getId()!=null&&userPageRequest.getId().length>0){
+//            StringBuffer sb=new StringBuffer();
+//            for(Integer id:userPageRequest.getId()){
+//                sb.append(id);
+//                sb.append(SplitCode.SPLIT_DOUHAO);
+//            }
+//
+//            userPageRequest.setIds(sb.toString().substring(0, sb.toString().length() - 1));
+//            System.out.println("-------------"+userPageRequest.getIds());
+//        }
+        UserPageResponse userPageResponse=new UserPageResponse();
+        userPageRequest.setStart((userPageRequest.getPage()-1)*userPageRequest.getSize());
+
+        int count=userInfoMapper.findPageCount(userPageRequest);
+        List<UserResponse> userResponseList=userInfoMapper.findPage(userPageRequest);
+
+        userPageResponse.setCount(count);
+        userPageResponse.setPage(userPageRequest.getPage());
+        userPageResponse.setUsers(userResponseList);
+        return userPageResponse;
     }
 }

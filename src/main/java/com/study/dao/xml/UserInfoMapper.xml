@@ -237,4 +237,39 @@
     set  update_time=sysdate()
     where  id = #{userId,jdbcType=INTEGER}
   </update>
+
+  <select id="findPageCount" resultType="java.lang.Integer" parameterType="userPageRequest" >
+    select count(1)
+    from user_info
+    where  status=0
+    <if test="id!= null and id!=''" >
+      and id in
+      <foreach item="item" collection="id" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="username!= null" >
+      and (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
+    </if>
+  </select>
+
+  <select id="findPage" resultType="userResponse" parameterType="userPageRequest" >
+    select id as id,name as name,nick as nick,icon as icon,gender as gender,mobile as mobile,
+          address as address,user_name as userName,create_time as ct
+    from user_info
+    where  status=0
+    <if test="id!= null and id!=''" >
+      and id in
+      <foreach item="item" collection="id" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="username!= null" >
+      and  (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
+    </if>
+    order by create_time desc
+
+    limit #{start},#{size}
+  </select>
+
 </mapper>

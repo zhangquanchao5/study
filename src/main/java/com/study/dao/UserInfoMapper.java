@@ -1,6 +1,10 @@
 package com.study.dao;
 
+import com.study.common.apibean.response.UserResponse;
+import com.study.common.page.UserPageRequest;
 import com.study.model.UserInfo;
+
+import java.util.List;
 
 public interface UserInfoMapper {
     int deleteByPrimaryKey(Integer id);
@@ -27,4 +31,8 @@ public interface UserInfoMapper {
      UserInfo findByEMail(String email);
 
      void updateUserTime(Integer userId);
+
+    int findPageCount(UserPageRequest userPageRequest);
+
+    List<UserResponse> findPage(UserPageRequest userPageRequest);
 }

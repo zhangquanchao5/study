@@ -2,6 +2,8 @@ package com.study.service;
 
 import com.study.common.apibean.ApiUserBean;
 import com.study.common.apibean.request.PwdResetRequest;
+import com.study.common.page.UserPageRequest;
+import com.study.common.page.UserPageResponse;
 import com.study.model.Account;
 import com.study.model.UserInfo;
 
@@ -29,6 +31,8 @@ public interface IApIUserService {
     public void updateUserTime(Integer userId);
 
     public Account findAccountByUserId(Integer userId);
+
+    public UserPageResponse findPageResponse(UserPageRequest userPageRequest);
 
     void sendEmail(final String mainBody, final String subject,
                    final String sendTo, final String sendFrom,

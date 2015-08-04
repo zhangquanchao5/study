@@ -15,6 +15,8 @@ import com.study.common.apibean.response.UserInfoUpdateResponse;
 import com.study.common.apibean.response.UserResponse;
 import com.study.common.apibean.response.ValidateResponse;
 import com.study.common.oss.DESUtils;
+import com.study.common.page.UserPageRequest;
+import com.study.common.page.UserPageResponse;
 import com.study.common.util.MessageUtil;
 import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
@@ -331,6 +333,39 @@ public class ApiUserController extends BaseController {
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
     }
+
+    /**
+     * 用户信息查询
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/search ")
+    public void search (HttpServletRequest request, HttpServletResponse response) {
+
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            if (isAuthToken(iRedisService, request)) {
+                String json = this.getParameter(request);
+                StudyLogger.recBusinessLog("/user/search:" + json);
+
+                UserPageRequest userPageRequest = JSON.parseObject(json, UserPageRequest.class);
+
+                UserPageResponse userPageResponse = iApIUserService.findPageResponse(userPageRequest);
+                commonResponse.setCode(ErrorCode.SUCCESS);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                commonResponse.setData(userPageResponse);
+            }else {
+                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
 
     /**
      * 用户绑定手机
