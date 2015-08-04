@@ -15,6 +15,13 @@
 </head>
 
 <body>
+<div class="home_top">
+    <jsp:include page="../head.jsp"/>
+</div>
+<div style="clear: both;height: 0px;font-size: 0"></div>
+<div class="h_t_search">
+    <jsp:include page="../menu.jsp"/>
+</div>
 <div class="wraper">
     <ul class="c_m_title border">
         <li class="hover">账户管理</li>
@@ -47,5 +54,9 @@
         </form>
     </div>
 </div>
+<div class="bottom">
+    <jsp:include page="../footer.jsp"/>
+</div>
+<div class="clear"></div>
 </body>
 </html>

@@ -13,13 +13,14 @@
     <result column="token" property="token" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="nick" property="nick" jdbcType="VARCHAR" />
     <result column="address" property="address" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_name, password, mobile, user_mail, icon, source, gender, token, status, 
-    create_time, name, nick, address
+    create_time, name, nick, address,update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -64,12 +65,12 @@
       mobile, user_mail, icon, 
       source, gender, token, 
       status, create_time, name, 
-      nick, address)
+      nick, address,update_time)
     values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{mobile,jdbcType=VARCHAR}, #{userMail,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
       #{source,jdbcType=TINYINT}, #{gender,jdbcType=TINYINT}, #{token,jdbcType=VARCHAR}, 
       #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{name,jdbcType=VARCHAR}, 
-      #{nick,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR})
+      #{nick,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},sysdate())
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.UserInfo" >
     insert into user_info
@@ -229,5 +230,11 @@
     update user_info
     set  password = #{password,jdbcType=VARCHAR}
     where mobile = #{mobile,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateUserTime" parameterType="java.lang.Integer" >
+    update user_info
+    set  update_time=sysdate()
+    where  id = #{userId,jdbcType=INTEGER}
   </update>
 </mapper>

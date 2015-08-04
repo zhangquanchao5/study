@@ -220,36 +220,31 @@ public class ApiPubController extends BaseController {
                 userInfo = iApIUserService.findByMobile(loginRequest.getUserPhone());
                 if (userInfo == null) {
                     commonResponse.setCode(ErrorCode.ERROR);
-                    commonResponse.setMsg(ErrorCode.USER_NOT_EXITS);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
                 }
             }else if(!StringUtil.isEmpty(loginRequest.getUserName())){
                 userInfo=iApIUserService.findByUserName(loginRequest.getUserName());
                 if (userInfo == null) {
                     commonResponse.setCode(ErrorCode.ERROR);
-                    commonResponse.setMsg(ErrorCode.USER_NOT_EXITS);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
                 }
             }else if(!StringUtil.isEmpty(loginRequest.getUserEmail())){
                 userInfo=iApIUserService.findByEMail(loginRequest.getUserEmail());
                 if (userInfo == null) {
                     commonResponse.setCode(ErrorCode.ERROR);
-                    commonResponse.setMsg(ErrorCode.USER_NOT_EXITS);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
                 }
             }
             String header=getPlatformHeader(request);
-
-            if(userInfo!=null&&!StringUtil.getMD5Str(loginRequest.getUserPassword()).equals(userInfo.getPassword())) {
+              if(userInfo!=null&&!StringUtil.getMD5Str(loginRequest.getUserPassword()).equals(userInfo.getPassword())) {
                 commonResponse.setCode(ErrorCode.ERROR);
-                commonResponse.setMsg(ErrorCode.USER_PWD_ERROR);
-            }else{
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_PWD_ERROR_CN"));
+            }else if(userInfo!=null){
                 long endTime=+Long.parseLong(PropertiesUtil.getString("TOKEN.TIME"))*60*1000+System.currentTimeMillis();
-
+                System.out.println("-------"+userInfo.getId()+SplitCode.SPLIT_EQULE+header+SplitCode.SPLIT_SHU+userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
                 String token=StringUtil.getBASE64(userInfo.getId()+SplitCode.SPLIT_EQULE+header+SplitCode.SPLIT_SHU+userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
                 //更新数据库token保存做备份,不做数据库备份
-//                UserInfo userInfoTemp=new UserInfo();
-//                userInfoTemp.setId(userInfo.getId());
-//                userInfoTemp.setToken(token);
-//
-//                iApIUserService.updateUserToken(userInfoTemp);
+                iApIUserService.updateUserTime(userInfo.getId());
 
 
                 commonResponse.setCode(ErrorCode.SUCCESS);

@@ -89,6 +89,7 @@ public class LoginController extends BaseController {
             SessionInfo sessionInfo=new SessionInfo(userInfo);
             LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
 
+            iUserService.updateUserTime(userInfo.getId());
             String gotoURL = request.getParameter("gotoURL");
             if (gotoURL != null)
             {

@@ -26,7 +26,7 @@ public interface IApIUserService {
 
     public void updateUserPwd(PwdResetRequest pwdResetRequest);
 
-    public void updateUserToken(UserInfo userInfo);
+    public void updateUserTime(Integer userId);
 
     public Account findAccountByUserId(Integer userId);
 

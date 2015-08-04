@@ -31,6 +31,16 @@ public class UserInfo {
 
     private String address="";
 
+    private Date updateTime;
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
     public Integer getId() {
         return id;
     }

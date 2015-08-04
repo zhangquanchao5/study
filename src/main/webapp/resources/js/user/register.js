@@ -66,7 +66,37 @@ $(document).ready(function() {
 
 });
 
+//$('#registerForm').validator({
+//    focusCleanup : true
+//    //msgMaker: false,    //不要自动生成消息
+//    //stopOnError:true
+//
+//});
+var parent=null;
+$("#registerForm").on("validation", function(e, current){
+    // 表单全部字段验证通过则返回 true
+    // 只要有一个字段验证不通过就返回 false
+    // 还没验证完，即验证结果未知的情况下返回 undefined
+    // 当前正在验证的字段是否通过
+    //if(parent!=null){
+    //    if(parent.key!=current.key){
+    //       $("#pre"+current.key).remove();
+    //        console.log(parent.key);
+    //    }
+    //}
+    //parent=current;
+    console.log(current.key);
+    if(!current.isValid){
+        setTimeout(function(){
+            $("#pre"+current.key).remove();
+        },500);
 
+      //  console.log(  $("#pre"+current.key).html());
+
+    }
+})
+
+//$('#registerForm').validator().trigger("showtip");
 
 var send = {
     node:null,
@@ -92,3 +122,24 @@ var send = {
         this.start();
     }
 };
+
+function mobileAjax(){
+    if($("#mobile").val()!=null&&$("#mobile").val()!=""){
+        utils.ajaxRequest(
+            {
+                "url":$contentPath +"/user/registerValidate",
+                "data":{"mobile":$("#mobile").val()},
+                "successCallBack":function(json){
+                    console.log("--------"+json)
+
+                        $("#sendMS").attr("disabled",false);
+
+                },
+                "errorCallBack":function(json){
+                    bootbox.alert("手机号已存在!");
+                    $("#sendMS").attr("disabled",true);
+                }
+            }
+        );
+    }
+}

@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public final class DateUtil {
 
-	private static final String DEFAULT_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String DEFAULT_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	private static final int SIXTY = 60;
 
 	private DateUtil() {

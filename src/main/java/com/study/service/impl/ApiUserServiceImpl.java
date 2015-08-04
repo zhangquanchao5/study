@@ -86,8 +86,8 @@ public class ApiUserServiceImpl implements IApIUserService {
         userSecurityMapper.insert(userSecurity);
     }
 
-    public void updateUserToken(UserInfo userInfo){
-        userInfoMapper.updateByPrimaryKeySelective(userInfo);
+    public void updateUserTime(Integer userId){
+        userInfoMapper.updateUserTime(userId);
     }
 
     public void updateUserPwd(PwdResetRequest pwdResetRequest){

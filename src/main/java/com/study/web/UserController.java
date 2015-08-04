@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -102,6 +104,40 @@ public class UserController extends BaseController {
         } catch (Exception e) {
             message.setSuccess(false);
             message.setCode(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+    @RequestMapping(value = "/registerValidate")
+    public void registerValidate(UserInfo userInfoModel, HttpServletResponse response) {
+
+        Map message = new HashMap();
+        try {
+            if(!StringUtil.isEmpty(userInfoModel.getUserName())){
+                if(iUserService.findByUserName(userInfoModel.getUserName())!=null||iUserService.findByMobile(userInfoModel.getUserName())!=null||iUserService.findByEMail(userInfoModel.getUserName())!=null){
+                    message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
+                    message.put("success",false);
+
+                }else{
+                    message.put("ok", messageUtil.getMessage("msg.register.success"));
+                    message.put("success",true);
+                }
+            }else if(!StringUtil.isEmpty(userInfoModel.getMobile())){
+                if(iUserService.findByUserName(userInfoModel.getMobile())!=null||iUserService.findByMobile(userInfoModel.getMobile())!=null||iUserService.findByEMail(userInfoModel.getMobile())!=null){
+                    message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
+                    message.put("success",false);
+
+                }else{
+                    message.put("ok", messageUtil.getMessage("msg.register.success"));
+                    message.put("success",true);
+
+                }
+            }
+        } catch (Exception e) {
+            message.put("error", messageUtil.getMessage("MSG.SYS_ERROR_CN"));
+            message.put("success",false);
+
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());

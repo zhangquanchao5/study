@@ -25,4 +25,6 @@ public interface UserInfoMapper {
 
 
      UserInfo findByEMail(String email);
+
+     void updateUserTime(Integer userId);
 }

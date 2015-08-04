@@ -189,8 +189,10 @@ public class ApiUserController extends BaseController {
             UserInfoRequest userInfoRequest = JSON.parseObject(json, UserInfoRequest.class);
             if(isAuthToken(iRedisService, request)){
                 String encode=StringUtil.getFromBASE64(userInfoRequest.getAuth_token());
-                String []head=StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]).split(SplitCode.SPLIT_EQULE)[1].split(SplitCode.SPLIT_ZHUANYI);
-                StudyLogger.recBusinessLog("/user/validate params:" + head[0]+"#######"+StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]));
+                String token=StringUtil.getFromBASE64(encode.substring(encode.split(SplitCode.SPLIT_EQULE)[0].length() + 1, encode.length()));
+                String []head=token.substring(token.split(SplitCode.SPLIT_EQULE)[0].length()+1,token.length()).split(SplitCode.SPLIT_ZHUANYI);
+                //String []head=StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]).split(SplitCode.SPLIT_EQULE)[1].split(SplitCode.SPLIT_ZHUANYI);
+                StudyLogger.recBusinessLog("/user/validate params:" + head[0]+"#######"+token);
                 if(head[0].equals(PrefixCode.API_HEAD_H5)){
                     userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
                 }else if(head[0].equals(PrefixCode.API_HEAD_WEB)){

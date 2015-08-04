@@ -15,6 +15,13 @@ To change this template use File | Settings | File Templates.
 </head>
 
 <body>
+<div class="home_top">
+    <jsp:include page="../head.jsp"/>
+</div>
+<div style="clear: both;height: 0px;font-size: 0"></div>
+<div class="h_t_search">
+    <jsp:include page="../menu.jsp"/>
+</div>
 <div class="wraper">
     <div class="courseManage">
         <ul class="c_m_title border">
@@ -34,7 +41,7 @@ To change this template use File | Settings | File Templates.
                         <dd class="blueColor">${sessionScope.user_session_info.userInfo.userName}</dd>
                         <dd>登录邮箱：您尚未设置登录邮箱</dd>
                         <dd>手机号码： ${sessionScope.user_session_info.userInfo.mobile}</dd>
-                        <dd>上次登录： 2015年06月01日 11:52:09<span class="blueColor">(不是您登录的？请点击这里)</span></dd>
+                        <dd>上次登录：${sessionScope.user_session_info.updateTime}<span class="blueColor">(不是您登录的？请点击这里)</span></dd>
                     </dl>
                 </div>
             </div>
@@ -72,5 +79,9 @@ To change this template use File | Settings | File Templates.
         </div>
     </div>
 </div>
+<div class="bottom">
+    <jsp:include page="../footer.jsp"/>
+</div>
+<div class="clear"></div>
 </body>
 </html>

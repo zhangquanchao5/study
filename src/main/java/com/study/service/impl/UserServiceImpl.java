@@ -67,4 +67,7 @@ public class UserServiceImpl implements IUserService{
     }
 
 
+    public void updateUserTime(Integer userId){
+        userInfoMapper.updateUserTime(userId);
+    }
 }

@@ -20,7 +20,7 @@ public interface IUserService {
 
     void updateUserInfo(UserInfo userInfo);
 
-
+    public void updateUserTime(Integer userId);
 
 
 }
