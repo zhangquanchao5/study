@@ -9,5 +9,5 @@ public interface UserInfoFromMapper {
 
     int insertSelective(UserInfoFrom record);
 
-    UserInfoFrom findByOpenIdAndFrom(Map<String,String> map);
+    UserInfoFrom findByOpenIdAndFrom(UserInfoFrom userInfoFrom);
 }

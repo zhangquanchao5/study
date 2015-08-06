@@ -12,7 +12,10 @@
 <html lang="en">
 <head>
     <jsp:include page="common/commonCss.jsp"/>
+    <meta property="qc:admins" content="353226116365610556375734541" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login/login.css">
+    <%--<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc.js"></script>--%>
+
 </head>
 
 <body style="background:#f8f8f8">
@@ -56,7 +59,24 @@
                 <div style="width: 317px;height: 40px"><button id="loginUp" type="button" class="btn btn-success btn-block" >登录</button></div>
                 <div style="margin-left:25px; line-height:36px"><a href="${pageContext.request.contextPath}/user/forget" class="login_3">忘记密码？</a></div>
             </li>
+            <li style="margin-top:20px">
+                <div class="login_right_in1">快捷登录：</div>
+                <div class="login_right_in2">
+                    <%--<span id="qqLoginBtn"></span>--%>
+                    <%--<script type="text/javascript">--%>
+                        <%--QC.Login.insertButton({--%>
+                            <%--btnId : 'qqLoginBtn',--%>
+                            <%--size : 'B_M',--%>
 
+                            <%--clientId : '222222',/*,--%>
+                             <%--scope : '',*/--%>
+                            <%--'btnMode':'showUserAfterLogin'--%>
+                        <%--});--%>
+                    <%--</script>--%>
+                    <a href="#"  onclick="redirectQq()"><img height="35px" src="${pageContext.request.contextPath}/resources/images/qq_login.png"></a>
+                </div>
+
+            </li>
         </ul>
         </form>
     </div>
@@ -68,6 +88,11 @@
 <div class="clear"></div>
 <jsp:include page="common/commonJS.jsp"/>
 <script src="${pageContext.request.contextPath}/resources/js/user/login.js"></script>
-
+<script>
+    function redirectQq(){
+       // var redirect="http://cas.unixue.com/study/user/qqloginUp";
+        window.location.href="${pageContext.request.contextPath}/user/qqlogin";
+    }
+</script>
 </body>
 </html>

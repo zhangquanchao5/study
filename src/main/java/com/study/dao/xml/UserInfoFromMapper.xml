@@ -15,9 +15,9 @@
       #{ex1,jdbcType=VARCHAR}, #{ex2,jdbcType=VARCHAR})
   </insert>
 
-  <select id="findByOpenIdAndFrom" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="findByOpenIdAndFrom" resultMap="BaseResultMap" parameterType="com.study.model.UserInfoFrom" >
     select * from user_info_from
-    where open_id = #{openid} and  comefrom= #{from}
+    where open_id = #{openId} and  comefrom= #{from}
   </select>
 
   <insert id="insertSelective" parameterType="com.study.model.UserInfoFrom" >

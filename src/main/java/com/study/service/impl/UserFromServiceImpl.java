@@ -24,10 +24,13 @@ public class UserFromServiceImpl implements IUserFromService{
     }
 
     public UserInfoFrom findByOpenIdAndFrom(String openId,String from){
-        Map<String,String> map=new HashMap<String, String>();
-        map.put("openid",openId);
-        map.put("from",from);
+        UserInfoFrom userInfoFrom=new UserInfoFrom();
+        userInfoFrom.setFrom(Byte.parseByte(from));
+        userInfoFrom.setOpenId(openId);
+//        Map<String,String> map=new HashMap<String, String>();
+//        map.put("openid",openId);
+//        map.put("from",from);
 
-        return userInfoFromMapper.findByOpenIdAndFrom(map);
+        return userInfoFromMapper.findByOpenIdAndFrom(userInfoFrom);
     }
 }

@@ -123,6 +123,19 @@ public class ApiPubController extends BaseController {
                         mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
                     }
                 }
+            }else if(mobileRequest.getType()== EntityCode.MOBILE_YU_YUE){
+                String code=StringUtil.generateTextCode(0, 6, null);
+                //SEND MOBILE
+                SmsResponse smsResponse=SendSm.sendSms(mobileRequest.getUserPhone(), messageUtil.getMessage("MSG.SMSSEND.CONTENT").replace("#CODE", code));
+                if(smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                    mobileBean.setCode(ErrorCode.SUCCESS);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                    mobileBean.setVerifyCode(code);
+                    iRedisService.set(PrefixCode.API_MOBILE_UPDATE  + mobileRequest.getUserPhone(), code, 300);
+                }else{
+                    mobileBean.setCode(ErrorCode.ERROR);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
+                }
             }
         } catch (Exception e) {
             mobileBean.setCode(ErrorCode.ERROR);
