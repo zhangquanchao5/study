@@ -70,13 +70,13 @@ public class AccountSafety {
 
     public void updateForWithdraw(Account account, AccountBill bill, Long amount) throws Exception{
         synchronized (lockObj){
-            if((bill.getBalance()+amount) < 0){
+            if((bill.getBalance()-amount) < 0){
                 throw new BalanceNotEnoughException(messageUtil.getMessage("msg.balance.notEnough"));
             }
             StudyLogger.recBusinessLog("before[" + account.getUserId() + "] ---> accountBalance[" + account.getBalance() + "] | accountBillBalance[" + bill.getBalance() + "] | amount[" + amount + "]");
-            bill.setBalance(bill.getBalance() + amount);
+            bill.setBalance(bill.getBalance() - amount);
             accountBillMapper.updateByPrimaryKey(bill);
-            account.setBalance(account.getBalance() + amount);
+            account.setBalance(account.getBalance() - amount);
             accountMapper.updateByPrimaryKey(account);
             StudyLogger.recBusinessLog("after[" + account.getUserId() + "] ---> accountBalance[" + account.getBalance() + "] | accountBillBalance[" + bill.getBalance() + "] | amount[" + amount + "]");
         }

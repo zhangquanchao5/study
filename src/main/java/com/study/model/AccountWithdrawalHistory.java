@@ -19,6 +19,8 @@ public class AccountWithdrawalHistory {
 
     private Integer createUser;
 
+    private String tradeNo;
+
     public Integer getId() {
         return id;
     }
@@ -81,5 +83,13 @@ public class AccountWithdrawalHistory {
 
     public void setCreateUser(Integer createUser) {
         this.createUser = createUser;
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
     }
 }

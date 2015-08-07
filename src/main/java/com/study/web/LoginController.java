@@ -76,7 +76,7 @@ public class LoginController extends BaseController {
             iRedisService.setObject(PrefixCode.API_COOKIE_PRE + ticketKey, changeUser(userInfo), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
 
             Cookie cookie = new Cookie(PropertiesUtil.getString("sso.cookieName"), encodedticketKey);
-            StudyLogger.recSysLog("sso.cookieName:" + encodedticketKey);
+            StudyLogger.recSysLog("sso.cookieName[Header-Authorization]:" + encodedticketKey);
             cookie.setSecure(Boolean.parseBoolean(PropertiesUtil.getString("sso.secure")));// 为true时用于https
             cookie.setMaxAge(7 * 24 * 3600);
             cookie.setDomain(PropertiesUtil.getString("sso.domainName"));

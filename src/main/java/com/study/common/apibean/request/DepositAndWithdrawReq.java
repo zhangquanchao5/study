@@ -5,17 +5,10 @@ package com.study.common.apibean.request;
  */
 public class DepositAndWithdrawReq {
 
-    private Integer userId;
     private String accountBIllType;
     private Integer amount;
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+    private String tradeNO;
+    private String accountbook;
 
     public String getAccountBIllType() {
         return accountBIllType;
@@ -31,5 +24,21 @@ public class DepositAndWithdrawReq {
 
     public void setAmount(Integer amount) {
         this.amount = amount;
+    }
+
+    public String getTradeNO() {
+        return tradeNO;
+    }
+
+    public void setTradeNO(String tradeNO) {
+        this.tradeNO = tradeNO;
+    }
+
+    public String getAccountbook() {
+        return accountbook;
+    }
+
+    public void setAccountbook(String accountbook) {
+        this.accountbook = accountbook;
     }
 }

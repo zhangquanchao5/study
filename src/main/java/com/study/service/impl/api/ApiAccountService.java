@@ -1,5 +1,7 @@
 package com.study.service.impl.api;
 
+import com.study.code.EntityCode;
+import com.study.common.StudyLogger;
 import com.study.common.apibean.response.AccountBook;
 import com.study.common.apibean.response.AccountInfoResp;
 import com.study.common.apibean.request.DepositAndWithdrawReq;
@@ -25,18 +27,25 @@ public class ApiAccountService {
     private MessageUtil messageUtil;
     @Autowired
     private AccountSafety accountSafety;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private UserInfoMapper userInfoMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private AccountMapper accountMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private AccountBillMapper accountBillMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private AccountBillTypeMapper accountBillTypeMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private AccountDepositHistoryMapper accountDepositHistoryMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private AccountWithdrawalHistoryMapper accountWithdrawalHistoryMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private UserSecurityMapper userSecurityMapper;
 
@@ -92,17 +101,22 @@ public class ApiAccountService {
         accountDepositHistoryMapper.insert(depositHistory);
     }
 
-    public void saveForWithdraw(DepositAndWithdrawReq req) throws Exception {
-        if(null == req.getUserId() || null == req.getAccountBIllType() || null == req.getAmount() || req.getAmount() > 0){
+    public void saveForWithdraw(Integer userId, DepositAndWithdrawReq req) throws Exception {
+        if(null == userId || null == req.getAmount()){
             throw new ParameterNotEnoughException(messageUtil.getMessage("msg.parameter.notEnough"));
         }
 
-        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(req.getUserId());
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(userId);
         if(null == userInfo){
             throw new UserNotExitsException(messageUtil.getMessage("msg.user.notExits"));
         }
 
-        AccountBillType billType = accountBillTypeMapper.selectByCode(req.getAccountBIllType());
+        if (null == req.getAccountbook()) {
+            req.setAccountbook(EntityCode.BILLTYPE_CODE_CASH);
+            StudyLogger.recBusinessLog("bill type code use default:"+EntityCode.BILLTYPE_CODE_CASH);
+        }
+
+        AccountBillType billType = accountBillTypeMapper.selectByCode(req.getAccountbook());
         Account account = accountMapper.selectByUserId(userInfo.getId());
         if(null == billType || null == account){
             throw new ProcessFailureException(messageUtil.getMessage("msg.process.fail"));
@@ -127,6 +141,7 @@ public class ApiAccountService {
         withdrawalHistory.setAmount(req.getAmount().longValue());
         withdrawalHistory.setCreateTime(new Date());
         withdrawalHistory.setCreateUser(0);
+        withdrawalHistory.setTradeNo(req.getTradeNO());
         accountWithdrawalHistoryMapper.insert(withdrawalHistory);
     }
 

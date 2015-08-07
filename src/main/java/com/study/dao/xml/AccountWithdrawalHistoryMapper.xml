@@ -10,9 +10,10 @@
     <result column="amount" property="amount" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, userId, account_id, account_bill_id, bill_type_code, amount, create_time, create_user
+    id, userId, account_id, account_bill_id, bill_type_code, amount, create_time, create_user, trade_no
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -30,10 +31,10 @@
     </selectKey>
     insert into account_withdrawal_history (id, userId, account_id, 
       account_bill_id, bill_type_code, amount, 
-      create_time, create_user)
+      create_time, create_user, trade_no)
     values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, 
       #{accountBillId,jdbcType=INTEGER}, #{billTypeCode,jdbcType=VARCHAR}, #{amount,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER})
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{tradeNo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.AccountWithdrawalHistory" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
@@ -63,6 +64,9 @@
       <if test="createUser != null" >
         create_user,
       </if>
+      <if test="tradeNo != null" >
+        trade_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=INTEGER},
@@ -86,6 +90,9 @@
       </if>
       <if test="createUser != null" >
         #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="tradeNo != null" >
+        #{tradeNo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -113,6 +120,9 @@
       <if test="createUser != null" >
         create_user = #{createUser,jdbcType=INTEGER},
       </if>
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -125,6 +135,7 @@
       amount = #{amount,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=INTEGER}
+      trade_no = #{tradeNo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

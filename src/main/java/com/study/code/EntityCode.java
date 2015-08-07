@@ -25,4 +25,6 @@ public class EntityCode {
     public static final Integer EMAIL_PWD=1;
     public static final Integer EMAIL_ACTIVE=2;
 
+    public static final String BILLTYPE_CODE_CASH="cash";
+    public static final String BILLTYPE_CODE_GIFT="gift";
 }

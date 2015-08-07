@@ -103,7 +103,7 @@ public class ApiAccountController extends BaseController {
         return message;
     }
 
-    @RequestMapping(value = "/account/withdraw", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/accountpay", method = RequestMethod.POST)
     private
     @ResponseBody
     ApiResponseMessage withdraw(@RequestBody String strJson, HttpServletRequest request) {
@@ -112,7 +112,8 @@ public class ApiAccountController extends BaseController {
         DepositAndWithdrawReq depositAndWithdrawReq = JSON.parseObject(strJson, DepositAndWithdrawReq.class);
         try {
             if (isAuthToken(iRedisService, request)) {
-                apiAccountService.saveForWithdraw(depositAndWithdrawReq);
+                Integer userId = getAuthHeader(request).getUserId();
+                apiAccountService.saveForWithdraw(userId, depositAndWithdrawReq);
                 message.setCode(ErrorCode.PROCESS_SUCC);
                 message.setMsg(messageUtil.getMessage("msg.process.succ"));
             } else {
