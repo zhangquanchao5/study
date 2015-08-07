@@ -14,6 +14,7 @@ import com.study.service.impl.api.ApiAccountService;
 import com.study.code.ErrorCode;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.ApiResponseMessage;
+import org.apache.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,14 +36,25 @@ public class ApiAccountController extends BaseController {
     @RequestMapping(value = "/user/accountinfo", method = RequestMethod.POST)
     private
     @ResponseBody
-    ApiResponseMessage getAccountSnapshoot(@RequestBody AccountInfoReq req) {
+    ApiResponseMessage getAccountSnapshoot(@RequestBody AccountInfoReq req, HttpServletRequest request) {
         ApiResponseMessage message = new ApiResponseMessage();
         StudyLogger.recBusinessLog("userid:" + req.getId());
         try {
-            AccountInfoResp resp = apiAccountService.getAccountInfo(req.getId());
-            message.setCode(ErrorCode.PROCESS_SUCC);
-            message.setMsg(messageUtil.getMessage("msg.process.succ"));
-            message.setData(resp);
+            if (isAuthToken(iRedisService, request)) {
+                Integer userId = getAuthHeader(request).getUserId();
+                if (req.getId().intValue() == userId.intValue()) {
+                    AccountInfoResp resp = apiAccountService.getAccountInfo(req.getId());
+                    message.setCode(ErrorCode.PROCESS_SUCC);
+                    message.setMsg(messageUtil.getMessage("msg.process.succ"));
+                    message.setData(resp);
+                } else {
+                    message.setCode(ErrorCode.PROCESS_FAIL);
+                    message.setMsg(messageUtil.getMessage("msg.process.fail"));
+                }
+            } else {
+                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
         } catch (ParameterNotEnoughException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
@@ -82,6 +94,7 @@ public class ApiAccountController extends BaseController {
             } else {
                 message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+                StudyLogger.recBusinessLog(Level.ERROR, "request-userId is not equal to header-userId");
             }
         } catch (ParameterNotEnoughException e) {
             message.setCode(e.getCode());
