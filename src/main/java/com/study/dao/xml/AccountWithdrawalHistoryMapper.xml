@@ -3,7 +3,7 @@
 <mapper namespace="com.study.dao.AccountWithdrawalHistoryMapper" >
   <resultMap id="BaseResultMap" type="com.study.model.AccountWithdrawalHistory" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="account_id" property="accountId" jdbcType="INTEGER" />
     <result column="account_bill_id" property="accountBillId" jdbcType="INTEGER" />
     <result column="bill_type_code" property="billTypeCode" jdbcType="VARCHAR" />
@@ -13,7 +13,7 @@
     <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, userId, account_id, account_bill_id, bill_type_code, amount, create_time, create_user, trade_no
+    id, user_id, account_id, account_bill_id, bill_type_code, amount, create_time, create_user, trade_no
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -29,10 +29,10 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into account_withdrawal_history (id, userId, account_id, 
+    insert into account_withdrawal_history (id, user_id, account_id,
       account_bill_id, bill_type_code, amount, 
       create_time, create_user, trade_no)
-    values (#{id,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER},
       #{accountBillId,jdbcType=INTEGER}, #{billTypeCode,jdbcType=VARCHAR}, #{amount,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{tradeNo,jdbcType=VARCHAR})
   </insert>
@@ -43,8 +43,8 @@
     insert into account_withdrawal_history
     <trim prefix="(" suffix=")" suffixOverrides="," >
       id,
-      <if test="userid != null" >
-        userId,
+      <if test="userId != null" >
+        user_id,
       </if>
       <if test="accountId != null" >
         account_id,
@@ -70,8 +70,8 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=INTEGER},
-      <if test="userid != null" >
-        #{userid,jdbcType=INTEGER},
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
       </if>
       <if test="accountId != null" >
         #{accountId,jdbcType=INTEGER},
@@ -99,8 +99,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.study.model.AccountWithdrawalHistory" >
     update account_withdrawal_history
     <set >
-      <if test="userid != null" >
-        userId = #{userid,jdbcType=INTEGER},
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
       </if>
       <if test="accountId != null" >
         account_id = #{accountId,jdbcType=INTEGER},
@@ -128,7 +128,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.study.model.AccountWithdrawalHistory" >
     update account_withdrawal_history
-    set userId = #{userid,jdbcType=INTEGER},
+    set user_id = #{userId,jdbcType=INTEGER},
       account_id = #{accountId,jdbcType=INTEGER},
       account_bill_id = #{accountBillId,jdbcType=INTEGER},
       bill_type_code = #{billTypeCode,jdbcType=VARCHAR},

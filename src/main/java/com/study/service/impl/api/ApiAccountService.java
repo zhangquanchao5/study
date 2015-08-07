@@ -93,7 +93,7 @@ public class ApiAccountService {
         AccountDepositHistory depositHistory = new AccountDepositHistory();
         depositHistory.setAccountId(bill.getAccountId());
         depositHistory.setAccountBillId(bill.getId());
-        depositHistory.setUserid(userInfo.getId());
+        depositHistory.setUserId(userInfo.getId());
         depositHistory.setBillTypeCode(billType.getCode());
         depositHistory.setAmount(req.getAmount().longValue());
         depositHistory.setCreateTime(new Date());
@@ -136,7 +136,7 @@ public class ApiAccountService {
         AccountWithdrawalHistory withdrawalHistory = new AccountWithdrawalHistory();
         withdrawalHistory.setAccountId(bill.getAccountId());
         withdrawalHistory.setAccountBillId(bill.getId());
-        withdrawalHistory.setUserid(userInfo.getId());
+        withdrawalHistory.setUserId(userInfo.getId());
         withdrawalHistory.setBillTypeCode(billType.getCode());
         withdrawalHistory.setAmount(req.getAmount().longValue());
         withdrawalHistory.setCreateTime(new Date());
