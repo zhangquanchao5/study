@@ -119,7 +119,7 @@ public class BaseController {
             StudyLogger.recBusinessLog("auth:[" + auth + "] encode[" + encode + "]");
             String[] strs = encode.split(SplitCode.SPLIT_EQULE);
             authHeaderBean.setUserId(Integer.parseInt(strs[0]));
-            authHeaderBean.setEncode(encode.substring(strs[0].length()+1,encode.length()));
+            authHeaderBean.setEncode(encode);
 
 //        }
         return authHeaderBean;

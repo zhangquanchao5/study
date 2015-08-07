@@ -138,7 +138,8 @@ public class ApiUserServiceImpl implements IApIUserService {
 //            System.out.println("-------------"+userPageRequest.getIds());
 //        }
         UserPageResponse userPageResponse=new UserPageResponse();
-        userPageRequest.setStart((userPageRequest.getPage()-1)*userPageRequest.getSize());
+        userPageRequest.setStart(((userPageRequest.getPage()==null?1:userPageRequest.getPage()-1))*(userPageRequest.getSize()==null?20:userPageRequest.getSize()));
+        userPageRequest.setSize(userPageRequest.getSize()==null?20:userPageRequest.getSize());
 
         int count=userInfoMapper.findPageCount(userPageRequest);
         List<UserResponse> userResponseList=userInfoMapper.findPage(userPageRequest);

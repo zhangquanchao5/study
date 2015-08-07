@@ -199,7 +199,7 @@ public class ApiUserController extends BaseController {
                     userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
                 }else if(head[0].equals(PrefixCode.API_HEAD_WEB)){
                     userInfo=(UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE+encode);
-                }else if(head[0].equals(PrefixCode.API_TOKEN_MAP)){
+                }else{
                     userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
                 }
 
@@ -339,16 +339,16 @@ public class ApiUserController extends BaseController {
      * @param request
      * @param response
      */
-    @RequestMapping(value = "/search ")
-    public void search (HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/search" ,method = RequestMethod.GET)
+    public void search ( UserPageRequest userPageRequest,HttpServletRequest request, HttpServletResponse response) {
 
         CommonResponse commonResponse = new CommonResponse();
         try {
             if (isAuthToken(iRedisService, request)) {
                 String json = this.getParameter(request);
-                StudyLogger.recBusinessLog("/user/search:" + json);
+                StudyLogger.recBusinessLog("/user/search:" + JSON.toJSONString(userPageRequest));
 
-                UserPageRequest userPageRequest = JSON.parseObject(json, UserPageRequest.class);
+                //UserPageRequest userPageRequest = JSON.parseObject(json, UserPageRequest.class);
 
                 UserPageResponse userPageResponse = iApIUserService.findPageResponse(userPageRequest);
                 commonResponse.setCode(ErrorCode.SUCCESS);

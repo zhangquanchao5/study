@@ -5,11 +5,13 @@ package com.study.common.page;
  */
 public class UserPageRequest extends BasePageRequest {
 
-    private Integer []id;
+    private Integer id;
 
     private String username;
 
     private Integer start;
+
+    private Integer type;
 
     private String ids;
 
@@ -29,11 +31,19 @@ public class UserPageRequest extends BasePageRequest {
         this.username = username;
     }
 
-    public Integer[] getId() {
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Integer[] id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

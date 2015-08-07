@@ -243,11 +243,16 @@
     from user_info
     where  status=0
     <if test="id!= null and id!=''" >
-      and id in
-      <foreach item="item" collection="id" open="(" separator="," close=")">
-        #{item}
-      </foreach>
+      and id =#{id}
     </if>
+    <choose>
+       <when test="type!=null and type==1">
+         and source=0
+       </when>
+      <when test="type!=null and type==2">
+         and source=1
+      </when>
+    </choose>
     <if test="username!= null" >
       and (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
     </if>
@@ -259,11 +264,16 @@
     from user_info
     where  status=0
     <if test="id!= null and id!=''" >
-      and id in
-      <foreach item="item" collection="id" open="(" separator="," close=")">
-        #{item}
-      </foreach>
+      and id =#{id}
     </if>
+    <choose>
+      <when test="type!=null and type==1">
+        and source=0
+      </when>
+      <when test="type!=null and type==2">
+        and source=1
+      </when>
+    </choose>
     <if test="username!= null" >
       and  (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
     </if>
