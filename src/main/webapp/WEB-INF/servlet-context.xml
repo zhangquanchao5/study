@@ -89,6 +89,7 @@
     <mvc:view-controller path="/account/paypassword" view-name="account/paypassword"/>
     <mvc:view-controller path="/account/securityIssues" view-name="account/securityIssues"/>
     <mvc:view-controller path="/account/securityTouble" view-name="account/securityTouble"/>
+    <mvc:view-controller path="/user/introduce" view-name="user/introduce"/>
 
     <!-- Resolve logical view names to .jsp resources in the /WEB-INF/views directory -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

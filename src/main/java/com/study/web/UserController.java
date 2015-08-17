@@ -57,7 +57,6 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/registerUp", method = RequestMethod.POST)
     public void registerUp(UserInfo userInfoModel, @RequestParam String valCode, HttpServletResponse response) {
-        System.out.println("sysour:" + valCode);
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
             UserInfo userInfo = iUserService.findByUserName(userInfoModel.getUserName());
@@ -153,7 +152,6 @@ public class UserController extends BaseController {
     public String qqlogin(HttpServletRequest request, HttpServletResponse response) {
         try {
             String url = PropertiesUtil.getString("authorizeURL") + "?response_type=code&client_id=101240680&redirect_uri=" + PropertiesUtil.getString("redirect_URI") + "&scope=get_user_info";
-            ////"https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101240680&redirect_uri="+redirect+"&scope=get_user_info"
             response.sendRedirect(url);
         } catch (Exception e) {
             printLogger(e);

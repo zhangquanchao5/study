@@ -17,6 +17,7 @@ import com.study.common.apibean.response.ValidateResponse;
 import com.study.common.oss.DESUtils;
 import com.study.common.page.UserPageRequest;
 import com.study.common.page.UserPageResponse;
+import com.study.common.session.LoginUser;
 import com.study.common.util.MessageUtil;
 import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -653,6 +655,12 @@ public class ApiUserController extends BaseController {
                 iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, authHeaderBean.getUserId().toString());
             }else  if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
                 iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE+authHeaderBean.getEncode());
+                Cookie cookied = new Cookie(PropertiesUtil.getString("sso.cookieName"), authHeaderBean.getEncode());
+                cookied.setSecure(Boolean.parseBoolean(PropertiesUtil.getString("sso.secure")));// 为true时用于https
+                cookied.setMaxAge(0);
+                cookied.setDomain(PropertiesUtil.getString("sso.domainName"));
+                cookied.setPath("/");
+                response.addCookie(cookied);
             }else{
                 iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, authHeaderBean.getUserId().toString());
             }

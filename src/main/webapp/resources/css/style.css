@@ -3656,3 +3656,55 @@ select.r_c_inputWidth01,select.r_c_inputWidth02{
 .teacher_1 ul li a{
     margin-right:20px
 }
+
+.service_phone {
+    font-size: 14px;
+}
+
+.messages2{
+    width:800px;
+    float: left;
+    border: solid 1px #dededf;
+    padding: 0 16px;
+    height:700px
+}
+.top_tanchu{
+    width:780px;
+    margin:0 auto;
+    height:60px;
+    border-bottom:1px solid #b5b4b4;
+    line-height:60px;
+    font-size:18px
+}
+.top_center{
+    width:750px;
+    margin:20px auto;
+    height:auto;
+    overflow:hidden;
+    line-height:30px;
+    color:#777575;
+}
+.messages3{
+    width:800px;
+    float: left;
+    border: solid 1px #dededf;
+    padding: 0 16px;
+    height:auto
+}
+.top_center1{
+    width:750px;
+    margin:20px auto;
+    height:auto;
+    overflow:hidden;
+    line-height:30px;
+    color:#777575;
+}
+.top_center1 p{
+    margin-top:10px
+}
+.top_button{
+    margin:100px 0 0 300px
+}
+.top_button1{
+    margin:30px 0 30px 300px
+}

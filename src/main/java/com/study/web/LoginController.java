@@ -111,12 +111,22 @@ public class LoginController extends BaseController {
             if (cookies != null)
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals(PropertiesUtil.getString("sso.cookieName"))) {
-                        String decodedTicket = DESUtils.decrypt(cookie.getValue(), PropertiesUtil.getString("sso.secretKey"));
+                        String decodedTicket =StringUtil.getFromBASE64(cookie.getValue());
                         iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + decodedTicket);
+                        LoginUser.getCurrentSession().invalidate();
+                        Cookie cookied = new Cookie(PropertiesUtil.getString("sso.cookieName"), cookie.getValue());
+                        StudyLogger.recSysLog("sso.cookieName[Header-Authorization]:" + cookie.getValue());
+                        cookied.setSecure(Boolean.parseBoolean(PropertiesUtil.getString("sso.secure")));// 为true时用于https
+                        cookied.setMaxAge(0);
+                        cookied.setDomain(PropertiesUtil.getString("sso.domainName"));
+                        cookied.setPath("/");
+                        response.addCookie(cookied);
+
+                       // LoginUser.getCurrentSession().invalidate();
                         break;
                     }
                 }
-            LoginUser.getCurrentSession().invalidate();
+
         }catch (Exception e){
             printLogger(e);
         }

@@ -41,7 +41,7 @@
         <ul>
             <li>
                 <div class="login_right_in1">用 户 名：</div>
-                <div class="login_right_in2"><input type="text" name="userName" id="userName" placeholder="输入用户名" data-rule="required;length[3~15]" data-tip="用户名3到15位" data-msg-length="用户名3到15位"></div>
+                <div class="login_right_in2"><input type="text" name="userName" id="userName" placeholder="输入用户名" data-rule="required;length[3~15];remote[${pageContext.request.contextPath}/user/registerValidate]" data-tip="用户名3到15位" data-msg-length="用户名3到15位"></div>
     </li>
             <li style="margin-top:10px">
                 <div class="login_right_in1">用户类型：</div>
@@ -72,7 +72,7 @@
             </li>
             <li style="margin-top:10px">
                 <div><input name="agree" type="checkbox" value="" data-rule="checked" style="margin-left:80px"  data-msg-checked="请同意服务协议"></div>
-                <div style="margin-left:5px; line-height:36px">我已阅读并同意遵守 《有你学用户服务协议》</div>
+                <div style="margin-left:5px; line-height:36px"><a href="${pageContext.request.contextPath}/user/introduce" target="_blank">我已阅读并同意遵守 《有你学用户服务协议》</div>
             </li>
             <li style="margin-top:10px;margin-left:80px">
                 <div>
