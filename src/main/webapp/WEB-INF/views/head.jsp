@@ -16,7 +16,7 @@
             <li><a href="http://www.unixue.com/#/myyouni.html">我的有你学</a></li>
             <li><a href="#">客户服务</a></li>
             <li><a href="#">我的收藏</a></li>
-            <li><a href="/manage">机构入口</a></li>
+            <li><a href="http://www.unixue.com/manage">机构入口</a></li>
         </c:if>
 
 
