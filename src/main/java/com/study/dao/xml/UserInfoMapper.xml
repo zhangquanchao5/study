@@ -178,7 +178,7 @@
       <if test="userMail != null" >
         user_mail = #{userMail,jdbcType=VARCHAR},
       </if>
-      <if test="icon != null" >
+      <if test="icon != null and icon!=''" >
         icon = #{icon,jdbcType=VARCHAR},
       </if>
       <if test="source != null" >

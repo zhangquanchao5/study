@@ -11,7 +11,9 @@ $(document).ready(function() {
             cache:false,
             success : function(responseJson) {
                 if(responseJson.success){
-                        if(responseJson.code!=null&&responseJson.code!=""){
+                        if(responseJson.code!=null&&responseJson.code!=""&&responseJson.code==200){
+                            window.location.href =responseJson.data;
+                        }else if(responseJson.code!=null&&responseJson.code!=""){
                             window.location.href =responseJson.code;
                         }else{
                             window.location.href =$contentPath+"/account/accountManagement";

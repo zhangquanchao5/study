@@ -90,10 +90,14 @@ public class LoginController extends BaseController {
             LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
 
             iUserService.updateUserTime(userInfo.getId());
+            if(userInfo.getSource()==1){
+                message.setCode(ErrorCode.SUCCESS);
+                message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT"));
+            }
             String gotoURL = request.getParameter("gotoURL");
-            if (gotoURL != null)
+            if (!StringUtil.isEmpty(gotoURL))
             {
-               message.setCode(gotoURL);
+               message.setCode(StringUtil.getFromBASE64(gotoURL));
             }
         } catch (Exception e) {
             message.setSuccess(false);
