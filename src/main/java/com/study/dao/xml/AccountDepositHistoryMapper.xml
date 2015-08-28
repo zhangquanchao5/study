@@ -40,7 +40,7 @@
       create_time, create_user, trade_no)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER},
       #{accountBillId,jdbcType=INTEGER}, #{billTypeCode,jdbcType=VARCHAR}, #{amount,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}), #{tradeNo,jdbcType=VARCHAR})
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{tradeNo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.AccountDepositHistory" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >

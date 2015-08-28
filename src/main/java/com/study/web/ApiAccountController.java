@@ -5,10 +5,7 @@ import com.study.common.apibean.request.AccountInfoReq;
 import com.study.common.apibean.response.AccountInfoResp;
 import com.study.common.apibean.request.DepositAndWithdrawReq;
 import com.study.common.apibean.request.PayPasswordReq;
-import com.study.exception.BalanceNotEnoughException;
-import com.study.exception.ParameterNotEnoughException;
-import com.study.exception.ProcessFailureException;
-import com.study.exception.UserNotExitsException;
+import com.study.exception.*;
 import com.study.service.IRedisService;
 import com.study.service.impl.api.ApiAccountService;
 import com.study.code.ErrorCode;
@@ -108,6 +105,10 @@ public class ApiAccountController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
+        } catch (RepeatDepositException e){
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
         } catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));
@@ -146,6 +147,10 @@ public class ApiAccountController extends BaseController {
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
         } catch (ProcessFailureException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (RepeatWithdrawException e){
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);

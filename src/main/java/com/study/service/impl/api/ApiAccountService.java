@@ -5,10 +5,7 @@ import com.study.common.StudyLogger;
 import com.study.common.apibean.response.AccountBook;
 import com.study.common.apibean.response.AccountInfoResp;
 import com.study.common.apibean.request.DepositAndWithdrawReq;
-import com.study.exception.ParameterNotEnoughException;
-import com.study.exception.ProcessFailureException;
-import com.study.exception.RechargeException;
-import com.study.exception.UserNotExitsException;
+import com.study.exception.*;
 import com.study.common.StringUtil;
 import com.study.common.util.MessageUtil;
 import com.study.dao.*;
@@ -93,7 +90,7 @@ public class ApiAccountService {
         //检查重复充值
         List<AccountDepositHistory> olds = accountDepositHistoryMapper.findByTradeNo(req.getTradeNO());
         if(null != olds && olds.size() > 0){
-            throw new RechargeException(messageUtil.getMessage("msg.balance.recharge"));
+            throw new RepeatDepositException(messageUtil.getMessage("msg.balance.repeatDeposit"));
         }
 
         //充值
@@ -140,10 +137,10 @@ public class ApiAccountService {
             throw new ProcessFailureException(messageUtil.getMessage("msg.process.fail"));
         }
 
-        //检查重复充值
+        //检查重复扣款
         List<AccountWithdrawalHistory> olds = accountWithdrawalHistoryMapper.findByTradeNo(req.getTradeNO());
         if(null != olds && olds.size() > 0){
-            throw new RechargeException(messageUtil.getMessage("msg.balance.recharge"));
+            throw new RepeatWithdrawException(messageUtil.getMessage("msg.balance.repeatWithdraw"));
         }
 
         //扣款

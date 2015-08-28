@@ -58,7 +58,12 @@ public class ErrorCode {
     /**
      * 重复充值
      */
-    public static final String RECHARGE_ERROR="3003";
+    public static final String REPEAT_DEPOSIT_ERROR ="3003";
+
+    /**
+     * 重复扣款
+     */
+    public static final String REPEAT_WITHDRAW_ERROR="3004";
 
     /**
      * token no validate
