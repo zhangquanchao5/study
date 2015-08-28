@@ -21,6 +21,12 @@
     from account_withdrawal_history
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="findByTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from account_withdrawal_history
+    where trade_no = #{_parameter,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from account_withdrawal_history
     where id = #{id,jdbcType=INTEGER}
@@ -65,7 +71,7 @@
         create_user,
       </if>
       <if test="tradeNo != null" >
-        trade_no,
+        trade_no
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -92,7 +98,7 @@
         #{createUser,jdbcType=INTEGER},
       </if>
       <if test="tradeNo != null" >
-        #{tradeNo,jdbcType=VARCHAR},
+        #{tradeNo,jdbcType=VARCHAR}
       </if>
     </trim>
   </insert>
@@ -121,7 +127,7 @@
         create_user = #{createUser,jdbcType=INTEGER},
       </if>
       <if test="tradeNo != null" >
-        trade_no = #{tradeNo,jdbcType=VARCHAR},
+        trade_no = #{tradeNo,jdbcType=VARCHAR}
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -134,7 +140,7 @@
       bill_type_code = #{billTypeCode,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=INTEGER}
+      create_user = #{createUser,jdbcType=INTEGER},
       trade_no = #{tradeNo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>

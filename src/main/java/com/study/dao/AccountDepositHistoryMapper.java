@@ -2,6 +2,8 @@ package com.study.dao;
 
 import com.study.model.AccountDepositHistory;
 
+import java.util.List;
+
 public interface AccountDepositHistoryMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,6 @@ public interface AccountDepositHistoryMapper {
     int updateByPrimaryKeySelective(AccountDepositHistory record);
 
     int updateByPrimaryKey(AccountDepositHistory record);
+
+    List<AccountDepositHistory> findByTradeNo(String tradeNo);
 }

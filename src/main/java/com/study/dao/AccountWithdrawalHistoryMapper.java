@@ -2,6 +2,8 @@ package com.study.dao;
 
 import com.study.model.AccountWithdrawalHistory;
 
+import java.util.List;
+
 public interface AccountWithdrawalHistoryMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,6 @@ public interface AccountWithdrawalHistoryMapper {
     int updateByPrimaryKeySelective(AccountWithdrawalHistory record);
 
     int updateByPrimaryKey(AccountWithdrawalHistory record);
+
+    List<AccountWithdrawalHistory> findByTradeNo(String tradeNo);
 }

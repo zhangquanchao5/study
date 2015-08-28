@@ -56,6 +56,11 @@ public class ErrorCode {
     public static final String USER_TRADE_ERROR="3002";
 
     /**
+     * 重复充值
+     */
+    public static final String RECHARGE_ERROR="3003";
+
+    /**
      * token no validate
      */
     public static final String USER_TOKEN_NO_VAL="9999";

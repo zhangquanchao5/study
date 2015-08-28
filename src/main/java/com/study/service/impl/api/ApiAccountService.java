@@ -7,6 +7,7 @@ import com.study.common.apibean.response.AccountInfoResp;
 import com.study.common.apibean.request.DepositAndWithdrawReq;
 import com.study.exception.ParameterNotEnoughException;
 import com.study.exception.ProcessFailureException;
+import com.study.exception.RechargeException;
 import com.study.exception.UserNotExitsException;
 import com.study.common.StringUtil;
 import com.study.common.util.MessageUtil;
@@ -75,7 +76,7 @@ public class ApiAccountService {
     }
 
     public void saveForDeposit(Integer userId, DepositAndWithdrawReq req) throws Exception{
-        if(null == userId || null == req.getAccountBIllType() || null == req.getAmount() || req.getAmount() <= 0){
+        if(null == userId || null == req.getAccountBIllType()  || null == req.getTradeNO()|| null == req.getAmount() || req.getAmount() <= 0){
             throw new ParameterNotEnoughException(messageUtil.getMessage("msg.parameter.notEnough"));
         }
 
@@ -89,7 +90,15 @@ public class ApiAccountService {
             throw new ProcessFailureException(messageUtil.getMessage("msg.process.fail"));
         }
 
+        //检查重复充值
+        List<AccountDepositHistory> olds = accountDepositHistoryMapper.findByTradeNo(req.getTradeNO());
+        if(null != olds && olds.size() > 0){
+            throw new RechargeException(messageUtil.getMessage("msg.balance.recharge"));
+        }
+
+        //充值
         AccountBill bill = accountSafety.updateForDeposit(userInfo.getId(), billType, req.getAmount().longValue());
+        //充值历史
         AccountDepositHistory depositHistory = new AccountDepositHistory();
         depositHistory.setAccountId(bill.getAccountId());
         depositHistory.setAccountBillId(bill.getId());
@@ -98,6 +107,7 @@ public class ApiAccountService {
         depositHistory.setAmount(req.getAmount().longValue());
         depositHistory.setCreateTime(new Date());
         depositHistory.setCreateUser(0);
+        depositHistory.setTradeNo(req.getTradeNO());
         accountDepositHistoryMapper.insert(depositHistory);
     }
 
@@ -130,6 +140,13 @@ public class ApiAccountService {
             throw new ProcessFailureException(messageUtil.getMessage("msg.process.fail"));
         }
 
+        //检查重复充值
+        List<AccountWithdrawalHistory> olds = accountWithdrawalHistoryMapper.findByTradeNo(req.getTradeNO());
+        if(null != olds && olds.size() > 0){
+            throw new RechargeException(messageUtil.getMessage("msg.balance.recharge"));
+        }
+
+        //扣款
         accountSafety.updateForWithdraw(account, bill, req.getAmount().longValue());
 
         //扣款历史
