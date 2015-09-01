@@ -22,7 +22,7 @@ public class UserInsetTest  extends BaseTest {
     private IUserService iUserService;
 
     @Test
-    @Rollback(true)
+    @Rollback(false)
     public void testInsert(){
         Map<String,String> orgs=new HashMap<String,String>();
        // orgs.put("jingwuyongchun","江南精武咏春拳馆");
@@ -36,17 +36,17 @@ public class UserInsetTest  extends BaseTest {
 //        orgs.put("yanguangjiaoyu","西安阳光教育集团");
 //        orgs.put("yingtesi","英特思");
       //  orgs.put("jingwuyongchun","江南精武咏春拳馆");
-         orgs.put("西安爱心教育","西安爱心教育");
-        orgs.put("哈利博特名师","哈利博特名师");
-        orgs.put("西安博珈梵瑜伽","西安博珈梵瑜伽");
-        orgs.put("小马过河国际教育","小马过河国际教育");
-        orgs.put("西安新航道雅思","西安新航道雅思");
-        orgs.put("西安思润培训中心","西安思润培训中心");
-        orgs.put("江南精武咏春拳馆","江南精武咏春拳馆");
-        orgs.put("龙韵文化艺术","龙韵文化艺术");
-        orgs.put("无锡沃尔得语言培训","无锡沃尔得语言培训");
-        orgs.put("易鸿运教育","易鸿运教育");
-        orgs.put("卓悦学科英语","卓悦学科英语");
+         orgs.put("新巴别塔","xinbabieta");
+        orgs.put("麒麟艺术","qilinyishu");
+        orgs.put("包头英孚","baotouyingfu");
+        orgs.put("伊韵东方舞","yiyunwudao");
+//        orgs.put("西安新航道雅思","西安新航道雅思");
+//        orgs.put("西安思润培训中心","西安思润培训中心");
+//        orgs.put("江南精武咏春拳馆","江南精武咏春拳馆");
+//        orgs.put("龙韵文化艺术","龙韵文化艺术");
+//        orgs.put("无锡沃尔得语言培训","无锡沃尔得语言培训");
+//        orgs.put("易鸿运教育","易鸿运教育");
+//        orgs.put("卓悦学科英语","卓悦学科英语");
         for (Map.Entry<String, String> entry : orgs.entrySet()) {
             System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
             if(iUserService.findByUserName(entry.getKey())==null){

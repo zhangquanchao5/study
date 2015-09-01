@@ -13,4 +13,6 @@ public class SplitCode {
 
     public static final String SPLIT_ZHUANYI="\\|";
 
+    public static final String SPLIT_DIAN="\\.";
+
 }

@@ -101,7 +101,7 @@ public class ApiAccountController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        } catch (ProcessFailureException e) {
+        }catch (ProcessFailureException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
@@ -138,7 +138,7 @@ public class ApiAccountController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        } catch (UserNotExitsException e) {
+        }catch (UserNotExitsException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);

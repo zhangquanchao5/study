@@ -169,7 +169,9 @@ public class ApiPubController extends BaseController {
             }else{
                 //判断是否用户名注册
                 UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone());
-                if(isExist!=null){
+                //ADD 手机号
+                UserInfo userMobile = iApIUserService.findByMobile(mobileRequest.getUserPhone());
+                if(isExist!=null||userMobile!=null){
                     registerMobileResponse.setCode(ErrorCode.USER_EXITS);
                     registerMobileResponse.setMsg(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                 }else{
