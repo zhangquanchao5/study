@@ -42,67 +42,72 @@ public class CSVController {
         //机构名称,登录名,手机号---------导入的都是机构，手机号不做必要校验
         try {
             if (!file.isEmpty()) {
-                if (file.getOriginalFilename().split(SplitCode.SPLIT_DIAN)[file.getOriginalFilename().split(SplitCode.SPLIT_DIAN).length - 1].equalsIgnoreCase("csv")) {
-                    List<String> list = CSVUtils.importCsv(file.getInputStream());
-                    List<String> ruleErrorList = new ArrayList<String>();
-                    List<String> successList = new ArrayList<String>();
-                    List<String> existsList = new ArrayList<String>();
-                    List<String> dbErrorList = new ArrayList<String>();
-                    if (list != null && list.size() > 0) {
-                        uiModel.addAttribute("count", list.size());
-                        for (String org : list) {
-                            String[] info = org.split(SplitCode.SPLIT_DOUHAO);
-                            if (info.length == 3 || info.length == 2) {
-                                UserInfo userInfo = null;
-                                if (!StringUtil.isEmpty(info[1].trim())) {
-                                    userInfo = iUserService.findByUserName(info[1].trim());
-                                }
-                                if (userInfo != null) {
-                                    existsList.add(org + "[登录名存在]");
-                                } else {
-                                    if (info.length == 3 && !StringUtil.isEmpty(info[2].trim())) {
-                                        userInfo = iUserService.findByMobile(info[2].trim());
-                                    }
-                                    if (userInfo != null) {
-                                        existsList.add(org + "[手机号存在]");
-                                    } else {
-                                        //添加到数据库
-                                        userInfo = new UserInfo();
-                                        userInfo.setUserName(info[1].trim());
-                                        userInfo.setName(info[0].trim());
-                                        if (info.length == 3 && !StringUtil.isEmpty(info[2].trim())) {
-                                            userInfo.setMobile(info[2].trim());
-                                        }
-                                        userInfo.setSource((byte) 1);
-                                        userInfo.setPassword(StringUtil.getMD5Str("000000"));
-                                        userInfo.setCreateTime(new Date());
-                                        userInfo.setStatus(EntityCode.USER_VALIDATE);
+                 if(!CSVUtils.codeString(file.getInputStream()).equalsIgnoreCase("utf-8")){
+                     uiModel.addAttribute("error", "文件不是UTF8编码");
+                 }else{
+                     if (file.getOriginalFilename().split(SplitCode.SPLIT_DIAN)[file.getOriginalFilename().split(SplitCode.SPLIT_DIAN).length - 1].equalsIgnoreCase("csv")) {
+                         List<String> list = CSVUtils.importCsv(file.getInputStream());
+                         List<String> ruleErrorList = new ArrayList<String>();
+                         List<String> successList = new ArrayList<String>();
+                         List<String> existsList = new ArrayList<String>();
+                         List<String> dbErrorList = new ArrayList<String>();
+                         if (list != null && list.size() > 0) {
+                             uiModel.addAttribute("count", list.size());
+                             for (String org : list) {
+                                 String[] info = org.split(SplitCode.SPLIT_DOUHAO);
+                                 if (info.length == 3 || info.length == 2) {
+                                     UserInfo userInfo = null;
+                                     if (!StringUtil.isEmpty(info[1].trim())) {
+                                         userInfo = iUserService.findByUserName(info[1].trim());
+                                     }
+                                     if (userInfo != null) {
+                                         existsList.add(org + "[登录名存在]");
+                                     } else {
+                                         if (info.length == 3 && !StringUtil.isEmpty(info[2].trim())) {
+                                             userInfo = iUserService.findByMobile(info[2].trim());
+                                         }
+                                         if (userInfo != null) {
+                                             existsList.add(org + "[手机号存在]");
+                                         } else {
+                                             //添加到数据库
+                                             userInfo = new UserInfo();
+                                             userInfo.setUserName(info[1].trim());
+                                             userInfo.setName(info[0].trim());
+                                             if (info.length == 3 && !StringUtil.isEmpty(info[2].trim())) {
+                                                 userInfo.setMobile(info[2].trim());
+                                             }
+                                             userInfo.setSource((byte) 1);
+                                             userInfo.setPassword(StringUtil.getMD5Str("000000"));
+                                             userInfo.setCreateTime(new Date());
+                                             userInfo.setStatus(EntityCode.USER_VALIDATE);
 
-                                        UserInfoFrom userInfoFrom = new UserInfoFrom();
-                                        userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
-                                        try {
-                                            iUserService.saveUserInfo(userInfo, userInfoFrom);
-                                            successList.add(org);
-                                        } catch (Exception e) {
-                                            dbErrorList.add(org);
-                                        }
+                                             UserInfoFrom userInfoFrom = new UserInfoFrom();
+                                             userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
+                                             try {
+                                                 iUserService.saveUserInfo(userInfo, userInfoFrom);
+                                                 successList.add(org);
+                                             } catch (Exception e) {
+                                                 dbErrorList.add(org);
+                                             }
 
-                                    }
-                                }
+                                         }
+                                     }
 
-                            } else {
-                                ruleErrorList.add(org);
-                            }
-                        }
-                        uiModel.addAttribute("error", "文件正常");
-                        uiModel.addAttribute("dbErrorList", dbErrorList);
-                        uiModel.addAttribute("existsList", existsList);
-                        uiModel.addAttribute("ruleErrorList", ruleErrorList);
-                        uiModel.addAttribute("successList", successList);
-                    }
-                }  else {
-                    uiModel.addAttribute("error", "文件类型错误");
-                }
+                                 } else {
+                                     ruleErrorList.add(org);
+                                 }
+                             }
+                             uiModel.addAttribute("error", "文件正常");
+                             uiModel.addAttribute("dbErrorList", dbErrorList);
+                             uiModel.addAttribute("existsList", existsList);
+                             uiModel.addAttribute("ruleErrorList", ruleErrorList);
+                             uiModel.addAttribute("successList", successList);
+                         }
+                     }  else {
+                         uiModel.addAttribute("error", "文件类型错误");
+                     }
+                 }
+
             } else {
                 uiModel.addAttribute("error", "文件内容为空");
             }

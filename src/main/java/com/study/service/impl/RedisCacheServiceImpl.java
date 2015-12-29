@@ -33,16 +33,17 @@ public class RedisCacheServiceImpl implements IRedisService {
               // System.out.println("batch delete:"+key[k]);
                k++;
             }
-            if(key.length>0){
-                long count= jedis.del(key);
-                System.out.println("batch delete:"+count+"- k="+k);
-            }
+//            if(key.length>0){
+//                long count= jedis.del(key);
+//                System.out.println("batch delete:"+count+"- k="+k);
+//            }
 
             System.out.println("batch delete k="+k);
 
         }catch (Exception e) {
             jedisPool.returnBrokenResource(jedis);
             resutl=false;
+            e.printStackTrace();
         }finally{
             jedisPool.returnResource(jedis);
         }

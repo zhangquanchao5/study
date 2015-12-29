@@ -1,5 +1,6 @@
 package com.study.common.sms;
 
+import com.alibaba.fastjson.JSON;
 import com.study.common.util.PropertiesUtil;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -58,6 +59,10 @@ public class SendSm {
         }
 
         return smsResponse;
+    }
+
+    public static void main(String []args){
+        System.out.println(JSON.toJSONString(sendSms("15201175465","您的校验码是：【123】。请不要把校验码泄露给其他人。如非本人操作，可不用理会！")));
     }
 
 

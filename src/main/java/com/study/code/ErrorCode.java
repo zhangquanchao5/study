@@ -66,6 +66,16 @@ public class ErrorCode {
     public static final String REPEAT_WITHDRAW_ERROR="3004";
 
     /**
+     * 红包充值验证码不正确
+     */
+    public static final String RED_RECHARGE_CODE_ERROR="3005";
+
+    /**
+     * 新用户发送短信密码失败
+     */
+    public static final String RED_RECHARGE_SEND_ERROR="3006";
+
+    /**
      * token no validate
      */
     public static final String USER_TOKEN_NO_VAL="9999";

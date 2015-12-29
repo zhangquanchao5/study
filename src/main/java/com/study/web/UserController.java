@@ -2,10 +2,6 @@ package com.study.web;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.qq.connect.QQConnectException;
-import com.qq.connect.api.OpenID;
-import com.qq.connect.javabeans.AccessToken;
-import com.qq.connect.oauth.Oauth;
 import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
@@ -35,11 +31,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by huichao on 2015/7/13.
@@ -120,6 +114,7 @@ public class UserController extends BaseController {
         Map message = new HashMap();
         try {
             if (!StringUtil.isEmpty(userInfoModel.getUserName())) {
+
                 if (iUserService.findByUserName(userInfoModel.getUserName()) != null || iUserService.findByMobile(userInfoModel.getUserName()) != null || iUserService.findByEMail(userInfoModel.getUserName()) != null) {
                     message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
                     message.put("success", false);

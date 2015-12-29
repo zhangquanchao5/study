@@ -17,11 +17,9 @@ import com.study.common.apibean.response.ValidateResponse;
 import com.study.common.oss.DESUtils;
 import com.study.common.page.UserPageRequest;
 import com.study.common.page.UserPageResponse;
-import com.study.common.session.LoginUser;
 import com.study.common.util.MessageUtil;
 import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
-import com.study.model.Account;
 import com.study.model.UserInfo;
 import com.study.service.IApIUserService;
 import com.study.service.IRedisService;
@@ -29,15 +27,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
 
 /**
  * Created by huichao on 2015/7/7.
@@ -675,5 +668,7 @@ public class ApiUserController extends BaseController {
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
+
+
 
 }

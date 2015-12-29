@@ -1,11 +1,16 @@
 package com.study.web;
 
 import com.alibaba.fastjson.JSON;
-import com.study.common.apibean.request.AccountInfoReq;
+import com.study.code.SplitCode;
+import com.study.common.StringUtil;
+import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.AccountInfoResp;
-import com.study.common.apibean.request.DepositAndWithdrawReq;
-import com.study.common.apibean.request.PayPasswordReq;
+import com.study.common.apibean.response.CommonResponse;
+import com.study.common.util.DESUtils;
+import com.study.common.util.EncryptUtil;
+import com.study.common.util.ServletResponseHelper;
 import com.study.exception.*;
+import com.study.model.UserInfo;
 import com.study.service.IRedisService;
 import com.study.service.impl.api.ApiAccountService;
 import com.study.code.ErrorCode;
@@ -17,6 +22,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 /**
  * Created by Star on 2015/7/9.
@@ -101,11 +108,11 @@ public class ApiAccountController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        }catch (ProcessFailureException e) {
+        } catch (ProcessFailureException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        } catch (RepeatDepositException e){
+        } catch (RepeatDepositException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
@@ -138,7 +145,7 @@ public class ApiAccountController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        }catch (UserNotExitsException e) {
+        } catch (UserNotExitsException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
@@ -150,7 +157,7 @@ public class ApiAccountController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        } catch (RepeatWithdrawException e){
+        } catch (RepeatWithdrawException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
@@ -188,5 +195,83 @@ public class ApiAccountController extends BaseController {
             StudyLogger.recSysLog(e);
         }
         return message;
+    }
+
+    /**
+     * 给分享着用户充值
+     */
+    @RequestMapping(value = "/account/recharge")
+    public void recharge(HttpServletRequest request, HttpServletResponse response) {
+
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+
+            String json = this.getParameter(request);
+            StudyLogger.recBusinessLog("/account/recharge:" + json);
+
+            RechargeReq rechargeReq = JSON.parseObject(json, RechargeReq.class);
+            commonResponse.setCode(ErrorCode.SUCCESS);
+
+            commonResponse=apiAccountService.saveRedRecharge(rechargeReq,commonResponse) ;
+            if(commonResponse.getCode().equals(ErrorCode.SUCCESS)){
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+            }
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+    /**
+     * 给组织机构用户充值
+     */
+    @RequestMapping(value = "/account/orgRecharge")
+    public void orgRecharge(HttpServletRequest request, HttpServletResponse response) {
+
+        CommonResponse message = new CommonResponse();
+        try {
+            String json = this.getParameter(request);
+            StudyLogger.recBusinessLog("/account/orgRecharge:" + json);
+            OrgRechargeReq orgRechargeReq = JSON.parseObject(json, OrgRechargeReq.class);
+            String orgId= DESUtils.decrypt(orgRechargeReq.getOrgId(), DESUtils.secretKey);
+            String money =DESUtils.decrypt(orgRechargeReq.getMoney().toString(), DESUtils.secretKey);
+
+            if(!EncryptUtil.encrypt(orgId +""+money, EncryptUtil.MD5).equals(orgRechargeReq.getAuthKey())){
+                message.setCode(ErrorCode.RED_RECHARGE_CODE_ERROR);
+            }else{
+                DepositAndWithdrawReq depositAndWithdrawReq = new DepositAndWithdrawReq();
+                depositAndWithdrawReq.setAccountBIllType(orgRechargeReq.getAccountBIllType());
+                depositAndWithdrawReq.setAmount(Integer.parseInt(money));
+                depositAndWithdrawReq.setTradeNO(UUID.randomUUID().toString());
+
+                apiAccountService.saveForDeposit(Integer.parseInt(orgId), depositAndWithdrawReq);
+                message.setCode(ErrorCode.PROCESS_SUCC);
+                message.setMsg(messageUtil.getMessage("msg.process.succ"));
+            }
+        } catch (ParameterNotEnoughException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (UserNotExitsException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (ProcessFailureException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (RepeatDepositException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (Exception e) {
+            message.setCode(ErrorCode.PROCESS_FAIL);
+            message.setMsg(messageUtil.getMessage("msg.process.fail"));
+            StudyLogger.recSysLog(e);
+        }
+
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 }

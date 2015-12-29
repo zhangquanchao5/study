@@ -1,10 +1,18 @@
 package com.study.service.impl.api;
 
 import com.study.code.EntityCode;
+import com.study.code.ErrorCode;
+import com.study.code.PrefixCode;
 import com.study.common.StudyLogger;
+import com.study.common.apibean.request.RechargeReq;
 import com.study.common.apibean.response.AccountBook;
 import com.study.common.apibean.response.AccountInfoResp;
 import com.study.common.apibean.request.DepositAndWithdrawReq;
+import com.study.common.apibean.response.CommonResponse;
+import com.study.common.sms.SendSm;
+import com.study.common.sms.SmsResponse;
+import com.study.common.util.DESUtils;
+import com.study.common.util.EncryptUtil;
 import com.study.exception.*;
 import com.study.common.StringUtil;
 import com.study.common.util.MessageUtil;
@@ -28,6 +36,10 @@ public class ApiAccountService {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private UserInfoMapper userInfoMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    private UserInfoFromMapper userInfoFromMapper;
+
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private AccountMapper accountMapper;
@@ -166,5 +178,61 @@ public class ApiAccountService {
         }
         userSecurity.setPayPassword(StringUtil.getMD5Str(newPayPassword));
         userSecurityMapper.updateByPrimaryKey(userSecurity);
+    }
+
+    /**
+     * 红包充值用户不存在默认新建，发短信
+     */
+    public CommonResponse saveRedRecharge(RechargeReq rechargeReq,CommonResponse commonResponse) throws Exception{
+        //md5校验
+        String mobile= DESUtils.decrypt(rechargeReq.getMobile(),DESUtils.secretKey);
+        String money =DESUtils.decrypt(rechargeReq.getMoney().toString(),DESUtils.secretKey);
+        if(!EncryptUtil.encrypt(mobile+""+money,EncryptUtil.MD5).equals(rechargeReq.getAuthKey())){
+            commonResponse.setCode(ErrorCode.RED_RECHARGE_CODE_ERROR);
+            return commonResponse;
+        }
+        //判断用户是否是新用户
+        UserInfo userInfo=userInfoMapper.selectByMobile(mobile);
+        if(userInfo==null){
+            userInfo=userInfoMapper.findByUserName(mobile);
+            if(userInfo==null){
+                //新用户创建，发送密码给用户
+                String code=StringUtil.generateTextCode(0, 6, null);
+                userInfo=new UserInfo();
+                userInfo.setCreateTime(new Date());
+                userInfo.setMobile(mobile);
+                userInfo.setSource(EntityCode.USER_SOURCE_APP);
+                userInfo.setPassword(StringUtil.getMD5Str(code));
+                userInfo.setStatus(EntityCode.USER_VALIDATE);
+                userInfoMapper.insert(userInfo);
+
+                UserInfoFrom userInfoFrom=new UserInfoFrom();
+                userInfoFrom.setUserId(userInfo.getId());
+                userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
+
+
+
+                userInfoFromMapper.insert(userInfoFrom);
+
+                UserSecurity userSecurity = new UserSecurity();
+                userSecurity.setUserId(userInfo.getId());
+                userSecurity.setCreateTime(new Date());
+                userSecurityMapper.insert(userSecurity);
+                //发送短信
+                SmsResponse smsResponse= SendSm.sendSms(mobile, messageUtil.getMessage("MSG.SMSSEND.PASSWORD.CONTENT").replace("#CODE", code));
+                System.out.println(smsResponse.getCode() + ":" + smsResponse.getMsg() + ":" + smsResponse.getSmsid());
+                if(!smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                    commonResponse.setCode(ErrorCode.RED_RECHARGE_SEND_ERROR);
+                }
+            }
+        }
+
+        DepositAndWithdrawReq depositAndWithdrawReq=new DepositAndWithdrawReq();
+        depositAndWithdrawReq.setAmount(Integer.parseInt(money));
+        depositAndWithdrawReq.setTradeNO(UUID.randomUUID().toString());
+        depositAndWithdrawReq.setAccountBIllType(rechargeReq.getAccountBIllType());
+        saveForDeposit(userInfo.getId(), depositAndWithdrawReq);
+
+        return commonResponse;
     }
 }
