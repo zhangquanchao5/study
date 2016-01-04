@@ -8,6 +8,15 @@ public class LoginRequest {
     private String userPassword;
     private String userEmail;
     private String userPhone;
+    private String idCard;
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
 
     public String getUserName() {
         return userName;

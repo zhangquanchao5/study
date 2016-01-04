@@ -18,6 +18,8 @@ public interface IApIUserService {
 
     public UserInfo findByEMail(String email);
 
+    public UserInfo findByIdCard(String idCard);
+
     public UserInfo findById(Integer userId);
 
     public UserInfo findByToken(String token);

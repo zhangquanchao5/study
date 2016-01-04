@@ -29,9 +29,20 @@ public class UserInfo {
 
     private String nick="";
 
+    private String idCard="";
+
     private String address="";
 
     private Date updateTime;
+
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
 
     public Date getUpdateTime() {
         return updateTime;

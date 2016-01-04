@@ -69,6 +69,7 @@ public class BaseController {
         userResponse.setIcon(userInfo.getIcon());
         userResponse.setName(userInfo.getName());
         userResponse.setUserName(userInfo.getUserName());
+        userResponse.setIdCard(userInfo.getIdCard());
 
         return  userResponse;
     }

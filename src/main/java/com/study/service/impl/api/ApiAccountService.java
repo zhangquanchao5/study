@@ -197,7 +197,7 @@ public class ApiAccountService {
             userInfo=userInfoMapper.findByUserName(mobile);
             if(userInfo==null){
                 //新用户创建，发送密码给用户
-                String code=StringUtil.generateTextCode(0, 6, null);
+                String code="000000";//StringUtil.generateTextCode(0, 6, null);
                 userInfo=new UserInfo();
                 userInfo.setCreateTime(new Date());
                 userInfo.setMobile(mobile);
@@ -219,11 +219,11 @@ public class ApiAccountService {
                 userSecurity.setCreateTime(new Date());
                 userSecurityMapper.insert(userSecurity);
                 //发送短信
-                SmsResponse smsResponse= SendSm.sendSms(mobile, messageUtil.getMessage("MSG.SMSSEND.PASSWORD.CONTENT").replace("#CODE", code));
-                System.out.println(smsResponse.getCode() + ":" + smsResponse.getMsg() + ":" + smsResponse.getSmsid());
-                if(!smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
-                    commonResponse.setCode(ErrorCode.RED_RECHARGE_SEND_ERROR);
-                }
+//                SmsResponse smsResponse= SendSm.sendSms(mobile, messageUtil.getMessage("MSG.SMSSEND.PASSWORD.CONTENT").replace("#CODE", code));
+//                System.out.println(smsResponse.getCode() + ":" + smsResponse.getMsg() + ":" + smsResponse.getSmsid());
+//                if(!smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+//                    commonResponse.setCode(ErrorCode.RED_RECHARGE_SEND_ERROR);
+//                }
             }
         }
 

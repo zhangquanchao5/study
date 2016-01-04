@@ -16,6 +16,15 @@ public class UserResponse implements Serializable {
     private String address;
     private Date ct;
     private String userName;
+    private String idCard;
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
 
     public Integer getId() {
         return id;

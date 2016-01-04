@@ -55,6 +55,10 @@ public class ApiUserServiceImpl implements IApIUserService {
        return userInfoMapper.findByEMail(email);
     }
 
+    public UserInfo findByIdCard(String idCard){
+        return userInfoMapper.findByIdCard(idCard);
+    }
+
     @Override
     public UserInfo findById(Integer userId) {
         return userInfoMapper.selectByPrimaryKey(userId);
@@ -73,7 +77,7 @@ public class ApiUserServiceImpl implements IApIUserService {
         userInfo.setMobile(apiUserBean.getMobile());
         userInfo.setSource(EntityCode.USER_SOURCE_APP);
         userInfo.setPassword(StringUtil.getMD5Str(apiUserBean.getPassword()));
-       // userInfo.setUserName(apiUserBean.getMobile());
+        userInfo.setIdCard(apiUserBean.getIdCard());
         userInfo.setStatus(EntityCode.USER_VALIDATE);
         userInfoMapper.insert(userInfo);
 

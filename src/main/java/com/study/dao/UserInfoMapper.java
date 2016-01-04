@@ -30,6 +30,8 @@ public interface UserInfoMapper {
 
      UserInfo findByEMail(String email);
 
+     UserInfo findByIdCard(String idCard);
+
      void updateUserTime(Integer userId);
 
     int findPageCount(UserPageRequest userPageRequest);

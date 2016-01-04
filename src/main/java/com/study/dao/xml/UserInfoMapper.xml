@@ -17,10 +17,11 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="nick" property="nick" jdbcType="VARCHAR" />
     <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_name, password, mobile, user_mail, icon, source, gender, token, status, 
-    create_time, name, nick, address,update_time
+    create_time, name, nick, address,update_time,id_card
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -46,6 +47,13 @@
     where user_mail = #{email,jdbcType=VARCHAR} and status=0
   </select>
 
+  <select id="findByIdCard" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where id_card = #{idCard,jdbcType=VARCHAR} and status=0
+  </select>
+
   <select id="findByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
@@ -65,12 +73,12 @@
       mobile, user_mail, icon, 
       source, gender, token, 
       status, create_time, name, 
-      nick, address,update_time)
+      nick, address,update_time,id_card)
     values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{mobile,jdbcType=VARCHAR}, #{userMail,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
       #{source,jdbcType=TINYINT}, #{gender,jdbcType=TINYINT}, #{token,jdbcType=VARCHAR}, 
       #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{name,jdbcType=VARCHAR}, 
-      #{nick,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},sysdate())
+      #{nick,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},sysdate(), #{idCard,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.UserInfo" >
     insert into user_info
@@ -117,6 +125,9 @@
       <if test="address != null" >
         address,
       </if>
+      <if test="idCard != null" >
+        id_card,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -161,6 +172,9 @@
       <if test="address != null" >
         #{address,jdbcType=VARCHAR},
       </if>
+      <if test="idCard != null" >
+        #{idCard,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.study.model.UserInfo" >
@@ -204,6 +218,9 @@
       </if>
       <if test="address != null and address != ''" >
         address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null and idCard != ''" >
+        id_card = #{idCard,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}

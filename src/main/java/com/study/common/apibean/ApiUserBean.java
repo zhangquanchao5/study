@@ -7,9 +7,18 @@ public class ApiUserBean {
 
     private String userName;
     private String mobile;
+    private String idCard;
     private String password;
     private String code;
     private int from;
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
 
     public int getFrom() {
         return from;
