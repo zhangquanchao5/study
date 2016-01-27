@@ -137,6 +137,20 @@ public class ApiPubController extends BaseController {
                     mobileBean.setCode(ErrorCode.ERROR);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
                 }
+            }else if(mobileRequest.getType()== EntityCode.MOBILE_RESET_PWD){
+                String code=StringUtil.generateTextCode(0, 6, null);
+                //SEND MOBILE
+                SmsResponse smsResponse=SendSm.sendSms(mobileRequest.getUserPhone(), messageUtil.getMessage("MSG.SMSSEND.CONTENT").replace("#CODE", code));
+                if(smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                    mobileBean.setCode(ErrorCode.SUCCESS);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                    mobileBean.setVerifyCode(code);
+                    System.out.println("验证码："+PrefixCode.API_MOBILE_RESET  + mobileRequest.getUserPhone());
+                    iRedisService.set(PrefixCode.API_MOBILE_RESET  + mobileRequest.getUserPhone(), code, 900);
+                }else{
+                    mobileBean.setCode(ErrorCode.ERROR);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
+                }
             }
         } catch (Exception e) {
             mobileBean.setCode(ErrorCode.ERROR);
@@ -268,34 +282,34 @@ public class ApiPubController extends BaseController {
             }
 
             iApIUserService.saveUser(apiUserBean);
-            UserInfo userInfo = null;
-            if (!StringUtil.isEmpty(apiUserBean.getIdCard())) {
-                userInfo = iApIUserService.findByIdCard(apiUserBean.getIdCard());
-            } else if (!StringUtil.isEmpty(apiUserBean.getMobile())) {
-                userInfo = iApIUserService.findByMobile(apiUserBean.getMobile());
-            }
+//            UserInfo userInfo = null;
+//            if (!StringUtil.isEmpty(apiUserBean.getIdCard())) {
+//                userInfo = iApIUserService.findByIdCard(apiUserBean.getIdCard());
+//            } else if (!StringUtil.isEmpty(apiUserBean.getMobile())) {
+//                userInfo = iApIUserService.findByMobile(apiUserBean.getMobile());
+//            }
 
 
             registerMobileResponse.setCode(ErrorCode.SUCCESS);
             registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
 
 
-            long endTime = +Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")) * 60 * 1000 + System.currentTimeMillis();
-            String token = StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_EQULE + header + SplitCode.SPLIT_SHU + userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
-
-            //update
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setToken(token);
-            loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
-            UserResponse userResponse = changeUser(userInfo);
-            loginResponse.setUser(userResponse);
-
-            registerMobileResponse.setData(loginResponse);
-            if (!StringUtil.isEmpty(header) && header.equals(PrefixCode.API_HEAD_H5)) {
-                iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
-            } else {
-                iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
-            }
+//            long endTime = +Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")) * 60 * 1000 + System.currentTimeMillis();
+//            String token = StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_EQULE + header + SplitCode.SPLIT_SHU + userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
+//
+//            //update
+//            LoginResponse loginResponse = new LoginResponse();
+//            loginResponse.setToken(token);
+//            loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
+//            UserResponse userResponse = changeUser(userInfo);
+//            loginResponse.setUser(userResponse);
+//
+//            registerMobileResponse.setData(loginResponse);
+//            if (!StringUtil.isEmpty(header) && header.equals(PrefixCode.API_HEAD_H5)) {
+//                iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+//            } else {
+//                iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+//            }
 
 
         } catch (Exception e) {

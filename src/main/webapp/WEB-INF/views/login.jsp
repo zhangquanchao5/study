@@ -11,81 +11,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <jsp:include page="common/commonCss.jsp"/>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <title>有你学</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- end: META -->
+    <!-- start: MAIN CSS -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style_new.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/validator/jquery.validator.css">
+    <!-- start: CSS REQUIRED FOR THIS PAGE ONLY -->
+    <!-- end: CSS REQUIRED FOR THIS PAGE ONLY -->
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/resources/favicon.ico" />
     <meta property="qc:admins" content="353226116365610556375734541" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login/login.css">
-    <%--<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc.js"></script>--%>
-
 </head>
 
-<body style="background:#f8f8f8">
-<div class="home_top">
-    <jsp:include page="head.jsp"/>
-</div>
-<div style="clear: both;height: 0px;font-size: 0"></div>
-<div class="h_t_search">
-    <jsp:include page="menu.jsp"/>
-</div>
+<body >
 
-<div class="login_height">
 
-    <div class="login_top">
-        <p>用户登录</p>
+<div class="login">
+    <div class="login_main">
+        <a href="#"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a>
     </div>
-
-    <div class="login_left">
-        <img src="${pageContext.request.contextPath}/resources/images/longin_1.jpg" style="margin:103px 0 0 40px;">
-    </div>
-
-    <form class="login_right"  id="loginForm" method="post" autocomplete="off" data-validator-option="{theme:'yellow_top'}">
+</div>
+<div class="login_bg">
+    <form   id="loginForm" method="post" autocomplete="off" data-validator-option="{theme:'yellow_top'}">
         <input type="hidden" name="gotoURL" value="${param.gotoURL}" />
-        <div class="login_right-top">
-            <a href="${pageContext.request.contextPath}/login" class="login_1">登录&nbsp; |&nbsp;</a> <a href="${pageContext.request.contextPath}/user/register" class="login_2">注册</a>
+        <div class="login_bg1">
+        <div class="login_1 rfloat">
+            <div class="login_text">用户登录</div>
+            <div class="login_text1 login_mag">
+                <div class="login_kuang lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_10.png" /></div>
+                 <input name="userName"  id="userName"  placeholder="输入用户名" type="text" data-rule="required;" >
+            </div>
+            <div class="login_text1 login_mag1">
+                <div class="login_kuang lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_11.png" /></div>
+                <input name="password" id="password"  placeholder="输入密码" type="password" data-rule="required;length[6~15]"   data-msg-length="密码是6到15位">
+            </div>
+            <div class="wangji login_mag">
+                <a  href="${pageContext.request.contextPath}/user/forget" class="lfloat login_col">忘记密码？</a>
+                <a  href="${pageContext.request.contextPath}/user/register" class="rfloat login_co2">立即注册> </a>
+            </div>
+            <div style="clear: both;"></div>
+            <div class="login_mag1"   ><a href="#" id="loginUp" ><img  src="${pageContext.request.contextPath}/resources/images/pic-3.png" /></a></div>
+            <div class="login_mag2"><span class="lfloat login_left">快捷登录：</span>
+                <a href="#" onclick="redirectQq()" class="lfloat login_left"><img src="${pageContext.request.contextPath}/resources/images/icon_12.png" /></a>
+                <span class="lfloat login_left">qq登录</span></div>
         </div>
-        <ul>
-            <li>
-                <div class="login_right_in1">用 户 名：</div>
-                <div class="login_right_in2"><input name="userName"  id="userName"  placeholder="输入用户名" type="text" data-rule="required;" ></div>
-            </li>
-            <li style="margin-top:20px">
-                <div class="login_right_in1">密码：</div>
-                <div class="login_right_in2"><input name="password" id="password"  placeholder="输入密码" type="password" data-rule="required;length[6~15]"   data-msg-length="密码是6到15位"></div>
-            </li>
-            <%--<li style="margin-top:20px">--%>
-                <%--<div><input name="" type="checkbox" value="" style="margin-left:80px"></div>--%>
-                <%--<div style="margin-left:5px; line-height:36px">自动登录</div>--%>
-            <%--</li>--%>
-            <li style="margin-top:25px;margin-left:80px">
-                <div style="width: 317px;height: 40px"><button id="loginUp" type="button" class="btn btn-success btn-block" >登录</button></div>
-                <div style="margin-left:25px; line-height:36px"><a href="${pageContext.request.contextPath}/user/forget" class="login_3">忘记密码？</a></div>
-            </li>
-            <li style="margin-top:20px">
-                <div class="login_right_in1">快捷登录：</div>
-                <div class="login_right_in2">
-                    <%--<span id="qqLoginBtn"></span>--%>
-                    <%--<script type="text/javascript">--%>
-                        <%--QC.Login.insertButton({--%>
-                            <%--btnId : 'qqLoginBtn',--%>
-                            <%--size : 'B_M',--%>
-
-                            <%--clientId : '222222',/*,--%>
-                             <%--scope : '',*/--%>
-                            <%--'btnMode':'showUserAfterLogin'--%>
-                        <%--});--%>
-                    <%--</script>--%>
-                    <a href="#"  onclick="redirectQq()"><img height="35px" src="${pageContext.request.contextPath}/resources/images/qq_login.png"></a>
-                </div>
-
-            </li>
-        </ul>
-        </form>
     </div>
+    </form>
 </div>
 
-<div class="bottom">
-    <jsp:include page="footer.jsp"/>
+<div style="clear: both;"></div>
+<div class="login_bottom">
+    <jsp:include page="footer_new.jsp"/>
 </div>
-<div class="clear"></div>
+
 <jsp:include page="common/commonJS.jsp"/>
 <script src="${pageContext.request.contextPath}/resources/js/user/login.js"></script>
 <script>

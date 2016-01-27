@@ -21,6 +21,8 @@ public class EntityCode {
     public static final Integer MOBILE_GET_PASSWORD=2;
     public static final Integer MOBILE_BIND_UPDATE=3;
     public static final Integer MOBILE_YU_YUE=4;
+    public static final Integer MOBILE_RESET_PWD=5;
+
 
     public static final Integer EMAIL_PWD=1;
     public static final Integer EMAIL_ACTIVE=2;

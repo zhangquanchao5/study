@@ -1,5 +1,6 @@
 package com.study.service;
 
+import com.study.common.EmailException;
 import com.study.model.UserInfo;
 import com.study.model.UserInfoFrom;
 
@@ -21,6 +22,8 @@ public interface IUserService {
     void updateUserInfo(UserInfo userInfo);
 
     public void updateUserTime(Integer userId);
+
+
 
 
 }

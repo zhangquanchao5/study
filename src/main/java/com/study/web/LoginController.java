@@ -7,9 +7,6 @@ import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.bean.AjaxResponseMessage;
-import com.study.common.oss.DESUtils;
-import com.study.common.oss.LoginOutResponse;
-import com.study.common.oss.Ticket;
 import com.study.common.session.LoginUser;
 import com.study.common.session.SessionInfo;
 import com.study.common.util.PropertiesUtil;
@@ -21,14 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.UUID;
 
 /**
  * Created by huichao on 2015/7/9.

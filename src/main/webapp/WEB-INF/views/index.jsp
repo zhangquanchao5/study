@@ -16,7 +16,7 @@
 
 <body style="background:#f8f8f8">
 <div class="home_top">
-    <jsp:include page="head.jsp"/>
+    <jsp:include page="head_old.jsp"/>
 </div>
 <div style="clear: both;height: 0px;font-size: 0"></div>
 <div class="h_t_search">

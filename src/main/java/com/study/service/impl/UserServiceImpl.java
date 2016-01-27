@@ -1,6 +1,8 @@
 package com.study.service.impl;
 
 import com.study.code.EntityCode;
+import com.study.common.EmailException;
+import com.study.common.Encrypt;
 import com.study.common.bean.Mail;
 import com.study.common.util.PropertiesUtil;
 import com.study.dao.UserInfoFromMapper;
@@ -10,6 +12,7 @@ import com.study.model.UserInfo;
 import com.study.model.UserInfoFrom;
 import com.study.model.UserSecurity;
 import com.study.service.IUserService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -70,4 +73,6 @@ public class UserServiceImpl implements IUserService{
     public void updateUserTime(Integer userId){
         userInfoMapper.updateUserTime(userId);
     }
+
+
 }

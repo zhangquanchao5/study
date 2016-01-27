@@ -11,7 +11,7 @@ import java.io.UnsupportedEncodingException;
 public class Test {
     public static void main(String []args) throws UnsupportedEncodingException {
 //        System.out.println(StringUtil.getBASE64("1000015=MTAwMDAxNT1pb3N8MTAwMDAxNXwxNDQzODU1NzQyNTI1"));
-        System.out.println(StringUtil.getFromBASE64("aHR0cDovL3d3dy51bml4dWUuY29tLyMvb3JkZXIuaHRtbC84MC_ljYrlubTnj60vMzMwMC8xMDA="));
+        System.out.println(StringUtil.getFromBASE64("MTAwMDEyMz13ZWJ8MTAwMDEyM3wxNDU0MjE2ODU5MjE0"));
 //        String codes="1000039=MTAwMDAzOT1hbmRyb2lkfDEwMDAwMzl8MTQ0Mzc5NzUxMjM5NA==";
 //        System.out.println("qqq:"+codes.substring("1000039".length()+1,codes.length()));
 //        System.out.println("MTAwMDAyMj1NVEF3TURBeU1qMW9OWHd4TURBd01ESXlmRFkwT0RBd2ZERTBNemd5TlRNeE9Ea3hOekU9");

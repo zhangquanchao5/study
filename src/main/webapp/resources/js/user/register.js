@@ -11,16 +11,21 @@ $(document).ready(function() {
             cache:false,
             success : function(responseJson) {
                 if(responseJson.success){
-                    bootbox.alert("注册成功，请登录!",function(){
-                        window.location.href = $contentPath+"/login";
-                    });
+                    alert("注册成功，请登录!");
+                    window.location.href = $contentPath+"/login";
+                    //bootbox.alert("注册成功，请登录!",function(){
+                    //    window.location.href = $contentPath+"/login";
+                    //});
                 }else{
                     if(responseJson.code=="2003"){
-                        bootbox.alert("存在此账号!");
+                        alert("存在此账号!");
+                        //bootbox.alert("存在此账号!");
                     }else if(responseJson.code=="2005"){
-                        bootbox.alert("验证码错误!");
+                        alert("验证码错误!");
+                       // bootbox.alert("验证码错误!");
                     }else{
-                        bootbox.alert("系统出现未知错误!");
+                        alert("系统出现未知错误!");
+                        //bootbox.alert("系统出现未知错误!");
                     }
 
                 }
@@ -34,18 +39,30 @@ $(document).ready(function() {
         });
     });
 
+    $("#sendMS2").click(function (){
+        alert("测试");
+    });
+
     $("#sendMS").click(function (){
         if($("#mobile").val()==null||$("#mobile").val()==""){
-            bootbox.alert("手机号不能为空!");
+            alert("手机号不能为空!");
+           // bootbox.alert("手机号不能为空!");
             return;
         }
         if(!checkMobile($("#mobile").val())){
-            bootbox.alert("请检查输入的手机号!");
+            alert("请检查输入的手机号!");
+           // bootbox.alert("请检查输入的手机号!");
             return;
         }
 
+        if(!isSendMobile){
+            alert("短信发送中,等待....!");
+            return;
+        }
+
+        isSendMobile=false;
         var obj={"userPhone":$("#mobile").val(),"type":"1"};
-        send.init(document.getElementById("sendMS"));
+        send.init(document.getElementById("sendMSText"));
         $.ajax({
             url:  $contentPath + "/pub/getCode",
             type: "POST",
@@ -62,6 +79,7 @@ $(document).ready(function() {
                 }
             }
         });
+
     });
 
 });
@@ -97,7 +115,7 @@ $("#registerForm").on("validation", function(e, current){
 })
 
 //$('#registerForm').validator().trigger("showtip");
-
+var isSendMobile=true;
 var send = {
     node:null,
     count:60,
@@ -110,15 +128,16 @@ var send = {
                 _this.start();
             },1000);
         }else{
-            this.node.removeAttribute("disabled");
-            this.node.innerHTML = "获取验证码";
+           // this.node.removeAttribute("disabled");
+            this.node.innerHTML = "获取验证码60秒后没有收到短信可以重新获取";
+            isSendMobile=true;
             this.count = 60;
         }
     },
     //初始化
     init:function(node){
         this.node = node;
-        this.node.setAttribute("disabled",true);
+        //this.node.setAttribute("disabled",true);
         this.start();
     }
 };
@@ -130,13 +149,14 @@ function mobileAjax(){
                 "url":$contentPath +"/user/registerValidate",
                 "data":{"mobile":$("#mobile").val()},
                 "successCallBack":function(json){
-                    console.log("--------"+json)
+                   // console.log("--------"+json)
 
                         $("#sendMS").attr("disabled",false);
 
                 },
                 "errorCallBack":function(json){
-                    bootbox.alert("手机号已存在!");
+                     alert("手机号已存在!");
+                //    bootbox.alert("手机号已存在!");
                     $("#sendMS").attr("disabled",true);
                 }
             }

@@ -48,6 +48,11 @@ public class PrefixCode {
     public static final String API_MOBILE_BIND="MBIND";
 
     /**
+     * mobile RESET password
+     */
+    public static final String API_MOBILE_RESET="MRESET";
+
+    /**
      * h5 head
      */
     public static final String API_HEAD_H5="h5";

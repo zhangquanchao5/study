@@ -6,9 +6,11 @@ import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
 import com.study.code.SplitCode;
+import com.study.common.Encrypt;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.QqOpenIdBean;
+import com.study.common.apibean.response.CommonResponse;
 import com.study.common.bean.AjaxResponseMessage;
 import com.study.common.http.HttpSendResult;
 import com.study.common.http.HttpUtil;
@@ -18,15 +20,18 @@ import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
 import com.study.model.UserInfoFrom;
+import com.study.service.IApIUserService;
 import com.study.service.IRedisService;
 import com.study.service.IUserFromService;
 import com.study.service.IUserService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +53,8 @@ public class UserController extends BaseController {
     private IUserFromService iUserFromService;
     @Autowired
     private IRedisService iRedisService;
+    @Autowired
+    private IApIUserService iApIUserService;
 
     @RequestMapping(value = "/registerUp", method = RequestMethod.POST)
     public void registerUp(UserInfo userInfoModel, @RequestParam String valCode, HttpServletResponse response) {
@@ -63,6 +70,14 @@ public class UserController extends BaseController {
 
             UserInfo userInfoMobile = iUserService.findByMobile(userInfoModel.getMobile());
             if (userInfoMobile != null) {
+                message.setSuccess(false);
+                message.setCode(ErrorCode.USER_EXITS);
+                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                return;
+            }
+
+            UserInfo userInfoMail = iUserService.findByEMail(userInfoModel.getUserMail());
+            if (userInfoMail != null) {
                 message.setSuccess(false);
                 message.setCode(ErrorCode.USER_EXITS);
                 ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
@@ -108,6 +123,73 @@ public class UserController extends BaseController {
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 
+    @RequestMapping(value = "/userMail", method = RequestMethod.POST)
+    public void userMail(UserInfo userInfoModel, HttpServletResponse response) {
+
+        AjaxResponseMessage ajaxResponseMessage = new AjaxResponseMessage();
+        try {
+            UserInfo userInfo=iUserService.findByEMail(userInfoModel.getUserMail());
+            if(userInfo!=null){
+                String random = RandomStringUtils.randomAlphanumeric(32);
+                String actUrl = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.VERTIFY.URL") +
+                        "user/mail?uid=" + Encrypt.doEncrypt(String.valueOf(userInfo.getId())) +
+                        "&mid=" + Encrypt.doEncrypt(userInfo.getUserMail()) +
+                        "&sid=" + random;
+                String message = messageUtil.getMessage("MSG.EMAIL.ACTIVE.SEND").replace("#acturl", actUrl);
+                String subject = messageUtil.getMessage("MSG.EMAIL.ACTIVE.SEND.SUBJECT");
+                String sendFrom = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.ACCOUNT");
+                String mailPwd = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.PASSWORD");
+                String nick = "UNIXUE SERVER";
+
+                iApIUserService.sendEmail(message, subject, userInfo.getUserMail(), sendFrom, nick, mailPwd);
+                iRedisService.set(PrefixCode.API_MAIL_CONNACT + userInfo.getId(), random, Integer.parseInt(PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.TIMEOUT")) * 60);
+
+            }else{
+                ajaxResponseMessage.setSuccess(false);
+            }
+        } catch (Exception e) {
+            ajaxResponseMessage.setSuccess(false);
+            ajaxResponseMessage.setCode(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(ajaxResponseMessage).toString());
+    }
+
+    @RequestMapping("/mail")
+    public ModelAndView mail(@RequestParam String uid, @RequestParam String mid, @RequestParam String sid,  HttpServletResponse response, HttpServletRequest request) {
+        ModelAndView modelAndView=new ModelAndView();
+        try {
+            Object obj = iRedisService.get(PrefixCode.API_MAIL_CONNACT + Encrypt.doDecrypt(uid));
+
+                if (obj == null) {
+                    modelAndView.addObject("code",ErrorCode.ERROR);
+                    modelAndView.setViewName("email/fail");
+                } else {
+                    if (obj.toString().equals(sid)) {
+                        UserInfo u=iApIUserService.findByEMail(Encrypt.doDecrypt(mid));
+                        if(u!=null){
+                            iRedisService.deleteOneKey(PrefixCode.API_MAIL_CONNACT + Encrypt.doDecrypt(uid));
+                            modelAndView.addObject("mobile", u.getMobile());
+                            modelAndView.addObject("code", ErrorCode.SUCCESS);
+                            modelAndView.setViewName("email/success");
+                        } else {
+                            modelAndView.addObject("code", ErrorCode.ERROR);
+                            modelAndView.setViewName("email/fail");
+                        }
+                    } else {
+                        modelAndView.addObject("code", ErrorCode.ERROR);
+                        modelAndView.setViewName("email/fail");
+                    }
+                }
+
+        } catch (Exception e) {
+            modelAndView.addObject("code", ErrorCode.SYS_ERROR);
+            modelAndView.setViewName("email/fail");
+            printLogger(e);
+        }
+      return modelAndView;
+    }
+
     @RequestMapping(value = "/registerValidate")
     public void registerValidate(UserInfo userInfoModel, HttpServletResponse response) {
 
@@ -133,11 +215,92 @@ public class UserController extends BaseController {
                     message.put("success", true);
 
                 }
+            }else if (!StringUtil.isEmpty(userInfoModel.getUserMail())) {
+                if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
+                    message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
+                    message.put("success", false);
+
+                } else {
+                    message.put("ok", messageUtil.getMessage("msg.register.success"));
+                    message.put("success", true);
+
+                }
             }
         } catch (Exception e) {
             message.put("error", messageUtil.getMessage("MSG.SYS_ERROR_CN"));
             message.put("success", false);
 
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+    @RequestMapping(value = "/forgetValidate")
+    public void forgetValidate(UserInfo userInfoModel, HttpServletResponse response) {
+
+        Map message = new HashMap();
+        try {
+            if (!StringUtil.isEmpty(userInfoModel.getUserName())) {
+                UserInfo user=iUserService.findByUserName(userInfoModel.getUserName());
+                if(user==null){
+                    user=iUserService.findByMobile(userInfoModel.getUserName());
+                    if(user==null){
+                        user=iUserService.findByEMail(userInfoModel.getUserName());
+                    }
+                }
+
+                if (user != null) {
+                    message.put("ok", messageUtil.getMessage("MSG.FORGET_PWD_OK_CN"));
+                    message.put("success", true);
+                    message.put("mobile",user.getMobile());
+                } else {
+                    message.put("error", messageUtil.getMessage("MSG.FORGET_PWD_CN"));
+                    message.put("success", false);
+                }
+            }
+        } catch (Exception e) {
+            message.put("error", messageUtil.getMessage("MSG.SYS_ERROR_CN"));
+            message.put("success", false);
+
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+    @RequestMapping(value = "/code", method = RequestMethod.POST)
+    public void code(UserInfo userInfoModel, @RequestParam String valCode, HttpServletResponse response) {
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+            //判断注册码是否有效
+            String code = iRedisService.get(PrefixCode.API_MOBILE_RESET + userInfoModel.getMobile());
+
+            if (code != null && !"".equals(code) && code.equals(valCode)) {
+                iRedisService.deleteOneKey(PrefixCode.API_MOBILE_RESET + userInfoModel.getMobile());
+                message.setSuccess(true);
+            } else {
+                message.setSuccess(false);
+                message.setCode(ErrorCode.USER_CODE_ERROR);
+            }
+        } catch (Exception e) {
+            message.setSuccess(false);
+            message.setCode(ErrorCode.SYS_ERROR);
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+
+    @RequestMapping(value = "/updatepwd", method = RequestMethod.POST)
+    public void code(UserInfo userInfoModel, HttpServletResponse response) {
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+            UserInfo userInfoMobile = iUserService.findByMobile(userInfoModel.getMobile());
+            userInfoMobile.setPassword(StringUtil.getMD5Str(userInfoModel.getPassword()));
+
+            iUserService.updateUserInfo(userInfoMobile);
+        } catch (Exception e) {
+            message.setSuccess(false);
+            message.setCode(ErrorCode.SYS_ERROR);
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
@@ -150,7 +313,7 @@ public class UserController extends BaseController {
             response.sendRedirect(url);
         } catch (Exception e) {
             printLogger(e);
-            return "login";
+            return "login_old";
         }
 
         return null;
@@ -162,7 +325,7 @@ public class UserController extends BaseController {
         String code = request.getParameter("code");
         try {
             if (code == null || code.equals("")) {
-                return "login";
+                return "login_old";
             } else {
                 //第一步获取TOKE
                 String codeUrl = PropertiesUtil.getString("accessTokenURL") + "?grant_type=authorization_code&client_id=" + PropertiesUtil.getString("app_ID") + "&client_secret=" + PropertiesUtil.getString("app_KEY") + "&code=" + code + "&redirect_uri=" + PropertiesUtil.getString("redirect_URI");
@@ -230,16 +393,21 @@ public class UserController extends BaseController {
                     LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
                     iUserService.updateUserTime(realUser.getId());
                 } else {
-                    return "login";
+                    return "login_old";
                 }
             }
         } catch (Exception e) {
             printLogger(e);
-            return "login";
+            return "login_old";
         }
 
         return "account/accountManagement";
     }
 
 
+    @RequestMapping(value = "/forget")
+    public String forget(HttpServletRequest request,  HttpServletResponse response) {
+
+        return "user/forget_new";
+    }
 }

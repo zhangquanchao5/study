@@ -83,6 +83,7 @@
     <mvc:view-controller path="/" view-name="index"/>
     <mvc:view-controller path="/index" view-name="index"/>
     <mvc:view-controller path="/user/register" view-name="user/register"/>
+    <mvc:view-controller path="/user/registerOrg" view-name="user/registerOrg"/>
     <mvc:view-controller path="/account/accountManagement" view-name="account/accountManagement"/>
     <mvc:view-controller path="/account/loginpassword" view-name="account/loginpassword"/>
     <mvc:view-controller path="/account/modifypassword" view-name="account/modifypassword"/>
