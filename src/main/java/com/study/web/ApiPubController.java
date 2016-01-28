@@ -389,7 +389,7 @@ public class ApiPubController extends BaseController {
 
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
-            commonResponse.setMsg(messageUtil.getMessage("MSG.msg.process.fail"));
+            commonResponse.setMsg(messageUtil.getMessage("msg.process.fail"));
             printLogger(e);
         }
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());

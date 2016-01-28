@@ -42,7 +42,7 @@
 
 <div class="register">
     <div class="register_center">
-        <form id="registerForm" method="post" autocomplete="off"   data-validator-option="{theme:'yellow_top'}">
+        <form id="registerForm" method="post" autocomplete="off"   >
             <input type="hidden" name="source" value="1"/>
          <ul style="margin-top: 15px">
              <li>

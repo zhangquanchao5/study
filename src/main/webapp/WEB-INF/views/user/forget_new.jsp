@@ -89,7 +89,7 @@
     <div class="kuang-top">
         <div class="kuang-top_text">企业邮箱找回</div>
     </div>
-    <div class="kuang-tex4"><span class="kuandu">注册邮箱:</span><spaN><input name="userMail" id="userMail" type="text" placeholder="输入企业邮箱"   data-tip="企业邮箱必需输入" data-rule="企业邮箱:required;userMail;remote[${pageContext.request.contextPath}/user/registerValidate]"/></span>
+    <div class="kuang-tex4"><span class="kuandu">注册邮箱:</span><spaN><input name="userMail" id="userMail" type="text" placeholder="输入企业邮箱"   data-tip="企业邮箱必需输入" data-rule="企业邮箱:required;userMail;remote[${pageContext.request.contextPath}/user/registerValidate?type=1]"/></span>
     </div>
 
     <div class="kuang-btn1"><a href="#" id="nextStep4"><img src="${pageContext.request.contextPath}/resources/images/bunttom1.png" /></a></div>

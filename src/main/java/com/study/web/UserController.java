@@ -139,7 +139,7 @@ public class UserController extends BaseController {
                 String subject = messageUtil.getMessage("MSG.EMAIL.ACTIVE.SEND.SUBJECT");
                 String sendFrom = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.ACCOUNT");
                 String mailPwd = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.PASSWORD");
-                String nick = "UNIXUE SERVER";
+                String nick = PropertiesUtil.getString("MSG.EMAIL.ACTIVE.SEND.MAINT");
 
                 iApIUserService.sendEmail(message, subject, userInfo.getUserMail(), sendFrom, nick, mailPwd);
                 iRedisService.set(PrefixCode.API_MAIL_CONNACT + userInfo.getId(), random, Integer.parseInt(PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.TIMEOUT")) * 60);
@@ -191,7 +191,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/registerValidate")
-    public void registerValidate(UserInfo userInfoModel, HttpServletResponse response) {
+    public void registerValidate(UserInfo userInfoModel,String type, HttpServletResponse response) {
 
         Map message = new HashMap();
         try {
@@ -216,15 +216,26 @@ public class UserController extends BaseController {
 
                 }
             }else if (!StringUtil.isEmpty(userInfoModel.getUserMail())) {
-                if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
-                    message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
-                    message.put("success", false);
+                if(!StringUtil.isEmpty(type)){
+                    if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
+                        message.put("ok", messageUtil.getMessage("msg.mail.success"));
+                        message.put("success", true);
+                    } else {
+                        message.put("error", messageUtil.getMessage("msg.mail.error"));
+                        message.put("success", false);
+                    }
+                }else{
+                    if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
+                        message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
+                        message.put("success", false);
 
-                } else {
-                    message.put("ok", messageUtil.getMessage("msg.register.success"));
-                    message.put("success", true);
+                    } else {
+                        message.put("ok", messageUtil.getMessage("msg.register.success"));
+                        message.put("success", true);
 
+                    }
                 }
+
             }
         } catch (Exception e) {
             message.put("error", messageUtil.getMessage("MSG.SYS_ERROR_CN"));
