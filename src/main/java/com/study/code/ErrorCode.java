@@ -46,6 +46,11 @@ public class ErrorCode {
     public static final String USER_CODE_ERROR="2005";
 
     /**
+     * 用户需要激活
+     */
+    public static final String USER_NEED_ACTIVE="2006";
+
+    /**
      * 余额不足
      */
     public static final String USER_MONEY_ERROR="3001";

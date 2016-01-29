@@ -37,35 +37,35 @@
     select
     <include refid="Base_Column_List" />
     from user_info
-    where mobile = #{mobile,jdbcType=VARCHAR} and status=0
+    where mobile = #{mobile,jdbcType=VARCHAR} and status!=2
   </select>
 
   <select id="findByEMail" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
     from user_info
-    where user_mail = #{email,jdbcType=VARCHAR} and status=0
+    where user_mail = #{email,jdbcType=VARCHAR} and status!=2
   </select>
 
   <select id="findByIdCard" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
     from user_info
-    where id_card = #{idCard,jdbcType=VARCHAR} and status=0
+    where id_card = #{idCard,jdbcType=VARCHAR} and status!=2
   </select>
 
   <select id="findByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
     from user_info
-    where user_name = #{userName,jdbcType=VARCHAR} and status=0
+    where user_name = #{userName,jdbcType=VARCHAR} and status!=2
   </select>
 
   <select id="findByToken" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
     from user_info
-    where token = #{token,jdbcType=VARCHAR} and status=0
+    where token = #{token,jdbcType=VARCHAR} and status!=2
   </select>
 
   <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.study.model.UserInfo" >
@@ -245,7 +245,7 @@
 
   <update id="updatePwd" parameterType="com.study.model.UserInfo" >
     update user_info
-    set  password = #{password,jdbcType=VARCHAR}
+    set  password = #{password,jdbcType=VARCHAR},status=0
     where mobile = #{mobile,jdbcType=VARCHAR}
   </update>
 
@@ -258,7 +258,7 @@
   <select id="findPageCount" resultType="java.lang.Integer" parameterType="userPageRequest" >
     select count(1)
     from user_info
-    where  status=0
+    where  status!=2
     <if test="id!= null and id!=''" >
       and id =#{id}
     </if>
@@ -279,7 +279,7 @@
     select id as id,name as name,nick as nick,icon as icon,gender as gender,mobile as mobile,
           address as address,user_name as userName,create_time as ct
     from user_info
-    where  status=0
+    where   status!=2
     <if test="id!= null and id!=''" >
       and id =#{id}
     </if>

@@ -18,6 +18,7 @@ import com.study.common.StringUtil;
 import com.study.common.util.MessageUtil;
 import com.study.dao.*;
 import com.study.model.*;
+import com.study.service.IRedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,9 @@ public class ApiAccountService {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private UserSecurityMapper userSecurityMapper;
+
+    @Autowired
+    private IRedisService iRedisService;
 
     public AccountInfoResp getAccountInfo(Integer userId) throws Exception {
         if(null == userId){
@@ -197,20 +201,18 @@ public class ApiAccountService {
             userInfo=userInfoMapper.findByUserName(mobile);
             if(userInfo==null){
                 //新用户创建，发送密码给用户
-                String code="000000";//StringUtil.generateTextCode(0, 6, null);
+                String code=StringUtil.generateTextCode(0, 6, null);//StringUtil.generateTextCode(0, 6, null);
                 userInfo=new UserInfo();
                 userInfo.setCreateTime(new Date());
                 userInfo.setMobile(mobile);
                 userInfo.setSource(EntityCode.USER_SOURCE_APP);
-                userInfo.setPassword(StringUtil.getMD5Str(code));
-                userInfo.setStatus(EntityCode.USER_VALIDATE);
+                userInfo.setPassword(StringUtil.getMD5Str("ZHANGHUICHAO$%SD"));
+                userInfo.setStatus(EntityCode.USER_NEED_ACTIVE);
                 userInfoMapper.insert(userInfo);
 
                 UserInfoFrom userInfoFrom=new UserInfoFrom();
                 userInfoFrom.setUserId(userInfo.getId());
                 userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
-
-
 
                 userInfoFromMapper.insert(userInfoFrom);
 
@@ -219,11 +221,13 @@ public class ApiAccountService {
                 userSecurity.setCreateTime(new Date());
                 userSecurityMapper.insert(userSecurity);
                 //发送短信
-//                SmsResponse smsResponse= SendSm.sendSms(mobile, messageUtil.getMessage("MSG.SMSSEND.PASSWORD.CONTENT").replace("#CODE", code));
-//                System.out.println(smsResponse.getCode() + ":" + smsResponse.getMsg() + ":" + smsResponse.getSmsid());
-//                if(!smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
-//                    commonResponse.setCode(ErrorCode.RED_RECHARGE_SEND_ERROR);
-//                }
+                SmsResponse smsResponse= SendSm.sendSms(mobile, messageUtil.getMessage("MSG.SMSSEND.CONTENT").replace("#CODE", code));
+                System.out.println(smsResponse.getCode() + ":" + smsResponse.getMsg() + ":" + smsResponse.getSmsid());
+                if(!smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                    commonResponse.setCode(ErrorCode.RED_RECHARGE_SEND_ERROR);
+                }else{
+                    iRedisService.set(PrefixCode.API_MOBILE_LOGIN_ON  + mobile, code, 604800);
+                }
             }
         }
 

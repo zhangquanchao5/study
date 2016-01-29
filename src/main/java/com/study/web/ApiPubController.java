@@ -151,6 +151,20 @@ public class ApiPubController extends BaseController {
                     mobileBean.setCode(ErrorCode.ERROR);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
                 }
+            }else if(mobileRequest.getType()== EntityCode.MOBILE_LOGIN_CODE){
+                String code=StringUtil.generateTextCode(0, 6, null);
+                //SEND MOBILE
+                SmsResponse smsResponse=SendSm.sendSms(mobileRequest.getUserPhone(), messageUtil.getMessage("MSG.SMSSEND.CONTENT").replace("#CODE", code));
+                if(smsResponse.getCode().equals(SendSm.SUCCE_CODE)){
+                    mobileBean.setCode(ErrorCode.SUCCESS);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                    mobileBean.setVerifyCode(code);
+                    System.out.println("验证码："+PrefixCode.API_MOBILE_RESET  + mobileRequest.getUserPhone());
+                    iRedisService.set(PrefixCode.API_MOBILE_LOGIN_ON  + mobileRequest.getUserPhone(), code, 900);
+                }else{
+                    mobileBean.setCode(ErrorCode.ERROR);
+                    mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
+                }
             }
         } catch (Exception e) {
             mobileBean.setCode(ErrorCode.ERROR);
@@ -358,35 +372,76 @@ public class ApiPubController extends BaseController {
                     commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
                 }
             }
+            //获取请求头
             String header=getPlatformHeader(request);
-              if(userInfo!=null&&!StringUtil.getMD5Str(loginRequest.getUserPassword()).equals(userInfo.getPassword())) {
-                commonResponse.setCode(ErrorCode.USER_PWD_ERROR);
-                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_PWD_ERROR_CN"));
-            }else if(userInfo!=null){
-                long endTime=+Long.parseLong(PropertiesUtil.getString("TOKEN.TIME"))*60*1000+System.currentTimeMillis();
-               // System.out.println("-------"+userInfo.getId()+SplitCode.SPLIT_EQULE+header+SplitCode.SPLIT_SHU+userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
-                String token=StringUtil.getBASE64(userInfo.getId()+SplitCode.SPLIT_EQULE+header+SplitCode.SPLIT_SHU+userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
-                //更新数据库token保存做备份,不做数据库备份
-                iApIUserService.updateUserTime(userInfo.getId());
+            if(userInfo!=null){
+                //用户登录支持验证码登录,默认是密码登录
+                if(!StringUtil.isEmpty(loginRequest.getUserPassword())){
+                    if(StringUtil.getMD5Str(loginRequest.getUserPassword()).equals(userInfo.getPassword())){
+                        long endTime=+Long.parseLong(PropertiesUtil.getString("TOKEN.TIME"))*60*1000+System.currentTimeMillis();
+                        // System.out.println("-------"+userInfo.getId()+SplitCode.SPLIT_EQULE+header+SplitCode.SPLIT_SHU+userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
+                        String token=StringUtil.getBASE64(userInfo.getId()+SplitCode.SPLIT_EQULE+header+SplitCode.SPLIT_SHU+userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
+                        //更新数据库token保存做备份,不做数据库备份
+                        iApIUserService.updateUserTime(userInfo.getId());
 
+                        LoginResponse loginResponse=new LoginResponse();
+                        loginResponse.setToken(token);
+                        loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
+                        UserResponse userResponse=changeUser(userInfo);
+                        loginResponse.setUser(userResponse);
 
-                commonResponse.setCode(ErrorCode.SUCCESS);
-                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-                LoginResponse loginResponse=new LoginResponse();
-                loginResponse.setToken(token);
-                loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
-                UserResponse userResponse=changeUser(userInfo);
-                loginResponse.setUser(userResponse);
+                        commonResponse.setCode(ErrorCode.SUCCESS);
+                        commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                        commonResponse.setData(loginResponse);
 
-                commonResponse.setData(loginResponse);
+                        if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_H5)){
+                            iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+                        }else{
+                            iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+                        }
+                    }else{
+                        commonResponse.setCode(ErrorCode.USER_PWD_ERROR);
+                        commonResponse.setMsg(messageUtil.getMessage("MSG.USER_PWD_ERROR_CN"));
+                    }
+                }else if(!StringUtil.isEmpty(loginRequest.getCode())){
+                    if(iRedisService.get(PrefixCode.API_MOBILE_LOGIN_ON  +userInfo.getMobile())==null||!iRedisService.get(PrefixCode.API_MOBILE_LOGIN_ON  +userInfo.getMobile()).equals(loginRequest.getCode())){
+                        commonResponse.setCode(ErrorCode.USER_CODE_ERROR);
+                        commonResponse.setMsg(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
+                    }else{
+                        if(userInfo.getStatus()==EntityCode.USER_NEED_ACTIVE){
+                            commonResponse.setCode(ErrorCode.USER_NEED_ACTIVE);
+                            commonResponse.setMsg(messageUtil.getMessage("MSG.USER_ACTIVE_ERROR_CN"));
+                        }else{
+                            iRedisService.deleteOneKey(PrefixCode.API_MOBILE_LOGIN_ON  +userInfo.getMobile());
 
-                if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_H5)){
-                    iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+                            long endTime=+Long.parseLong(PropertiesUtil.getString("TOKEN.TIME"))*60*1000+System.currentTimeMillis();
+                            String token=StringUtil.getBASE64(userInfo.getId()+SplitCode.SPLIT_EQULE+header+SplitCode.SPLIT_SHU+userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
+                            //更新数据库token保存做备份,不做数据库备份
+                            iApIUserService.updateUserTime(userInfo.getId());
+
+                            LoginResponse loginResponse=new LoginResponse();
+                            loginResponse.setToken(token);
+                            loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
+                            UserResponse userResponse=changeUser(userInfo);
+                            loginResponse.setUser(userResponse);
+
+                            commonResponse.setCode(ErrorCode.SUCCESS);
+                            commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+                            commonResponse.setData(loginResponse);
+
+                            if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_H5)){
+                                iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+                            }else{
+                                iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+                            }
+                        }
+
+                    }
                 }else{
-                    iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
+                    commonResponse.setCode(ErrorCode.PARAMETER_NOT_ENOUGH);
+                    commonResponse.setMsg(messageUtil.getMessage("msg.parameter.notEnough"));
                 }
             }
-
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);
             commonResponse.setMsg(messageUtil.getMessage("msg.process.fail"));

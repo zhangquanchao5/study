@@ -53,6 +53,10 @@ public class PrefixCode {
     public static final String API_MOBILE_RESET="MRESET";
 
     /**
+     * mobile login code
+     */
+    public static final String API_MOBILE_LOGIN_ON="MLOGIN";
+    /**
      * h5 head
      */
     public static final String API_HEAD_H5="h5";

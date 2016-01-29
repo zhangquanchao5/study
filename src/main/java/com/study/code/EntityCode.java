@@ -8,6 +8,7 @@ public class EntityCode {
     public static final byte USER_VALIDATE=0;
     public static final byte USER_NO_VALIDATE=1;
     public static final byte USER_DELETE=2;
+    public static final byte USER_NEED_ACTIVE=3;
 
     public static final byte USER_FROM_MOBILE=0;
     public static final byte USER_FROM_QQ=1;
@@ -22,6 +23,7 @@ public class EntityCode {
     public static final Integer MOBILE_BIND_UPDATE=3;
     public static final Integer MOBILE_YU_YUE=4;
     public static final Integer MOBILE_RESET_PWD=5;
+    public static final Integer MOBILE_LOGIN_CODE=6;
 
 
     public static final Integer EMAIL_PWD=1;

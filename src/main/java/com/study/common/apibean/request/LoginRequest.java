@@ -9,6 +9,15 @@ public class LoginRequest {
     private String userEmail;
     private String userPhone;
     private String idCard;
+    private String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getIdCard() {
         return idCard;
