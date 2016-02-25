@@ -8,6 +8,7 @@ import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.AuthHeaderBean;
+import com.study.common.apibean.request.MobileRequest;
 import com.study.common.apibean.response.UserResponse;
 import com.study.common.util.MessageUtil;
 import com.study.common.oss.DESUtils;
@@ -133,8 +134,8 @@ public class BaseController {
     protected  boolean isAuthToken(IRedisService iRedisService,HttpServletRequest request){
         String auth = request.getHeader("Authorization");
         String encode= StringUtil.getFromBASE64(auth);
-        StudyLogger.recBusinessLog("platform:"+request.getHeader("platform"));
-        StudyLogger.recBusinessLog("auth:["+auth+"] encode["+encode+"]");
+        StudyLogger.recBusinessLog("platform:" + request.getHeader("platform"));
+        StudyLogger.recBusinessLog("auth:[" + auth + "] encode[" + encode + "]");
 
         if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
             StudyLogger.recBusinessLog((iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP,encode.split(SplitCode.SPLIT_EQULE)[0])!=null)+"");
@@ -164,6 +165,15 @@ public class BaseController {
         }
 
         return  false;
+    }
+
+    public boolean validatePubSingature(String timeStamp,String signature){
+        String []encodes=signature.split(SplitCode.SPLIT_ZHUANYI);
+        if(StringUtil.getBASE64(PrefixCode.API_TOKEN_SIGN+timeStamp).equals(encodes[0])){
+            return true;
+        }
+
+       return false;
     }
 
     /**

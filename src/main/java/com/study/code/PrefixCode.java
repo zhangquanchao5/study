@@ -76,4 +76,9 @@ public class PrefixCode {
      */
     public static final String API_MAIL_CONNACT="Mail";
 
+    /**
+     * 公共认证
+     */
+    public static final String API_TOKEN_SIGN="unixue";
+
 }

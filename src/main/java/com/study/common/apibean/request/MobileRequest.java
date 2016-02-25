@@ -6,6 +6,24 @@ package com.study.common.apibean.request;
 public class MobileRequest {
     private String userPhone;
     private Integer type;
+    private String timeStamp;
+    private String signature;
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
 
     public String getUserPhone() {
         return userPhone;

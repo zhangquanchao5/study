@@ -61,7 +61,8 @@ $(document).ready(function() {
         }
 
         isSendMobile=false;
-        var obj={"userPhone":$("#mobile").val(),"type":"1"};
+        var timestmp=new Date().getTime();
+        var obj={"userPhone":$("#mobile").val(),"type":"1","timeStamp":timestmp,"signature":BASE64.encoder("unixue"+timestmp)+"|"+timestmp};
         send.init(document.getElementById("sendMSText"));
         $.ajax({
             url:  $contentPath + "/pub/getCode",

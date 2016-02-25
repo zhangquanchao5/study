@@ -44,7 +44,8 @@ $(document).ready(function() {
     });
 
     $("#sendMS").click(function (){
-        var obj={"userPhone":$("#mobile").val(),"type":"5"};
+        var timestmp=new Date().getTime();
+        var obj={"userPhone":$("#mobile").val(),"type":"5","timeStamp":timestmp,"signature":BASE64.encoder("unixue"+timestmp)+"|"+timestmp};
         send.init(document.getElementById("sendMS"));
         $.ajax({
             url:  $contentPath + "/pub/getCode",

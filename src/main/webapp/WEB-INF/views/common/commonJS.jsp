@@ -7,7 +7,7 @@
 <script src="${pageContext.request.contextPath}/resources/plugins/bootbox/bootbox.js"></script>
 <script src="${pageContext.request.contextPath}/resources/plugins/form/jquery.form.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/util.js"></script>
-
+<script src="${pageContext.request.contextPath}/resources/js/base64.js"></script>
 <script>
     $contentPath='<%=request.getContextPath()%>';
 </script>

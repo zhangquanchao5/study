@@ -26,7 +26,7 @@ public interface IApIUserService {
 
     public void updateUser(UserInfo userInfo);
 
-    public void saveUser(ApiUserBean apiUserBean);
+    public Integer saveUser(ApiUserBean apiUserBean);
 
     public void updateUserPwd(PwdResetRequest pwdResetRequest);
 

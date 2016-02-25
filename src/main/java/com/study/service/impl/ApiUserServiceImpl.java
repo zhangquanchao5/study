@@ -71,7 +71,7 @@ public class ApiUserServiceImpl implements IApIUserService {
 
 
 
-    public   void saveUser(ApiUserBean apiUserBean){
+    public   Integer saveUser(ApiUserBean apiUserBean){
         UserInfo userInfo=new UserInfo();
         userInfo.setCreateTime(new Date());
         userInfo.setMobile(apiUserBean.getMobile());
@@ -93,6 +93,8 @@ public class ApiUserServiceImpl implements IApIUserService {
         userSecurity.setUserId(userInfo.getId());
         userSecurity.setCreateTime(new Date());
         userSecurityMapper.insert(userSecurity);
+
+        return userInfo.getId();
     }
 
     public void updateUserTime(Integer userId){

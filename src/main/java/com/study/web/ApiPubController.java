@@ -29,6 +29,7 @@ import com.study.service.IRedisService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,6 +67,17 @@ public class ApiPubController extends BaseController {
             StudyLogger.recBusinessLog("/pub/getCode:" + json);
 
             MobileRequest mobileRequest= JSON.parseObject(json, MobileRequest.class);
+            //判断是否签名正确
+            if(StringUtils.isEmpty(mobileRequest.getSignature())||StringUtils.isEmpty(mobileRequest.getTimeStamp())){
+                mobileBean.setCode(ErrorCode.PARAMETER_NOT_ENOUGH);
+                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(mobileBean).toString());
+                return;
+            }
+            if(!validatePubSingature(mobileRequest.getTimeStamp(),mobileRequest.getSignature())){
+                mobileBean.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(mobileBean).toString());
+                return;
+            }
             if(mobileRequest.getType()== EntityCode.MOBILE_REGESITER){
                 UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
                 if(userInfo!=null){
@@ -132,7 +144,7 @@ public class ApiPubController extends BaseController {
                     mobileBean.setCode(ErrorCode.SUCCESS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     mobileBean.setVerifyCode(code);
-                    iRedisService.set(PrefixCode.API_MOBILE_UPDATE  + mobileRequest.getUserPhone(), code, 300);
+                    iRedisService.set(PrefixCode.API_MOBILE_UPDATE + mobileRequest.getUserPhone(), code, 300);
                 }else{
                     mobileBean.setCode(ErrorCode.ERROR);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.ERROR_CN"));
@@ -145,7 +157,7 @@ public class ApiPubController extends BaseController {
                     mobileBean.setCode(ErrorCode.SUCCESS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.SUCCESS_CN"));
                     mobileBean.setVerifyCode(code);
-                    System.out.println("验证码："+PrefixCode.API_MOBILE_RESET  + mobileRequest.getUserPhone());
+                    System.out.println("验证码：" + PrefixCode.API_MOBILE_RESET + mobileRequest.getUserPhone());
                     iRedisService.set(PrefixCode.API_MOBILE_RESET  + mobileRequest.getUserPhone(), code, 900);
                 }else{
                     mobileBean.setCode(ErrorCode.ERROR);
@@ -295,7 +307,7 @@ public class ApiPubController extends BaseController {
                 return;
             }
 
-            iApIUserService.saveUser(apiUserBean);
+            Integer userID=iApIUserService.saveUser(apiUserBean);
 //            UserInfo userInfo = null;
 //            if (!StringUtil.isEmpty(apiUserBean.getIdCard())) {
 //                userInfo = iApIUserService.findByIdCard(apiUserBean.getIdCard());
@@ -305,6 +317,7 @@ public class ApiPubController extends BaseController {
 
 
             registerMobileResponse.setCode(ErrorCode.SUCCESS);
+            registerMobileResponse.setData(userID);
             registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
 
 
@@ -396,7 +409,9 @@ public class ApiPubController extends BaseController {
 
                         if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_H5)){
                             iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
-                        }else{
+                        } else if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_WEB)) {
+                            iRedisService.setObject(PrefixCode.API_COOKIE_PRE + userInfo.getId() + SplitCode.SPLIT_EQULE + token, changeUser(userInfo), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
+                        } else{
                             iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
                         }
                     }else{
@@ -431,7 +446,9 @@ public class ApiPubController extends BaseController {
 
                             if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_H5)){
                                 iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
-                            }else{
+                            }else if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_WEB)) {
+                                iRedisService.setObject(PrefixCode.API_COOKIE_PRE + StringUtil.getBASE64(userInfo.getId()+SplitCode.SPLIT_EQULE+token), changeUser(userInfo), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
+                            } else{
                                 iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
                             }
                         }

@@ -84,4 +84,5 @@ public class ErrorCode {
      * token no validate
      */
     public static final String USER_TOKEN_NO_VAL="9999";
+
 }
