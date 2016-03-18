@@ -93,6 +93,7 @@
     <mvc:view-controller path="/account/securityIssues" view-name="account/securityIssues"/>
     <mvc:view-controller path="/account/securityTouble" view-name="account/securityTouble"/>
     <mvc:view-controller path="/user/introduce" view-name="user/introduce"/>
+    <mvc:view-controller path="/user/introduceOrg" view-name="user/introduceOrg"/>
     <mvc:view-controller path="/import" view-name="import"/>
 
     <!-- Resolve logical view names to .jsp resources in the /WEB-INF/views directory -->

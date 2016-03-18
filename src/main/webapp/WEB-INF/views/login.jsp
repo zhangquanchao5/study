@@ -33,7 +33,7 @@
 
 <div class="login">
     <div class="login_main">
-        <a href="#"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a>
+        <a href="http://www.unixue.com><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a>
     </div>
 </div>
 <div class="login_bg">

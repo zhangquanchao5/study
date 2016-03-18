@@ -32,7 +32,7 @@
                     <ul>
                         <li><a href="http://www.unixue.com/manage" style="color: #ED7171;" class="lfloat">机构中心<img src="${pageContext.request.contextPath}/resources/images/icon_31.png"  style="margin-left:5px"/></a></li>
                         <li><a href="${pageContext.request.contextPath}/user/registerOrg">机构入驻</a></li>
-                        <li><a href="#">入驻步骤</a></li>
+                        <li><a href="http://www.unixue.com/xin.html" target="_blank">入驻步骤</a></li>
                     </ul>
                 </li>
             </ul>

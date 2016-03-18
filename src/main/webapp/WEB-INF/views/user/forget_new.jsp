@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>登录找回密码</title>
+    <title>登录重置密码</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style_new.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/validator/jquery.validator.css">
     <%--<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/bootstrap/css/bootstrap.min.css">--%>
@@ -40,9 +40,9 @@
 </div>
 <div  id="step1"  class="kuang">
     <div class="kuang-top">
-        <div class="kuang-top_text">找回密码</div>
+        <div class="kuang-top_text">重置密码</div>
     </div>
-    <div class="kuang-tex11"><span class="kuandu">找回方式:</span><spaN><select name="findType" id="findType" class="xl">
+    <div class="kuang-tex11"><span class="kuandu">重置方式:</span><spaN><select name="findType" id="findType" class="xl">
         <option value="1">邮箱找回</option>
         <option value="2">手机找回</option>
     </select></span>
@@ -59,7 +59,7 @@
 
 <div id="step2" class="kuang">
     <div class="kuang-top">
-        <div class="kuang-top_text">登录找回密码</div>
+        <div class="kuang-top_text">获取验证码</div>
     </div>
     <div class="kuang-tex1"><span class="kuandu">手机号码:</span><spaN><input name="mobile" id="mobile" type="text" /></span><input id="sendMS" type="button" style="margin:4px 0 0 20px; width:100px; height:26px;" value="获取验证码"/>
     </div>
@@ -87,7 +87,7 @@
 <div  id="step5" class="kuang">
     <form   id="mailForm" method="post" autocomplete="off" data-validator-option="{theme:'yellow_top'}">
     <div class="kuang-top">
-        <div class="kuang-top_text">企业邮箱找回</div>
+        <div class="kuang-top_text">企业邮箱重置</div>
     </div>
     <div class="kuang-tex4"><span class="kuandu">注册邮箱:</span><spaN><input name="userMail" id="userMail" type="text" placeholder="输入企业邮箱"   data-tip="企业邮箱必需输入" data-rule="企业邮箱:required;userMail;remote[${pageContext.request.contextPath}/user/registerValidate?type=1]"/></span>
     </div>

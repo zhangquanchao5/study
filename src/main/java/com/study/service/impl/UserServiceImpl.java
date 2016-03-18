@@ -1,9 +1,13 @@
 package com.study.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.study.code.EntityCode;
 import com.study.common.EmailException;
 import com.study.common.Encrypt;
+import com.study.common.StudyLogger;
 import com.study.common.bean.Mail;
+import com.study.common.http.HttpSendResult;
+import com.study.common.http.HttpUtil;
 import com.study.common.util.PropertiesUtil;
 import com.study.dao.UserInfoFromMapper;
 import com.study.dao.UserInfoMapper;
@@ -18,6 +22,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by huichao on 2015/7/9.
@@ -57,6 +63,16 @@ public class UserServiceImpl implements IUserService{
         userSecurity.setUserId(userInfo.getId());
         userSecurity.setCreateTime(new Date());
         userSecurityMapper.insert(userSecurity);
+
+        //调用接口同步到业务系统
+        if(userInfo.getSource()==1){
+            Map<String,String> map=new HashMap<String,String>();
+            map.put("user_id",userInfo.getId().toString());
+            map.put("org_name",userInfo.getName());
+            HttpSendResult httpSendResult=HttpUtil.formPostUrl(PropertiesUtil.getString("ORG.SYN.URL"), map);
+            StudyLogger.recBusinessLog("syn org result:"+ JSON.toJSONString(httpSendResult));
+        }
+
     }
 
     public void updateUserInfo(UserInfo userInfo){

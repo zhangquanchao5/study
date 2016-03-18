@@ -43,45 +43,10 @@ $(document).ready(function() {
         alert("测试");
     });
 
-    $("#sendMS").click(function (){
-        if($("#mobile").val()==null||$("#mobile").val()==""){
-            alert("手机号不能为空!");
-           // bootbox.alert("手机号不能为空!");
-            return;
-        }
-        if(!checkMobile($("#mobile").val())){
-            alert("请检查输入的手机号!");
-           // bootbox.alert("请检查输入的手机号!");
-            return;
-        }
-
-        if(!isSendMobile){
-            alert("短信发送中,等待....!");
-            return;
-        }
-
-        isSendMobile=false;
-        var timestmp=new Date().getTime();
-        var obj={"userPhone":$("#mobile").val(),"type":"1","timeStamp":timestmp,"signature":BASE64.encoder("unixue"+timestmp)+"|"+timestmp};
-        send.init(document.getElementById("sendMSText"));
-        $.ajax({
-            url:  $contentPath + "/pub/getCode",
-            type: "POST",
-            data: JSON.stringify(obj),
-            timeout: 10000,
-            contentType:"application/json",
-            dataType: "json",
-            success: function (json) {
-                if (json.code=="001") {
-                    //document.getElementById("sendMS").innerHTML = "发送成功";
-                   //alert("发送成功!");
-                } else {
-                    //document.getElementById("sendMS").innerHTML = "失败,重新发送";
-                }
-            }
-        });
-
-    });
+    //$("#sendMS").click(function (){
+    //
+    //
+    //});
 
 });
 
@@ -152,15 +117,54 @@ function mobileAjax(){
                 "successCallBack":function(json){
                    // console.log("--------"+json)
 
-                        $("#sendMS").attr("disabled",false);
-
+                       // $("#sendMS").attr("disabled",false);
+                    $('#sendMS').bind("click",sendCode);
                 },
                 "errorCallBack":function(json){
                      alert("手机号已存在!");
                 //    bootbox.alert("手机号已存在!");
-                    $("#sendMS").attr("disabled",true);
+                    $('#sendMS').unbind("click",sendCode);
                 }
             }
         );
     }
+}
+
+function sendCode(){
+    if($("#mobile").val()==null||$("#mobile").val()==""){
+        alert("手机号不能为空!");
+        // bootbox.alert("手机号不能为空!");
+        return;
+    }
+    if(!checkMobile($("#mobile").val())){
+        alert("请检查输入的手机号!");
+        // bootbox.alert("请检查输入的手机号!");
+        return;
+    }
+
+    if(!isSendMobile){
+        alert("短信发送中,等待....!");
+        return;
+    }
+
+    isSendMobile=false;
+    var timestmp=new Date().getTime();
+    var obj={"userPhone":$("#mobile").val(),"type":"1","timeStamp":timestmp,"signature":BASE64.encoder("unixue"+timestmp)+"|"+timestmp};
+    send.init(document.getElementById("sendMSText"));
+    $.ajax({
+        url:  $contentPath + "/pub/getCode",
+        type: "POST",
+        data: JSON.stringify(obj),
+        timeout: 10000,
+        contentType:"application/json",
+        dataType: "json",
+        success: function (json) {
+            if (json.code=="001") {
+                //document.getElementById("sendMS").innerHTML = "发送成功";
+                //alert("发送成功!");
+            } else {
+                //document.getElementById("sendMS").innerHTML = "失败,重新发送";
+            }
+        }
+    });
 }

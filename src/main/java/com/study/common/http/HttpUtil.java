@@ -17,6 +17,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright lr.
@@ -191,6 +194,7 @@ public final class HttpUtil {
         postMethod.setRequestHeader(REQUEST_HEADER_PROXYCONNECTION, REQUEST_HEADER_VALUE_CLOSE);
         try {
             postMethod.setRequestEntity(new ByteArrayRequestEntity(str.getBytes(charset)));
+
         } catch (UnsupportedEncodingException e1) {
             //LifeccpLogger.recSysLog(Level.ERROR, e1.getMessage(), e1);
         }
@@ -250,6 +254,49 @@ public final class HttpUtil {
             filePost.releaseConnection();
         }
         return sendResult;
+    }
+
+
+    public static HttpSendResult formPostUrl(String url,  Map<String, String> params) {
+        HttpSendResult sendResult = new HttpSendResult();
+        try{
+            NameValuePair[] formparams = new NameValuePair[params.size()];
+
+
+            HttpClient hc = new HttpClient(clientParams);
+            hc.setConnectionTimeout(connectiontimeout);
+            PostMethod postMethod = new PostMethod(url);
+            postMethod.setRequestHeader(REQUEST_HEADER_CONNECTION, REQUEST_HEADER_VALUE_CLOSE);
+            postMethod.setRequestHeader(REQUEST_HEADER_PROXYCONNECTION, REQUEST_HEADER_VALUE_CLOSE);
+           // postMethod.setRequestHeader("Authorization",auth);
+            postMethod.setRequestHeader("platform", "web");
+
+            // 构建请求参数
+
+            if (params != null) {
+                int i=0;
+                for (Map.Entry<String, String> e : params.entrySet()) {
+                    formparams[i]=new NameValuePair(e.getKey(),e.getValue());
+                    i++;
+                }
+            }
+            postMethod.setRequestBody(formparams);
+            postMethod.setRequestHeader(REQUEST_HEADER_CONTENTTYPE, "application/x-www-form-urlencoded" + "; charset=utf-8");
+
+            int responseCode = hc.executeMethod(postMethod);
+            InputStream inputStream = postMethod.getResponseBodyAsStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int read = -1;
+            while ((read = inputStream.read()) != -1) {
+                out.write(read);
+            }
+            String response = new String(out.toByteArray(), "utf-8");
+            sendResult.setStatusCode(responseCode);
+            sendResult.setResponse(response);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return  sendResult;
     }
 
 

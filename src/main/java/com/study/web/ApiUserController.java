@@ -158,6 +158,21 @@ public class ApiUserController extends BaseController {
                 userInfoUpdateResponse.setCode(ErrorCode.SUCCESS);
                 userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 userInfoUpdateResponse.setData(changeUser(userInfo));
+
+                //获取请求头
+                String header=getPlatformHeader(request);
+                String encode= StringUtil.getFromBASE64( request.getHeader("Authorization"));
+
+                //System.out.println("go:"+header+"["+encode+"]");
+                if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_H5)){
+                    iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userInfoUpdateResponse.getData());
+                } else if(!StringUtil.isEmpty(header)&&header.equals(PrefixCode.API_HEAD_WEB)) {
+                    //System.out.println("go:2");
+                    iRedisService.setObject(PrefixCode.API_COOKIE_PRE + encode,  userInfoUpdateResponse.getData(), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
+                } else{
+                    iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(),  userInfoUpdateResponse.getData());
+                }
+
             } else {
                 userInfoUpdateResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 userInfoUpdateResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));

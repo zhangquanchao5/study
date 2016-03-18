@@ -32,7 +32,7 @@
     <jsp:include page="../head.jsp"/>
     <div class="logo_center">
         <div class="logo_center_left lfloat" >
-            <a href="${pageContext.request.contextPath}/login"  class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
+            <a href="http://www.unixue.com"  class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
             <a  href="${pageContext.request.contextPath}/user/register" class="logo_center_left_2">个人注册</a>
             <span class="lfloat logo_center_left_2">|</span>
             <a href="${pageContext.request.contextPath}/user/registerOrg"  class="logo_center_left_3">机构入驻</a>
@@ -46,8 +46,8 @@
             <input type="hidden" name="source" value="1"/>
          <ul style="margin-top: 15px">
              <li>
-                 <label class="lfloat">企业邮箱</label>
-                 <input type="text" name="userMail" id="userMail" placeholder="输入企业邮箱"   data-tip="企业邮箱必需输入" data-rule="企业邮箱:required;userMail;remote[${pageContext.request.contextPath}/user/registerValidate]" >
+                 <label class="lfloat">联系邮箱</label>
+                 <input type="text" name="userMail" id="userMail" placeholder="输入联系邮箱"   data-tip="企业联系必需输入" data-rule="联系邮箱:required;email;remote[${pageContext.request.contextPath}/user/registerValidate]" >
              </li>
             <li>
                 <label class="lfloat">手机号</label>
@@ -61,11 +61,11 @@
                 <input type="text"  name="valCode" id="valCode" data-rule="验证码:required;length[6];" maxlength="6" data-tip="输入六位验证码" data-msg-length="验证码6位" placeholder="输入验证码" >
                 <%--<div class="lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_13.png" /></div>--%>
             </li>
-            <li>
-                <label class="lfloat">用户名</label>
-                <input type="text" name="userName" id="userName" placeholder="输入用户名" data-rule="required;length[3~15];remote[${pageContext.request.contextPath}/user/registerValidate]" data-tip="用户名3到15位" data-msg-length="用户名3到15位">
+            <%--<li>--%>
+                <%--<label class="lfloat">机构名</label>--%>
+                <%--<input type="text" name="name" id="name" placeholder="输入机构名" data-rule="required" >--%>
 
-            </li>
+            <%--</li>--%>
             <li>
                 <label class="lfloat">密码</label>
                 <input type="password" name="password" id="password" placeholder="输入密码"  data-tip="密码6到15位" data-rule="密码:required;length[6~15]" data-msg-length="密码6到15位">
@@ -79,7 +79,7 @@
         </ul>
         <div style="clear: both;"></div>
         <div class="register_xieyi">
-            <input name="agree" type="checkbox" value="" data-rule="checked" data-msg-checked="请同意服务协议">我已阅读并同意<a href="${pageContext.request.contextPath}/user/introduce" target="_blank">《有你学用户服务协议》</a>
+            <input name="agree" type="checkbox" value="" data-rule="checked" data-msg-checked="请同意服务协议">我已阅读并同意<a href="${pageContext.request.contextPath}/user/introduceOrg" target="_blank">《有你学用户服务协议》</a>
         </div>
         <div style="clear: both;"></div>
         <div  class="reguster_button">

@@ -85,8 +85,6 @@ public class ApiUserServiceImpl implements IApIUserService {
         userInfoFrom.setUserId(userInfo.getId());
         userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
 
-
-
         userInfoFromMapper.insert(userInfoFrom);
 
         UserSecurity userSecurity = new UserSecurity();
