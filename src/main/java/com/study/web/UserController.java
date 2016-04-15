@@ -84,6 +84,8 @@ public class UserController extends BaseController {
                 return;
             }
 
+
+
             //判断注册码是否有效
             String code = iRedisService.get(PrefixCode.API_MOBILE_REGISTER + userInfoModel.getMobile());
             if (code != null && !"".equals(code) && code.equals(valCode)) {

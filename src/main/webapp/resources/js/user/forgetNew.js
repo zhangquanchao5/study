@@ -7,6 +7,10 @@ $(document).ready(function() {
     $("#step6").css('display','none');
 
     $("#nextStep1").click(function(){
+         if(document.getElementById("inputCode").value==null||document.getElementById("inputCode").value==""){
+             alert("验证码不能为空！");
+             return;
+         }
          if(isSuccess){
              if($("#findType").val()==2){
                  $("#step1").css('display','none');

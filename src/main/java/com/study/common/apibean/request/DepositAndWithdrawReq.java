@@ -9,6 +9,15 @@ public class DepositAndWithdrawReq {
     private Integer amount;
     private String tradeNO;
     private String accountbook;
+    private Integer orgId;
+
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
 
     /**
      * Gets account b ill type.

@@ -173,6 +173,28 @@ public class ApiAccountService {
         withdrawalHistory.setCreateUser(0);
         withdrawalHistory.setTradeNo(req.getTradeNO());
         accountWithdrawalHistoryMapper.insert(withdrawalHistory);
+
+        //判断机构编号是否为空，不为空钱转到教育机构
+        if(!StringUtil.isEmpty(req.getOrgId())&&req.getOrgId().intValue()!=userId.intValue()){
+            //充值
+            UserInfo userInfoOrg = userInfoMapper.selectByPrimaryKey(req.getOrgId());
+            if(userInfoOrg!=null){
+                AccountBillType billTypeOrg = accountBillTypeMapper.selectByCode("cash");
+                //充值
+                AccountBill billOrg = accountSafety.updateForDeposit(userInfoOrg.getId(), billTypeOrg, req.getAmount().longValue());
+                //充值历史
+                AccountDepositHistory depositHistory = new AccountDepositHistory();
+                depositHistory.setAccountId(billOrg.getAccountId());
+                depositHistory.setAccountBillId(billOrg.getId());
+                depositHistory.setUserId(userInfoOrg.getId());
+                depositHistory.setBillTypeCode(billTypeOrg.getCode());
+                depositHistory.setAmount(req.getAmount().longValue());
+                depositHistory.setCreateTime(new Date());
+                depositHistory.setCreateUser(userId);
+                depositHistory.setTradeNo("U_"+req.getTradeNO());
+                accountDepositHistoryMapper.insert(depositHistory);
+            }
+        }
     }
 
     public void updatePayPassword(Integer userId, String newPayPassword) throws Exception{

@@ -41,10 +41,10 @@
         <input type="hidden" name="gotoURL" value="${param.gotoURL}" />
         <div class="login_bg1">
         <div class="login_1 rfloat">
-            <div class="login_text">用户登录</div>
+            <div class="login_text">机构/用户登录</div>
             <div class="login_text1 login_mag">
                 <div class="login_kuang lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_10.png" /></div>
-                 <input name="userName"  id="userName"  placeholder="输入用户名" type="text" data-rule="required;" >
+                 <input name="userName"  id="userName"  placeholder="输入用户名\手机号码\邮箱" type="text" data-rule="required;" >
             </div>
             <div class="login_text1 login_mag1">
                 <div class="login_kuang lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_11.png" /></div>
@@ -52,7 +52,7 @@
             </div>
             <div class="wangji login_mag">
                 <a  href="${pageContext.request.contextPath}/user/forget" class="lfloat login_col">忘记密码？</a>
-                <a  href="${pageContext.request.contextPath}/user/register" class="rfloat login_co2">立即注册> </a>
+                <a  href="${pageContext.request.contextPath}/user/registerOrg" class="rfloat login_co2">立即注册> </a>
             </div>
             <div style="clear: both;"></div>
             <div class="login_mag1"   ><a href="#" id="loginUp" ><img  src="${pageContext.request.contextPath}/resources/images/pic-3.png" /></a></div>

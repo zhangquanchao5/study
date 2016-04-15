@@ -85,6 +85,10 @@ public class UserServiceImpl implements IUserService{
        return  userInfoMapper.findByEMail(email);
     }
 
+    public UserInfo findByIdcard(String card){
+        return  userInfoMapper.findByIdCard(card);
+    }
+
 
     public void updateUserTime(Integer userId){
         userInfoMapper.updateUserTime(userId);

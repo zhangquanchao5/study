@@ -13,6 +13,8 @@ public interface IUserService {
 
     UserInfo findByEMail(String email);
 
+    UserInfo findByIdcard(String card);
+
     UserInfo fingById(Integer userId);
 
     public UserInfo findByMobile(String mobile);

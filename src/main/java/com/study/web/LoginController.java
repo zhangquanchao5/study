@@ -46,10 +46,14 @@ public class LoginController extends BaseController {
                 if(userInfo==null){
                     userInfo=iUserService.findByEMail(userInfoModel.getUserName());
                     if(userInfo==null){
-                        message.setSuccess(false);
-                        message.setCode(ErrorCode.USER_NOT_EXITS);
-                        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-                        return;
+                        userInfo=iUserService.findByIdcard(userInfoModel.getUserName());
+                        if(userInfo==null){
+                            message.setSuccess(false);
+                            message.setCode(ErrorCode.USER_NOT_EXITS);
+                            ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                            return;
+                        }
+
                     }
                 }
             }
