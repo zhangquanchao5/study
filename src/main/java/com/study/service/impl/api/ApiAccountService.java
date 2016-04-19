@@ -121,6 +121,7 @@ public class ApiAccountService {
         depositHistory.setCreateTime(new Date());
         depositHistory.setCreateUser(0);
         depositHistory.setTradeNo(req.getTradeNO());
+        depositHistory.setLeftAmount(accountMapper.selectByUserId(userInfo.getId()).getBalance().intValue()-req.getAmount().longValue());
         accountDepositHistoryMapper.insert(depositHistory);
     }
 
@@ -172,6 +173,7 @@ public class ApiAccountService {
         withdrawalHistory.setCreateTime(new Date());
         withdrawalHistory.setCreateUser(0);
         withdrawalHistory.setTradeNo(req.getTradeNO());
+        withdrawalHistory.setLeftAmount(account.getBalance().intValue()+req.getAmount().longValue());
         accountWithdrawalHistoryMapper.insert(withdrawalHistory);
 
         //判断机构编号是否为空，不为空钱转到教育机构
@@ -192,6 +194,7 @@ public class ApiAccountService {
                 depositHistory.setCreateTime(new Date());
                 depositHistory.setCreateUser(userId);
                 depositHistory.setTradeNo("U_"+req.getTradeNO());
+                depositHistory.setLeftAmount(accountMapper.selectByUserId(userInfoOrg.getId()).getBalance().intValue()-req.getAmount().longValue());
                 accountDepositHistoryMapper.insert(depositHistory);
             }
         }

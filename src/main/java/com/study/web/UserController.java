@@ -1,5 +1,6 @@
 package com.study.web;
 
+import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.study.code.EntityCode;
@@ -98,6 +99,10 @@ public class UserController extends BaseController {
                 userInfoFrom.setFrom(EntityCode.USER_FROM_MOBILE);
 
                 iUserService.saveUserInfo(userInfoModel, userInfoFrom);
+
+                if(!StringUtils.isEmpty(userInfoModel.getGotoURL())){
+                    message.setData(userInfoModel.getGotoURL());
+                }
             } else {
                 message.setSuccess(false);
                 message.setCode(ErrorCode.USER_CODE_ERROR);

@@ -12,7 +12,12 @@ $(document).ready(function() {
             success : function(responseJson) {
                 if(responseJson.success){
                     alert("注册成功，请登录!");
-                    window.location.href = $contentPath+"/login";
+                    if(responseJson.data==null||responseJson.data==""){
+                        window.location.href = $contentPath+"/login";
+                    }else{
+                        window.location.href = $contentPath+"/login?gotoURL="+responseJson.data;
+                    }
+
                     //bootbox.alert("注册成功，请登录!",function(){
                     //    window.location.href = $contentPath+"/login";
                     //});

@@ -18,11 +18,21 @@ public class AccountDepositHistory {
 
     private Long amount;
 
+    private Long leftAmount;
+
     private Date createTime;
 
     private Integer createUser;
 
     private String tradeNo;
+
+    public Long getLeftAmount() {
+        return leftAmount;
+    }
+
+    public void setLeftAmount(Long leftAmount) {
+        this.leftAmount = leftAmount;
+    }
 
     /**
      * Gets id.

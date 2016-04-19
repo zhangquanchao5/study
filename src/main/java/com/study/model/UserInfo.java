@@ -35,6 +35,16 @@ public class UserInfo {
 
     private Date updateTime;
 
+    private String gotoURL;
+
+
+    public String getGotoURL() {
+        return gotoURL;
+    }
+
+    public void setGotoURL(String gotoURL) {
+        this.gotoURL = gotoURL;
+    }
 
     public String getIdCard() {
         return idCard;

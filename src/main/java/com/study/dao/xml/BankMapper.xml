@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.study.dao.BankMapper" >
+  <resultMap id="BaseResultMap" type="com.study.model.Bank" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="bank_no" property="bankNo" jdbcType="VARCHAR" />
+    <result column="bank_type" property="bankType" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="bank_deposit" property="bankDeposit" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, bank_no, bank_type, name, bank_deposit, address, status, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bank
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bank
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.study.model.Bank" >
+    insert into bank (id, user_id, bank_no, 
+      bank_type, name, bank_deposit, 
+      address, status, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{bankNo,jdbcType=VARCHAR}, 
+      #{bankType,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{bankDeposit,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.study.model.Bank" >
+    insert into bank
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="bankNo != null" >
+        bank_no,
+      </if>
+      <if test="bankType != null" >
+        bank_type,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="bankDeposit != null" >
+        bank_deposit,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="bankNo != null" >
+        #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankType != null" >
+        #{bankType,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="bankDeposit != null" >
+        #{bankDeposit,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.study.model.Bank" >
+    update bank
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="bankNo != null" >
+        bank_no = #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankType != null" >
+        bank_type = #{bankType,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="bankDeposit != null" >
+        bank_deposit = #{bankDeposit,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.study.model.Bank" >
+    update bank
+    set user_id = #{userId,jdbcType=INTEGER},
+      bank_no = #{bankNo,jdbcType=VARCHAR},
+      bank_type = #{bankType,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      bank_deposit = #{bankDeposit,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

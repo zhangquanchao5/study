@@ -37,6 +37,55 @@ public class ApiAccountController extends BaseController {
     @Autowired
     private ApiAccountService apiAccountService;
 
+    /**
+     * 账户明细查询
+     * @param req
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/user/detail", method = RequestMethod.POST)
+    private
+    @ResponseBody
+    ApiResponseMessage getAccountHistory(@RequestBody AccountInfoReq req, HttpServletRequest request) {
+        ApiResponseMessage message = new ApiResponseMessage();
+        StudyLogger.recBusinessLog("userid:" + req.getId());
+        try {
+            if (isAuthToken(iRedisService, request)) {
+                Integer userId = getAuthHeader(request).getUserId();
+                if (req.getId().intValue() == userId.intValue()) {
+                    AccountInfoResp resp = apiAccountService.getAccountInfo(req.getId());
+                    message.setCode(ErrorCode.PROCESS_SUCC);
+                    message.setMsg(messageUtil.getMessage("msg.process.succ"));
+                    message.setData(resp);
+                } else {
+                    message.setCode(ErrorCode.PROCESS_FAIL);
+                    message.setMsg(messageUtil.getMessage("msg.process.fail"));
+                }
+            } else {
+                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
+        } catch (ParameterNotEnoughException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (UserNotExitsException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (ProcessFailureException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (Exception e) {
+            message.setCode(ErrorCode.PROCESS_FAIL);
+            message.setMsg(messageUtil.getMessage("msg.process.fail"));
+            StudyLogger.recSysLog(e);
+        }
+
+        return message;
+    }
+
     @RequestMapping(value = "/user/accountinfo", method = RequestMethod.POST)
     private
     @ResponseBody

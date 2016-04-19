@@ -8,12 +8,13 @@
     <result column="account_bill_id" property="accountBillId" jdbcType="INTEGER" />
     <result column="bill_type_code" property="billTypeCode" jdbcType="VARCHAR" />
     <result column="amount" property="amount" jdbcType="BIGINT" />
+    <result column="left_amount" property="leftAmount" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
     <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, account_id, account_bill_id, bill_type_code, amount, create_time, create_user, trade_no
+    id, user_id, account_id, account_bill_id, bill_type_code, amount,left_amount, create_time, create_user, trade_no
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -36,10 +37,10 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into account_deposit_history (id, user_id, account_id,
-      account_bill_id, bill_type_code, amount, 
+      account_bill_id, bill_type_code, amount,  left_amount,
       create_time, create_user, trade_no)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER},
-      #{accountBillId,jdbcType=INTEGER}, #{billTypeCode,jdbcType=VARCHAR}, #{amount,jdbcType=BIGINT}, 
+      #{accountBillId,jdbcType=INTEGER}, #{billTypeCode,jdbcType=VARCHAR}, #{amount,jdbcType=BIGINT},  #{leftAmount,jdbcType=BIGINT},
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{tradeNo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.AccountDepositHistory" >
@@ -63,6 +64,9 @@
       </if>
       <if test="amount != null" >
         amount,
+      </if>
+      <if test="leftAmount != null" >
+        left_amount,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -90,6 +94,9 @@
       </if>
       <if test="amount != null" >
         #{amount,jdbcType=BIGINT},
+      </if>
+      <if test="leftAmount != null" >
+        #{leftAmount,jdbcType=BIGINT},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -120,6 +127,9 @@
       <if test="amount != null" >
         amount = #{amount,jdbcType=BIGINT},
       </if>
+      <if test="leftAmount != null" >
+        left_amount = #{leftAmount,jdbcType=BIGINT},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -139,6 +149,7 @@
       account_bill_id = #{accountBillId,jdbcType=INTEGER},
       bill_type_code = #{billTypeCode,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=BIGINT},
+      left_amount = #{leftAmount,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=INTEGER},
       trade_no = #{tradeNo,jdbcType=VARCHAR}
