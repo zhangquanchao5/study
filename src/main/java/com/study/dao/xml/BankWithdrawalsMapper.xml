@@ -21,6 +21,32 @@
     from bank_withdrawals
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="findPageWithDraw" resultType="com.study.common.apibean.response.BankWithDrawResp" parameterType="com.study.common.apibean.request.BankWithdrawReq" >
+    select
+    bw.id as withdrawNo,bw.bank_type as type,bw.amount as amount,bw.status as status,bw.create_time as  withdrawTime,bw.transfer_time as receiveTime,
+    b.bank_no as bankNo,b.bank_deposit as depositBank,b.name as accountName
+    from bank_withdrawals bw,bank b
+    where bw.bank_id=b.id
+    and bw.user_id = #{userId,jdbcType=INTEGER}
+    <if test="status != null" >
+      and bw.status=#{status}
+    </if>
+    order by bw.create_time desc
+    limit #{start},#{size}
+  </select>
+
+  <select id="findPageWithDrawCount" resultType="java.lang.Integer" parameterType="com.study.common.apibean.request.BankWithdrawReq" >
+    select
+    count(1)
+    from bank_withdrawals bw
+    where 1=1
+    and bw.user_id = #{userId,jdbcType=INTEGER}
+    <if test="status != null" >
+      and bw.status=#{status}
+    </if>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from bank_withdrawals
     where id = #{id,jdbcType=INTEGER}

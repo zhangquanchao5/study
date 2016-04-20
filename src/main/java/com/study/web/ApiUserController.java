@@ -8,7 +8,6 @@ import com.study.code.SplitCode;
 import com.study.common.Encrypt;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
-import com.study.common.apibean.ApiResponseMessage;
 import com.study.common.apibean.AuthHeaderBean;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.CommonResponse;
@@ -23,7 +22,6 @@ import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
 import com.study.service.IApIUserService;
-import com.study.service.IBankService;
 import com.study.service.IRedisService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +45,7 @@ public class ApiUserController extends BaseController {
     private IRedisService iRedisService;
     @Autowired
     private MessageUtil messageUtil;
-    @Autowired
-    private IBankService bankService;
+
 //    /**
 //     * Register save.
 //     */
@@ -688,27 +685,6 @@ public class ApiUserController extends BaseController {
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 
-    @RequestMapping(value = "/user/prewithdraw", method = RequestMethod.POST)
-    private
-    @ResponseBody
-    ApiResponseMessage getAccountSnapshoot(@RequestBody BankWithdrawReq req, HttpServletRequest request) {
-        ApiResponseMessage message = new ApiResponseMessage();
-        StudyLogger.recBusinessLog("api/user/prewithdraw:" + JSON.toJSONString(req));
-        try {
-            if (isAuthToken(iRedisService, request)) {
-                Integer userId = getAuthHeader(request).getUserId();
 
-            } else {
-                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
-                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
-            }
-        }  catch (Exception e) {
-            message.setCode(ErrorCode.PROCESS_FAIL);
-            message.setMsg(messageUtil.getMessage("msg.process.fail"));
-            StudyLogger.recSysLog(e);
-        }
-
-        return message;
-    }
 
 }

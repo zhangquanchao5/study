@@ -9,6 +9,26 @@ public class BankWithdrawReq extends BasePageRequest {
 
     private Integer status;
 
+    private Integer userId;
+
+    private Integer start;
+
+    public Integer getStart() {
+        return start;
+    }
+
+    public void setStart(Integer start) {
+        this.start = start;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public Integer getStatus() {
         return status;
     }

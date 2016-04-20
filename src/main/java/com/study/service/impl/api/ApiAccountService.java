@@ -69,7 +69,7 @@ public class ApiAccountService {
 
     public AccountDetailResp getAccountHistory( AccountInfoPageReq req) throws Exception {
         AccountDetailResp accountInfoPageReq=new AccountDetailResp();
-        req.setStart(((req.getPage() == null ? 0 : req.getPage() - 1)) * (req.getSize() == null ? 20 : req.getSize()));
+        req.setStart(((req.getPage() == null ? 0 : req.getPage() - 1)) * (req.getSize() == null ? 15 : req.getSize()));
         req.setSize(req.getSize() == null ? 15 : req.getSize());
         if(null == req.getId()){
             throw new ParameterNotEnoughException(messageUtil.getMessage("msg.parameter.notEnough"));

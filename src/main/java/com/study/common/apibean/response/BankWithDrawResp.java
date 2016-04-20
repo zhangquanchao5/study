@@ -8,9 +8,9 @@ import java.util.Date;
 public class BankWithDrawResp {
     private Integer withdrawNo;
     private String bankNo;
-    private String depositBank;
+    private String depositBank="";
     private Integer type;
-    private String accountName;
+    private String accountName="";
     private Integer amount;
     private Integer status;
     private Date withdrawTime;

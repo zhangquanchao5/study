@@ -12,6 +12,7 @@ import com.study.common.util.EncryptUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.exception.*;
 import com.study.model.UserInfo;
+import com.study.service.IBankService;
 import com.study.service.IRedisService;
 import com.study.service.impl.api.ApiAccountService;
 import com.study.code.ErrorCode;
@@ -37,6 +38,8 @@ public class ApiAccountController extends BaseController {
     private IRedisService iRedisService;
     @Autowired
     private ApiAccountService apiAccountService;
+    @Autowired
+    private IBankService bankService;
 
     /**
      * 账户明细查询
@@ -323,5 +326,29 @@ public class ApiAccountController extends BaseController {
         }
 
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
+
+    @RequestMapping(value = "/user/prewithdraw", method = RequestMethod.POST)
+    private
+    @ResponseBody
+    ApiResponseMessage prewithdraw(@RequestBody BankWithdrawReq req, HttpServletRequest request) {
+        ApiResponseMessage message = new ApiResponseMessage();
+        StudyLogger.recBusinessLog("api/user/prewithdraw:" + JSON.toJSONString(req));
+        try {
+            if (isAuthToken(iRedisService, request)) {
+                req.setUserId(getAuthHeader(request).getUserId());
+                message=bankService.findPageWithDraw(req,message);
+                message.setCode(ErrorCode.SUCCESS);
+            } else {
+                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
+        }  catch (Exception e) {
+            message.setCode(ErrorCode.PROCESS_FAIL);
+            message.setMsg(messageUtil.getMessage("msg.process.fail"));
+            StudyLogger.recSysLog(e);
+        }
+
+        return message;
     }
 }
