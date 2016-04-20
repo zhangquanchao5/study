@@ -13,6 +13,8 @@ public class BankWithdrawReq extends BasePageRequest {
 
     private Integer start;
 
+
+
     public Integer getStart() {
         return start;
     }

@@ -1,6 +1,7 @@
 package com.study.service;
 
 import com.study.common.apibean.ApiResponseMessage;
+import com.study.common.apibean.request.AccountInfoPageReq;
 import com.study.common.apibean.request.BankWithdrawReq;
 import com.study.common.apibean.response.BankWithDrawResp;
 
@@ -15,7 +16,17 @@ public interface IBankService {
      * Find page with draw.
      *
      * @param bankWithdrawReq the bank withdraw req
+     * @param message the message
      * @return the list
      */
     ApiResponseMessage findPageWithDraw(BankWithdrawReq bankWithdrawReq,ApiResponseMessage message);
+
+    /**
+     * Find page account query.
+     *
+     * @param bankWithdrawReq the bank withdraw req
+     * @param message the message
+     * @return the api response message
+     */
+    ApiResponseMessage findPageAccountQuery(AccountInfoPageReq bankWithdrawReq,ApiResponseMessage message);
 }

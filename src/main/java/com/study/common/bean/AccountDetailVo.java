@@ -17,7 +17,17 @@ public class AccountDetailVo {
 
     private Long amount;
 
+    private Long balance;
+
     private String status;
+
+    public Long getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Long balance) {
+        this.balance = balance;
+    }
 
     public String getType() {
         return type;

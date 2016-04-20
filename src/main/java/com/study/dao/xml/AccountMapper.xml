@@ -27,16 +27,25 @@
   <select id="findHistoryList" resultType="com.study.common.bean.AccountDetailVo" parameterType="com.study.common.apibean.request.AccountInfoPageReq" >
    select  createDate, billType ,type, amount, status, tradeNo from
    ( select
-    create_time as createDate,bill_type_code as billType ,1 as type,amount as amount,0 as status,trade_no as tradeNo
+    create_time as createDate,bill_type_code as billType ,1 as type,amount as amount,0 as status,trade_no as tradeNo,left_amount as balance
     from account_deposit_history where user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
     UNION ALL
      select
-    create_time as createDate,bill_type_code as billType ,2 as type,amount as amount,0 as status,trade_no as tradeNo
+    create_time as createDate,bill_type_code as billType ,2 as type,amount as amount,0 as status,trade_no as tradeNo,left_amount as balance
     from account_withdrawal_history where user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
     UNION  ALL
      select
-    create_time as createDate,0 as billType ,3 as type,amount as amount,status as status,id as tradeNo
+    create_time as createDate,0 as billType ,3 as type,amount as amount,status as status,id as tradeNo,left_amount as balance
     from bank_withdrawals where user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
     ) r
      order by r.createDate desc
      limit #{start},#{size}
@@ -48,15 +57,47 @@
     ( select
     create_time as createDate,bill_type_code as billType ,1 as type,amount as amount,0 as status,trade_no as tradeNo
     from account_deposit_history where user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
     UNION ALL
     select
     create_time as createDate,bill_type_code as billType ,2 as type,amount as amount,0 as status,trade_no as tradeNo
     from account_withdrawal_history where user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
     UNION  ALL
     select
     create_time as createDate,0 as billType ,3 as type,amount as amount,status as status,id as tradeNo
     from bank_withdrawals where user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
     ) r
+  </select>
+
+  <select id="findAccountQuery" resultType="com.study.common.bean.AccountQueryVo" parameterType="com.study.common.apibean.request.AccountInfoPageReq" >
+    select a.amount,b.inAmount,c.outAmount,d.withdramAmount from
+
+    (select a.balance as amount from account a where a.user_id=#{id} ) a,
+    ( select ifnull(sum(adh.amount),0) as inAmount   from account_deposit_history adh
+    where adh.user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+    and adh.create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+  </if>) b,
+    (select ifnull(sum(awh.amount),0) as outAmount from account_withdrawal_history awh
+     where   awh.user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and awh.create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
+    ) c,
+    (select  ifnull(sum(bw.amount),0) as withdramAmount from  bank_withdrawals bw where bw.user_id=#{id}
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and bw.create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>
+    ) d
+
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

@@ -1,7 +1,9 @@
 package com.study.dao;
 
 import com.study.common.apibean.request.AccountInfoPageReq;
+import com.study.common.apibean.request.BankWithdrawReq;
 import com.study.common.bean.AccountDetailVo;
+import com.study.common.bean.AccountQueryVo;
 import com.study.model.Account;
 
 import java.util.List;
@@ -24,4 +26,6 @@ public interface AccountMapper {
     List<AccountDetailVo> findHistoryList(AccountInfoPageReq req);
 
     int findHistoryListCount(AccountInfoPageReq req);
+
+    AccountQueryVo findAccountQuery(AccountInfoPageReq req);
 }
