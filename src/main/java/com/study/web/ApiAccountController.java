@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.apibean.request.*;
+import com.study.common.apibean.response.AccountDetailResp;
 import com.study.common.apibean.response.AccountInfoResp;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.util.DESUtils;
@@ -46,14 +47,14 @@ public class ApiAccountController extends BaseController {
     @RequestMapping(value = "/user/detail", method = RequestMethod.POST)
     private
     @ResponseBody
-    ApiResponseMessage getAccountHistory(@RequestBody AccountInfoReq req, HttpServletRequest request) {
+    ApiResponseMessage getAccountHistory(@RequestBody AccountInfoPageReq req, HttpServletRequest request) {
         ApiResponseMessage message = new ApiResponseMessage();
         StudyLogger.recBusinessLog("userid:" + req.getId());
         try {
             if (isAuthToken(iRedisService, request)) {
                 Integer userId = getAuthHeader(request).getUserId();
                 if (req.getId().intValue() == userId.intValue()) {
-                    AccountInfoResp resp = apiAccountService.getAccountInfo(req.getId());
+                    AccountDetailResp resp = apiAccountService.getAccountHistory(req);
                     message.setCode(ErrorCode.PROCESS_SUCC);
                     message.setMsg(messageUtil.getMessage("msg.process.succ"));
                     message.setData(resp);

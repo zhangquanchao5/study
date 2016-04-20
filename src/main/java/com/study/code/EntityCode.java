@@ -31,4 +31,19 @@ public class EntityCode {
 
     public static final String BILLTYPE_CODE_CASH="cash";
     public static final String BILLTYPE_CODE_GIFT="gift";
+    public static final String BILLTYPE_CODE_RED="red";
+
+    public static final Integer BILLTYPE_CODE_CASH_ID=1;
+    public static final Integer BILLTYPE_CODE_GIFT_ID=2;
+    public static final Integer BILLTYPE_CODE_RED_ID=3;
+
+
+    public static final String BILLTYPE_CODE_1="1";//现金充值
+    public static final String BILLTYPE_CODE_2="2";//红包充值
+    public static final String BILLTYPE_CODE_3="3";//代金券充值值
+    public static final String BILLTYPE_CODE_4="4";//购买课程充值
+    public static final String BILLTYPE_CODE_5="5";//现金扣款
+    public static final String BILLTYPE_CODE_6="6";//红包扣款
+    public static final String BILLTYPE_CODE_7="7";//代金券扣款
+    public static final String BILLTYPE_CODE_8="8";//提现
 }

@@ -4,11 +4,15 @@ import com.study.code.EntityCode;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
 import com.study.common.StudyLogger;
+import com.study.common.apibean.AccountDetailBean;
+import com.study.common.apibean.request.AccountInfoPageReq;
 import com.study.common.apibean.request.RechargeReq;
 import com.study.common.apibean.response.AccountBook;
+import com.study.common.apibean.response.AccountDetailResp;
 import com.study.common.apibean.response.AccountInfoResp;
 import com.study.common.apibean.request.DepositAndWithdrawReq;
 import com.study.common.apibean.response.CommonResponse;
+import com.study.common.bean.AccountDetailVo;
 import com.study.common.sms.SendSm;
 import com.study.common.sms.SmsResponse;
 import com.study.common.util.DESUtils;
@@ -63,6 +67,82 @@ public class ApiAccountService {
     @Autowired
     private IRedisService iRedisService;
 
+    public AccountDetailResp getAccountHistory( AccountInfoPageReq req) throws Exception {
+        AccountDetailResp accountInfoPageReq=new AccountDetailResp();
+        req.setStart(((req.getPage() == null ? 0 : req.getPage() - 1)) * (req.getSize() == null ? 20 : req.getSize()));
+        req.setSize(req.getSize() == null ? 15 : req.getSize());
+        if(null == req.getId()){
+            throw new ParameterNotEnoughException(messageUtil.getMessage("msg.parameter.notEnough"));
+        }
+
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(req.getId());
+        if(null == userInfo){
+            throw new UserNotExitsException(messageUtil.getMessage("msg.user.notExits"));
+        }
+
+        Account account = accountMapper.selectByUserId(userInfo.getId());
+        if(null == account){
+            throw new ProcessFailureException(messageUtil.getMessage("msg.process.fail"));
+        }
+        accountInfoPageReq.setAmount(account.getBalance());
+        accountInfoPageReq.setCashAmount(0L);
+        accountInfoPageReq.setGiftAmount(0l);
+        accountInfoPageReq.setRedAmount(0l);
+        List<AccountBill> bills = accountBillMapper.selectByAccountId(account.getId());
+        if(null != bills && bills.size() > 0){
+            for(AccountBill bill : bills){
+                if(bill.getBillTypeId().intValue()==EntityCode.BILLTYPE_CODE_CASH_ID){
+                    accountInfoPageReq.setCashAmount(bill.getBalance());
+                }else if(bill.getBillTypeId().intValue()==EntityCode.BILLTYPE_CODE_GIFT_ID){
+                    accountInfoPageReq.setGiftAmount(bill.getBalance());
+                }else if(bill.getBillTypeId().intValue()==EntityCode.BILLTYPE_CODE_RED_ID){
+                    accountInfoPageReq.setRedAmount(bill.getBalance());
+                }
+            }
+        }
+        //查询收支明细
+        List<AccountDetailVo> accountDetailVos=accountMapper.findHistoryList(req);
+        List<AccountDetailBean> accountDetailBeans=new ArrayList<AccountDetailBean>();
+        if(accountDetailVos!=null&&accountDetailVos.size()>0){
+            AccountDetailBean accountDetailBean;
+            for(AccountDetailVo accountDetailVo:accountDetailVos){
+                accountDetailBean=new AccountDetailBean();
+                accountDetailBean.setAmount(accountDetailVo.getAmount());
+                accountDetailBean.setCreateDate(accountDetailVo.getCreateDate());
+                accountDetailBean.setStatus(accountDetailVo.getStatus());
+                accountDetailBean.setTradeNo(accountDetailVo.getTradeNo());
+                if(accountDetailVo.getType().equals("1")){
+                    if(accountDetailVo.getBillType().equals(EntityCode.BILLTYPE_CODE_CASH)){
+                        if(accountDetailVo.getTradeNo().startsWith("U_")){
+                            accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_4);
+                        }else{
+                            accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_1);
+                        }
+                    }else if(accountDetailVo.getBillType().equals(EntityCode.BILLTYPE_CODE_GIFT)){
+                        accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_3);
+                    }else if(accountDetailVo.getBillType().equals(EntityCode.BILLTYPE_CODE_RED)){
+                        accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_2);
+                    }
+                }else if(accountDetailVo.getType().equals("2")){
+                    if(accountDetailVo.getBillType().equals(EntityCode.BILLTYPE_CODE_CASH)){
+                        accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_5);
+                    }else if(accountDetailVo.getBillType().equals(EntityCode.BILLTYPE_CODE_GIFT)){
+                        accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_7);
+                    }else if(accountDetailVo.getBillType().equals(EntityCode.BILLTYPE_CODE_RED)){
+                        accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_6);
+                    }
+                }else{
+                    accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_8);
+                }
+
+                accountDetailBeans.add(accountDetailBean);
+            }
+        }
+
+        accountInfoPageReq.setTotal(accountMapper.findHistoryListCount(req));
+        accountInfoPageReq.setAccountDetailBeans(accountDetailBeans);
+        return  accountInfoPageReq;
+    }
     public AccountInfoResp getAccountInfo(Integer userId) throws Exception {
         if(null == userId){
             throw new ParameterNotEnoughException(messageUtil.getMessage("msg.parameter.notEnough"));

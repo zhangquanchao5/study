@@ -23,6 +23,42 @@
     from account
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
+
+  <select id="findHistoryList" resultType="com.study.common.bean.AccountDetailVo" parameterType="com.study.common.apibean.request.AccountInfoPageReq" >
+   select  createDate, billType ,type, amount, status, tradeNo from
+   ( select
+    create_time as createDate,bill_type_code as billType ,1 as type,amount as amount,0 as status,trade_no as tradeNo
+    from account_deposit_history where user_id=#{id}
+    UNION ALL
+     select
+    create_time as createDate,bill_type_code as billType ,2 as type,amount as amount,0 as status,trade_no as tradeNo
+    from account_withdrawal_history where user_id=#{id}
+    UNION  ALL
+     select
+    create_time as createDate,0 as billType ,3 as type,amount as amount,status as status,id as tradeNo
+    from bank_withdrawals where user_id=#{id}
+    ) r
+     order by r.createDate desc
+     limit #{start},#{size}
+  </select>
+
+
+  <select id="findHistoryListCount" resultType="java.lang.Integer" parameterType="com.study.common.apibean.request.AccountInfoPageReq" >
+    select  count(1) from
+    ( select
+    create_time as createDate,bill_type_code as billType ,1 as type,amount as amount,0 as status,trade_no as tradeNo
+    from account_deposit_history where user_id=#{id}
+    UNION ALL
+    select
+    create_time as createDate,bill_type_code as billType ,2 as type,amount as amount,0 as status,trade_no as tradeNo
+    from account_withdrawal_history where user_id=#{id}
+    UNION  ALL
+    select
+    create_time as createDate,0 as billType ,3 as type,amount as amount,status as status,id as tradeNo
+    from bank_withdrawals where user_id=#{id}
+    ) r
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from account
     where id = #{id,jdbcType=INTEGER}

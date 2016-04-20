@@ -1,6 +1,10 @@
 package com.study.dao;
 
+import com.study.common.apibean.request.AccountInfoPageReq;
+import com.study.common.bean.AccountDetailVo;
 import com.study.model.Account;
+
+import java.util.List;
 
 public interface AccountMapper {
     int deleteByPrimaryKey(Integer id);
@@ -16,4 +20,8 @@ public interface AccountMapper {
     int updateByPrimaryKey(Account record);
 
     Account selectByUserId(Integer userId);
+
+    List<AccountDetailVo> findHistoryList(AccountInfoPageReq req);
+
+    int findHistoryListCount(AccountInfoPageReq req);
 }
