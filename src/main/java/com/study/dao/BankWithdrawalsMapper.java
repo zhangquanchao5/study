@@ -2,6 +2,7 @@ package com.study.dao;
 
 import com.study.common.apibean.request.BankWithdrawReq;
 import com.study.common.apibean.response.BankWithDrawResp;
+import com.study.common.bean.AccountQueryVo;
 import com.study.model.BankWithdrawals;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface BankWithdrawalsMapper {
     List<BankWithDrawResp> findPageWithDraw(BankWithdrawReq bankWithdrawReq);
 
     int  findPageWithDrawCount(BankWithdrawReq bankWithdrawReq);
+
+
 }

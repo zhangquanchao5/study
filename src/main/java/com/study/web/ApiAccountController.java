@@ -351,4 +351,28 @@ public class ApiAccountController extends BaseController {
 
         return message;
     }
+
+    @RequestMapping(value = "/user/accounts/query", method = RequestMethod.POST)
+    private
+    @ResponseBody
+    ApiResponseMessage accountsQuery(@RequestBody AccountInfoPageReq req, HttpServletRequest request) {
+        ApiResponseMessage message = new ApiResponseMessage();
+        StudyLogger.recBusinessLog("api/user/accounts/query:" + JSON.toJSONString(req));
+        try {
+//            if (isAuthToken(iRedisService, request)) {
+//                req.setId(getAuthHeader(request).getUserId());
+                message=bankService.findPageAccountQuery(req, message);
+                message.setCode(ErrorCode.SUCCESS);
+//            } else {
+//                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+//                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+//            }
+        }  catch (Exception e) {
+            message.setCode(ErrorCode.PROCESS_FAIL);
+            message.setMsg(messageUtil.getMessage("msg.process.fail"));
+            StudyLogger.recSysLog(e);
+        }
+
+        return message;
+    }
 }
