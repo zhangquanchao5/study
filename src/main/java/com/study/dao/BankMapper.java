@@ -1,6 +1,7 @@
 package com.study.dao;
 
 import com.study.model.Bank;
+import org.apache.ibatis.annotations.Param;
 
 public interface BankMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +15,6 @@ public interface BankMapper {
     int updateByPrimaryKeySelective(Bank record);
 
     int updateByPrimaryKey(Bank record);
+
+    Bank findByUserIdAndBankNo(@Param("userId") Integer userId, @Param("bankNo") String bankNo);
 }
