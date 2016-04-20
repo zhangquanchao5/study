@@ -85,6 +85,8 @@ public class ErrorCode {
      */
     public static final String BANK_DUPLICATE_BINDING="4001";
 
+    public static final String BANKWITHDRAWALS_NOT_EXITS="4002";
+
     /**
      * token no validate
      */

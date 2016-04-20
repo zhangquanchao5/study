@@ -8,6 +8,7 @@ import com.study.code.SplitCode;
 import com.study.common.Encrypt;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
+import com.study.common.apibean.ApiResponseMessage;
 import com.study.common.apibean.AuthHeaderBean;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.CommonResponse;
@@ -22,6 +23,7 @@ import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
 import com.study.model.UserInfo;
 import com.study.service.IApIUserService;
+import com.study.service.IBankWithdrawalsService;
 import com.study.service.IRedisService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,29 @@ public class ApiUserController extends BaseController {
     private IRedisService iRedisService;
     @Autowired
     private MessageUtil messageUtil;
+    @Autowired
+    private IBankWithdrawalsService iBankWithdrawalsService;
+
+    @RequestMapping("/confirm")
+    public @ResponseBody
+    ApiResponseMessage confirm(@RequestBody WithdrawConfirmReq req, HttpServletRequest request){
+        ApiResponseMessage message = new ApiResponseMessage();
+        try {
+            Integer userId = getAuthHeader(request).getUserId();
+            StudyLogger.recBusinessLog("withdraw confirm :" + req.getWithdrawNo());
+            if (null != userId) {
+                iBankWithdrawalsService.confirmWithdraw(req);
+            } else {
+                message.setCode(ErrorCode.PROCESS_FAIL);
+                message.setMsg(messageUtil.getMessage("msg.user.notExits"));
+            }
+        } catch (Exception e) {
+            message.setCode(ErrorCode.PROCESS_FAIL);
+            message.setMsg(messageUtil.getMessage("msg.process.fail"));
+            StudyLogger.recSysLog(e);
+        }
+        return message;
+    }
 
 //    /**
 //     * Register save.

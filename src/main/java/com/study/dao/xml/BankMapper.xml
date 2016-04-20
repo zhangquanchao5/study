@@ -26,7 +26,13 @@
     select
     <include refid="Base_Column_List" />
     from bank
-    where id = #{id,jdbcType=INTEGER} AND bank_no = #{bankNo,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER} AND bank_no = #{bankNo,jdbcType=VARCHAR}
+  </select>
+  <select id="findAllByUser" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from bank
+    where user_id = #{_parameter,jdbcType=INTEGER}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

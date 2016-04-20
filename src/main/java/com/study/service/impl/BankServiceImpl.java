@@ -1,5 +1,6 @@
 package com.study.service.impl;
 
+import com.study.code.EntityCode;
 import com.study.common.apibean.ApiResponseMessage;
 import com.study.common.apibean.request.BankBindReq;
 import com.study.common.apibean.request.BankWithdrawReq;
@@ -54,6 +55,21 @@ public class BankServiceImpl implements IBankService {
         bank.setAddress(req.getDepositBankAddress());
         bank.setCreateTime(new Date());
         bank.setName(req.getAccountName());
+        bank.setStatus(EntityCode.BANK_VALID);
         bankMapper.insert(bank);
+    }
+
+    @Override
+    public void unbindBank(Integer id) throws Exception {
+        Bank bank = bankMapper.selectByPrimaryKey(id);
+        if (null != bank) {
+            bank.setStatus(EntityCode.BANK_INVALID);
+            bankMapper.updateByPrimaryKey(bank);
+        }
+    }
+
+    @Override
+    public List findAllBanks(Integer userId) throws Exception {
+        return bankMapper.findAllByUser(userId);
     }
 }
