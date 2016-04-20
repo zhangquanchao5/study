@@ -81,6 +81,11 @@ public class ErrorCode {
     public static final String RED_RECHARGE_SEND_ERROR="3006";
 
     /**
+     * 重复绑定
+     */
+    public static final String BANK_DUPLICATE_BINDING="4001";
+
+    /**
      * token no validate
      */
     public static final String USER_TOKEN_NO_VAL="9999";

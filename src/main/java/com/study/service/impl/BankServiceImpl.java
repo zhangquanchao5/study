@@ -1,18 +1,14 @@
 package com.study.service.impl;
 
-import com.study.code.EntityCode;
-import com.study.common.apibean.AccountDetailBean;
 import com.study.common.apibean.ApiResponseMessage;
-import com.study.common.apibean.request.AccountInfoPageReq;
 import com.study.common.apibean.request.BankWithdrawReq;
-import com.study.common.bean.AccountDetailVo;
-import com.study.dao.AccountMapper;
+import com.study.common.apibean.response.BankWithDrawResp;
 import com.study.dao.BankWithdrawalsMapper;
 import com.study.service.IBankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,6 +16,12 @@ import java.util.List;
  */
 @Service
 public class BankServiceImpl implements IBankService {
+
+    @Autowired
+    private MessageUtil messageUtil;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    private BankMapper bankMapper;
 
     @Autowired
     private BankWithdrawalsMapper bankWithdrawalsMapper;
@@ -84,5 +86,22 @@ public class BankServiceImpl implements IBankService {
 
         message.setDatas(accountDetailBeans);
         return message;
+    }
+
+    @Override
+    public void bindBank(Integer userId, BankBindReq req) throws Exception {
+        Bank binded = bankMapper.findByUserIdAndBankNo(userId, req.getBankNO());
+        if (null != binded) {
+            throw new BankDuplicateBindingException(messageUtil.getMessage("msg.bank.duplicateBinding"));
+        }
+        Bank bank = new Bank();
+        bank.setUserId(userId);
+        bank.setBankType(req.getType());
+        bank.setBankNo(req.getBankNO());
+        bank.setBankDeposit(req.getDepositBank());
+        bank.setAddress(req.getDepositBankAddress());
+        bank.setCreateTime(new Date());
+        bank.setName(req.getAccountName());
+        bankMapper.insert(bank);
     }
 }

@@ -1,7 +1,6 @@
 package com.study.service;
 
 import com.study.common.apibean.ApiResponseMessage;
-import com.study.common.apibean.request.AccountInfoPageReq;
 import com.study.common.apibean.request.BankWithdrawReq;
 import com.study.common.apibean.response.BankWithDrawResp;
 
@@ -17,9 +16,18 @@ public interface IBankService {
      *
      * @param bankWithdrawReq the bank withdraw req
      * @param message the message
+     * @param message         the message
      * @return the list
      */
     ApiResponseMessage findPageWithDraw(BankWithdrawReq bankWithdrawReq,ApiResponseMessage message);
+
+    /**
+     * Bind bank.
+     *
+     * @param userId the user id
+     * @param req    the req
+     */
+    void bindBank(Integer userId, BankBindReq req) throws Exception;
 
     /**
      * Find page account query.

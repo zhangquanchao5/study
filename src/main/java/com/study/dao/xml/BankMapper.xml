@@ -21,6 +21,14 @@
     from bank
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="findByUserIdAndBankNo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bank
+    where id = #{id,jdbcType=INTEGER} AND bank_no = #{bankNo,jdbcType=VARCHAR}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from bank
     where id = #{id,jdbcType=INTEGER}
