@@ -21,6 +21,7 @@ import com.study.common.page.UserPageResponse;
 import com.study.common.util.MessageUtil;
 import com.study.common.util.PropertiesUtil;
 import com.study.common.util.ServletResponseHelper;
+import com.study.exception.*;
 import com.study.model.UserInfo;
 import com.study.service.IApIUserService;
 import com.study.service.IBankWithdrawalsService;
@@ -49,6 +50,43 @@ public class ApiUserController extends BaseController {
     private MessageUtil messageUtil;
     @Autowired
     private IBankWithdrawalsService iBankWithdrawalsService;
+
+
+
+    @RequestMapping("/prewithdraw")
+    public @ResponseBody
+    ApiResponseMessage prewithdraw(@RequestBody PreWithdrawReq req, HttpServletRequest request){
+        ApiResponseMessage message = new ApiResponseMessage();
+        try {
+            StudyLogger.recBusinessLog("prewithdraw :" + req.getId());
+            iBankWithdrawalsService.prewithdraw(req);
+        } catch (BankNotExitsException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (AccountNotExitsException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (AccountBalanceNotEnoughException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (UnknowAccountBillTypeException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (AccountBillBalanceNotEnoughException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (Exception e) {
+            message.setCode(ErrorCode.PROCESS_FAIL);
+            message.setMsg(messageUtil.getMessage("msg.process.fail"));
+            StudyLogger.recSysLog(e);
+        }
+        return message;
+    }
 
     @RequestMapping("/confirm")
     public @ResponseBody

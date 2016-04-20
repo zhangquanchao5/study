@@ -47,9 +47,10 @@ public class EntityCode {
     public static final String BILLTYPE_CODE_7="7";//代金券扣款
     public static final String BILLTYPE_CODE_8="8";//提现
 
-    public static final byte BANK_VALID=1;
-    public static final byte BANK_INVALID=0;
+    public static final byte BANK_VALID=1; //正常
+    public static final byte BANK_INVALID=0; //删除
 
-    public static final int WITHDRAW_CONFIRM_SUCC=2;
-    public static final int WITHDRAW_CONFIRM_REFUSE=3;
+    public static final int WITHDRAW_STATUS_APPLY =1;//申请中
+    public static final int WITHDRAW_STATUS_SUCC=2; //已打款
+    public static final int WITHDRAW_STATUS_REFUSE =3; //拒绝提现
 }

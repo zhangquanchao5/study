@@ -21,6 +21,10 @@ public class ErrorCode {
      * 参数不完整
      */
     public static final String PARAMETER_NOT_ENOUGH="1002";
+    /**
+     * 未知账本类型
+     */
+    public static final String UNKNOW_BILL_TYPE = "1003";
 
     /**
      * 存在此账号
@@ -49,6 +53,11 @@ public class ErrorCode {
      * 用户需要激活
      */
     public static final String USER_NEED_ACTIVE="2006";
+
+    /**
+     * 用户账户不存在
+     */
+    public static final String USER_ACCOUNT_NOT_EXITS="2007";
 
     /**
      * 余额不足
@@ -81,11 +90,18 @@ public class ErrorCode {
     public static final String RED_RECHARGE_SEND_ERROR="3006";
 
     /**
+     * 无效的绑定ID
+     */
+    public static final String BANK_NOT_EXITS = "4000";
+    /**
      * 重复绑定
      */
-    public static final String BANK_DUPLICATE_BINDING="4001";
+    public static final String BANK_DUPLICATE_BINDING = "4001";
 
-    public static final String BANKWITHDRAWALS_NOT_EXITS="4002";
+    public static final String BANKWITHDRAWALS_NOT_EXITS = "4002";
+
+    public static final String BANKWITHDRAWALS_ACCOUT_BALANCENOTENOUGH = "4003";
+    public static final String BANKWITHDRAWALS_ACCOUTBILL_BALANCENOTENOUGH = "4004";
 
     /**
      * token no validate
