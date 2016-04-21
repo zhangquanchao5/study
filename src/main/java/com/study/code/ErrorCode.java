@@ -102,11 +102,21 @@ public class ErrorCode {
      * 重复绑定
      */
     public static final String BANK_DUPLICATE_BINDING = "4001";
-
+    /**
+     * 银行提现记录不存在
+     */
     public static final String BANKWITHDRAWALS_NOT_EXITS = "4002";
-
+    /**
+     * 用户提现账户余额不足
+     */
     public static final String BANKWITHDRAWALS_ACCOUT_BALANCENOTENOUGH = "4003";
+    /**
+     * 用户提现账本余额不足
+     */
     public static final String BANKWITHDRAWALS_ACCOUTBILL_BALANCENOTENOUGH = "4004";
+    /**
+     * 无效的提现确认（重复）
+     */
     public static final String BANKWITHDRAWALS_INVALID_CONFIRM = "4005";
 
     /**
