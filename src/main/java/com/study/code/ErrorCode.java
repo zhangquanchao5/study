@@ -60,6 +60,11 @@ public class ErrorCode {
     public static final String USER_ACCOUNT_NOT_EXITS="2007";
 
     /**
+     * 用户账户账本不存在
+     */
+    public static final String USER_ACCOUNT_BILL_NOT_EXITS="2008";
+
+    /**
      * 余额不足
      */
     public static final String USER_MONEY_ERROR="3001";
@@ -102,6 +107,7 @@ public class ErrorCode {
 
     public static final String BANKWITHDRAWALS_ACCOUT_BALANCENOTENOUGH = "4003";
     public static final String BANKWITHDRAWALS_ACCOUTBILL_BALANCENOTENOUGH = "4004";
+    public static final String BANKWITHDRAWALS_INVALID_CONFIRM = "4005";
 
     /**
      * token no validate

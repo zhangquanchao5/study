@@ -39,7 +39,7 @@ public class BankWithdrawalsServiceImpl implements IBankWithdrawalsService {
     private BankWithdrawalsMapper bankWithdrawalsMapper;
 
     @Override
-    public void prewithdraw(PreWithdrawReq req) throws Exception {
+    public void saveForPrewithdraw(PreWithdrawReq req) throws Exception {
         //为空默认现金账户
         if (null == req.getCashType() || req.getCashType().trim().length() <= 0) {
             req.setCashType(EntityCode.BILLTYPE_CODE_CASH);
@@ -81,20 +81,44 @@ public class BankWithdrawalsServiceImpl implements IBankWithdrawalsService {
         bankWithdrawals.setStatus(Integer.valueOf(EntityCode.WITHDRAW_STATUS_APPLY).byteValue());
         bankWithdrawals.setCreateTime(new Date());
         bankWithdrawals.setLeftAmount(account.getBalance());
+        bankWithdrawals.setBillType(accountBillType.getId());
         bankWithdrawalsMapper.insert(bankWithdrawals);
     }
 
     @Override
-    public void confirmWithdraw(WithdrawConfirmReq req) throws Exception{
+    public void saveForConfirmWithdraw(WithdrawConfirmReq req) throws Exception{
         BankWithdrawals bankWithdrawals = bankWithdrawalsMapper.selectByPrimaryKey(req.getWithdrawNo());
-        if (null != bankWithdrawals) {
-            bankWithdrawals.setStatus(req.getStatus().byteValue());
-            if (req.getStatus() == EntityCode.WITHDRAW_STATUS_SUCC) {
-                bankWithdrawals.setTransferTime(new Date());
-            }
-            bankWithdrawalsMapper.updateByPrimaryKey(bankWithdrawals);
-        } else {
+        if (null == bankWithdrawals) {
             throw new BankWithDrawalsNotExitsException(messageUtil.getMessage("msg.bankWithdraw.notExits"));
         }
+
+        if (bankWithdrawals.getStatus() != EntityCode.WITHDRAW_STATUS_APPLY) {
+            throw new BankWithdrawInvalidConfirmException(messageUtil.getMessage("msg.bankWithdraw.invalidConfirm"));
+        }
+
+        bankWithdrawals.setStatus(req.getStatus().byteValue());
+        if (req.getStatus() == EntityCode.WITHDRAW_STATUS_SUCC) {
+            bankWithdrawals.setTransferTime(new Date());
+        } else if (req.getStatus() == EntityCode.WITHDRAW_STATUS_REFUSE) {
+            Account account = accountMapper.selectByUserId(bankWithdrawals.getUserId());
+            if (null == account) {
+                throw new AccountNotExitsException(messageUtil.getMessage("msg.user.accountNotExits"));
+            }
+
+            Map<String, Integer> map = new HashMap<String, Integer>();
+            map.put("accountId", account.getId());
+            map.put("billTypeId", bankWithdrawals.getBillType());
+            AccountBill accountBill = accountBillMapper.selectByAccountIdAndBillType(map);
+            if (null == accountBill) {
+                throw new AccountBillNotExitsException(messageUtil.getMessage("msg.user.accoutBillNotExits"));
+            }
+
+            accountBill.setBalance(accountBill.getBalance() + bankWithdrawals.getAmount());
+            accountBillMapper.updateByPrimaryKey(accountBill);
+
+            account.setBalance(account.getBalance() + bankWithdrawals.getAmount());
+            accountMapper.updateByPrimaryKey(account);
+        }
+        bankWithdrawalsMapper.updateByPrimaryKey(bankWithdrawals);
     }
 }

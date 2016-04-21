@@ -33,9 +33,10 @@ public class BankServiceImpl implements IBankService {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private BankMapper bankMapper;
-
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private BankWithdrawalsMapper bankWithdrawalsMapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private AccountMapper accountMapper;
 
@@ -100,13 +101,13 @@ public class BankServiceImpl implements IBankService {
     }
 
     @Override
-    public void bindBank(Integer userId, BankBindReq req) throws Exception {
-        Bank binded = bankMapper.findByUserIdAndBankNo(userId, req.getBankNO());
+    public Bank saveForBindBank(BankBindReq req) throws Exception {
+        Bank binded = bankMapper.findByUserIdAndBankNo(req.getUserId(), req.getBankNO());
         if (null != binded) {
             throw new BankDuplicateBindingException(messageUtil.getMessage("msg.bank.duplicateBinding"));
         }
         Bank bank = new Bank();
-        bank.setUserId(userId);
+        bank.setUserId(req.getUserId());
         bank.setBankType(req.getType());
         bank.setBankNo(req.getBankNO());
         bank.setBankDeposit(req.getDepositBank());
@@ -115,10 +116,11 @@ public class BankServiceImpl implements IBankService {
         bank.setName(req.getAccountName());
         bank.setStatus(EntityCode.BANK_VALID);
         bankMapper.insert(bank);
+        return bank;
     }
 
     @Override
-    public void unbindBank(Integer id) throws Exception {
+    public void saveForUnbindBank(Integer id) throws Exception {
         Bank bank = bankMapper.selectByPrimaryKey(id);
         if (null != bank) {
             bank.setStatus(EntityCode.BANK_INVALID);

@@ -14,7 +14,7 @@ public interface IBankWithdrawalsService {
      * @param req the req
      * @throws Exception the exception
      */
-    void prewithdraw(PreWithdrawReq req) throws Exception;
+    void saveForPrewithdraw(PreWithdrawReq req) throws Exception;
 
     /**
      * Confirm withdraw.
@@ -22,5 +22,5 @@ public interface IBankWithdrawalsService {
      * @param req the req
      * @throws Exception the exception
      */
-    void confirmWithdraw(WithdrawConfirmReq req) throws Exception;
+    void saveForConfirmWithdraw(WithdrawConfirmReq req) throws Exception;
 }

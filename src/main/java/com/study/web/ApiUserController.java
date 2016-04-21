@@ -53,13 +53,15 @@ public class ApiUserController extends BaseController {
 
 
 
-    @RequestMapping("/prewithdraw")
+    @RequestMapping("/applyWithdraw")
     public @ResponseBody
-    ApiResponseMessage prewithdraw(@RequestBody PreWithdrawReq req, HttpServletRequest request){
+    ApiResponseMessage prewithdraw(@RequestBody PreWithdrawReq req){
         ApiResponseMessage message = new ApiResponseMessage();
         try {
-            StudyLogger.recBusinessLog("prewithdraw :" + req.getId());
-            iBankWithdrawalsService.prewithdraw(req);
+            StudyLogger.recBusinessLog("withdraw ID:" + req.getId());
+            iBankWithdrawalsService.saveForPrewithdraw(req);
+            message.setCode(ErrorCode.PROCESS_SUCC);
+            message.setMsg(messageUtil.getMessage("msg.process.succ"));
         } catch (BankNotExitsException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
@@ -90,17 +92,34 @@ public class ApiUserController extends BaseController {
 
     @RequestMapping("/confirm")
     public @ResponseBody
-    ApiResponseMessage confirm(@RequestBody WithdrawConfirmReq req, HttpServletRequest request){
+    ApiResponseMessage confirm(@RequestBody WithdrawConfirmReq req){
         ApiResponseMessage message = new ApiResponseMessage();
         try {
-            Integer userId = getAuthHeader(request).getUserId();
-            StudyLogger.recBusinessLog("withdraw confirm :" + req.getWithdrawNo());
-            if (null != userId) {
-                iBankWithdrawalsService.confirmWithdraw(req);
+            StudyLogger.recBusinessLog("withdraw confirm ID:" + req.getWithdrawNo());
+            if (null != req.getWithdrawNo()) {
+                iBankWithdrawalsService.saveForConfirmWithdraw(req);
+                message.setCode(ErrorCode.PROCESS_SUCC);
+                message.setMsg(messageUtil.getMessage("msg.process.succ"));
             } else {
                 message.setCode(ErrorCode.PROCESS_FAIL);
                 message.setMsg(messageUtil.getMessage("msg.user.notExits"));
             }
+        } catch (BankWithDrawalsNotExitsException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (BankWithdrawInvalidConfirmException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (AccountNotExitsException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
+        } catch (AccountBillNotExitsException e) {
+            message.setCode(e.getCode());
+            message.setMsg(e.getMessage());
+            StudyLogger.recSysLog(e);
         } catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));
