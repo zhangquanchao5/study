@@ -4,10 +4,10 @@ package com.study.common.bean;
  * Created by huichao on 2016/4/20.
  */
 public class AccountQueryVo {
-    private Long amount;
-    private Long outAmount;
-    private Long inAmount;
-    private Long withdramAmount;
+    private Long amount=0l;
+    private Long outAmount=0l;
+    private Long inAmount=0l;
+    private Long withdramAmount=0l;
 
     public Long getAmount() {
         return amount;

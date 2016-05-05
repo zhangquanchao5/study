@@ -495,7 +495,16 @@ public final class StringUtil {
 		}
 	}
 
+  public static String formatBankNo(String bankNo){
+	  String end=bankNo.substring(bankNo.length()-4,bankNo.length());
+	  StringBuffer sb=new StringBuffer();
+	  for(int i=0;i<bankNo.length()-4;i++){
+		  sb.append("*");
+	  }
+	  sb.append(end);
 
+	  return sb.toString();
+  }
 
 
 }

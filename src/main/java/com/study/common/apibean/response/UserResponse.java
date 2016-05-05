@@ -17,6 +17,15 @@ public class UserResponse implements Serializable {
     private Date ct;
     private String userName;
     private String idCard;
+    private Date lastLoginTime;
+
+    public Date getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
 
     public String getIdCard() {
         return idCard;

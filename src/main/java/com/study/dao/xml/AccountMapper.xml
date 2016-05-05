@@ -47,6 +47,10 @@
       and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
     </if>
     ) r
+     where 1=1
+    <if test="type != null">
+      and r.type=#{type}
+    </if>
      order by r.createDate desc
      limit #{start},#{size}
   </select>
@@ -75,6 +79,10 @@
       and create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
     </if>
     ) r
+    where 1=1
+    <if test="type != null">
+      and r.type=#{type}
+    </if>
   </select>
 
   <select id="findAccountQuery" resultType="com.study.common.bean.AccountQueryVo" parameterType="com.study.common.apibean.request.AccountInfoPageReq" >

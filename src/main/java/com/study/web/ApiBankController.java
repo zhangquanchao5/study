@@ -80,13 +80,21 @@ public class ApiBankController extends BaseController {
 
     @RequestMapping(value = "/banks/{id}", method = RequestMethod.DELETE)
     public @ResponseBody
-    ApiResponseMessage unbind(@PathVariable("id") Integer id){
+    ApiResponseMessage unbind(@PathVariable("id") Integer id,HttpServletRequest request){
         ApiResponseMessage message = new ApiResponseMessage();
         try {
+            Integer userId = getAuthHeader(request).getUserId();
             StudyLogger.recBusinessLog("unbind bank:" + id);
-            iBankService.saveForUnbindBank(id);
-            message.setCode(ErrorCode.PROCESS_SUCC);
-            message.setMsg(messageUtil.getMessage("msg.process.succ"));
+
+            if (null != userId) {
+                StudyLogger.recBusinessLog("unbind bank:" + id);
+                iBankService.saveForUnbindBank(id);
+                message.setCode(ErrorCode.PROCESS_SUCC);
+                message.setMsg(messageUtil.getMessage("msg.process.succ"));
+            } else {
+                message.setCode(ErrorCode.PROCESS_FAIL);
+                message.setMsg(messageUtil.getMessage("msg.user.notExits"));
+            }
         } catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));

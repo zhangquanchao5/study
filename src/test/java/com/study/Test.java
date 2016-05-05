@@ -13,6 +13,8 @@ public class Test {
          System.out.println(StringUtil.getBASE64("1000673=MTAwMDY3Mz13ZWJ8MTAwMDY3M3wxNDU5MjMyMDEwMDM1"));
         System.out.println(StringUtil.getFromBASE64("MTAwMDY3Mz13ZWJ8MTAwMDY3M3wxNDU5MjIyNTUyNjQ5"));
         System.out.println(System.currentTimeMillis()-Long.parseLong("1459221317477"));
+        String bank="1234444";
+        System.out.println(StringUtil.formatBankNo(bank));
 //        String codes="1000039=MTAwMDAzOT1hbmRyb2lkfDEwMDAwMzl8MTQ0Mzc5NzUxMjM5NA==";
 //        System.out.println("qqq:"+codes.substring("1000039".length()+1,codes.length()));
 //        System.out.println("MTAwMDAyMj1NVEF3TURBeU1qMW9OWHd4TURBd01ESXlmRFkwT0RBd2ZERTBNemd5TlRNeE9Ea3hOekU9");

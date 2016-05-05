@@ -1,6 +1,7 @@
 package com.study.service.impl;
 
 import com.study.code.EntityCode;
+import com.study.common.StringUtil;
 import com.study.common.apibean.AccountDetailBean;
 import com.study.common.apibean.ApiResponseMessage;
 import com.study.common.apibean.request.AccountInfoPageReq;
@@ -8,6 +9,7 @@ import com.study.common.apibean.request.BankBindReq;
 import com.study.common.apibean.request.BankWithdrawReq;
 import com.study.common.apibean.response.BankWithDrawResp;
 import com.study.common.bean.AccountDetailVo;
+import com.study.common.bean.AccountQueryVo;
 import com.study.common.util.MessageUtil;
 import com.study.dao.AccountMapper;
 import com.study.dao.BankMapper;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +48,11 @@ public class BankServiceImpl implements IBankService {
         bankWithdrawReq.setSize(bankWithdrawReq.getSize() == null ? 15 : bankWithdrawReq.getSize());
 
         message.setTotal(bankWithdrawalsMapper.findPageWithDrawCount(bankWithdrawReq));
-        message.setDatas(bankWithdrawalsMapper.findPageWithDraw(bankWithdrawReq));
+        List<BankWithDrawResp> bankWithDrawResps=bankWithdrawalsMapper.findPageWithDraw(bankWithdrawReq);
+        for(BankWithDrawResp bankWithDrawResp:bankWithDrawResps){
+            bankWithDrawResp.setBankNo(StringUtil.formatBankNo(bankWithDrawResp.getBankNo()));
+        }
+        message.setDatas(bankWithDrawResps);
         return message;
     }
 
@@ -53,7 +60,8 @@ public class BankServiceImpl implements IBankService {
         bankWithdrawReq.setStart(((bankWithdrawReq.getPage() == null ? 0 : bankWithdrawReq.getPage() - 1)) * (bankWithdrawReq.getSize() == null ? 15 : bankWithdrawReq.getSize()));
         bankWithdrawReq.setSize(bankWithdrawReq.getSize() == null ? 15 : bankWithdrawReq.getSize());
 
-        message.setData(accountMapper.findAccountQuery(bankWithdrawReq));
+        AccountQueryVo accountQueryVo=accountMapper.findAccountQuery(bankWithdrawReq);
+        message.setData(accountQueryVo!=null?accountQueryVo:new AccountQueryVo());
         message.setTotal(accountMapper.findHistoryListCount(bankWithdrawReq));
 
         //查询收支明细
@@ -116,6 +124,8 @@ public class BankServiceImpl implements IBankService {
         bank.setName(req.getAccountName());
         bank.setStatus(EntityCode.BANK_VALID);
         bankMapper.insert(bank);
+
+         bank.setBankNo(StringUtil.formatBankNo(bank.getBankNo()));
         return bank;
     }
 
@@ -130,6 +140,10 @@ public class BankServiceImpl implements IBankService {
 
     @Override
     public List findAllBanks(Integer userId) throws Exception {
-        return bankMapper.findAllByUser(userId);
+        List<Bank> banks=bankMapper.findAllByUser(userId);
+        for(Bank bank:banks){
+            bank.setBankNo(StringUtil.formatBankNo(bank.getBankNo()));
+        }
+        return banks;
     }
 }

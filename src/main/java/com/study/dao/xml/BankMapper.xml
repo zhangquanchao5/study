@@ -32,7 +32,7 @@
     select
     <include refid="Base_Column_List" />
     from bank
-    where user_id = #{_parameter,jdbcType=INTEGER}
+    where user_id = #{_parameter,jdbcType=INTEGER} and status=1
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

@@ -82,7 +82,7 @@ public class ApiAccountService {
 
         Account account = accountMapper.selectByUserId(userInfo.getId());
         if(null == account){
-            throw new ProcessFailureException(messageUtil.getMessage("msg.process.fail"));
+            throw new AccountNotExitsException(messageUtil.getMessage("msg.user.accountNotExits"));
         }
         accountInfoPageReq.setAmount(account.getBalance());
         accountInfoPageReq.setCashAmount(0L);
@@ -134,8 +134,12 @@ public class ApiAccountService {
                 }else{
                     accountDetailBean.setTradeType(EntityCode.BILLTYPE_CODE_8);
                 }
+                if(accountDetailBean.getTradeNo().startsWith("U_")){
+                    accountDetailBean.setTradeNo(accountDetailBean.getTradeNo().replace("U_",""));
+                }
 
                 accountDetailBeans.add(accountDetailBean);
+
             }
         }
 

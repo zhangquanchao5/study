@@ -71,6 +71,7 @@ public class BaseController {
         userResponse.setName(userInfo.getName());
         userResponse.setUserName(userInfo.getUserName());
         userResponse.setIdCard(userInfo.getIdCard());
+        userResponse.setLastLoginTime(userInfo.getUpdateTime()==null?userInfo.getCreateTime():userInfo.getUpdateTime());
 
         return  userResponse;
     }

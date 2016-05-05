@@ -77,7 +77,7 @@ public class ApiAccountController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        } catch (ProcessFailureException e) {
+        } catch (AccountNotExitsException e) {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
@@ -359,14 +359,14 @@ public class ApiAccountController extends BaseController {
         ApiResponseMessage message = new ApiResponseMessage();
         StudyLogger.recBusinessLog("api/user/accounts/query:" + JSON.toJSONString(req));
         try {
-//            if (isAuthToken(iRedisService, request)) {
-//                req.setId(getAuthHeader(request).getUserId());
+            if (isAuthToken(iRedisService, request)) {
+                req.setId(getAuthHeader(request).getUserId());
                 message=bankService.findPageAccountQuery(req, message);
                 message.setCode(ErrorCode.SUCCESS);
-//            } else {
-//                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
-//                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
-//            }
+            } else {
+                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
         }  catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));
