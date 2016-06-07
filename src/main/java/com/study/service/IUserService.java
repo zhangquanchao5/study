@@ -11,6 +11,8 @@ public interface IUserService {
 
     UserInfo findByUserName(String userName);
 
+    UserInfo findByUserName(String userName,String mobile);
+
     UserInfo findByEMail(String email);
 
     UserInfo findByIdcard(String card);

@@ -61,6 +61,18 @@ public class ApiUserServiceImpl implements IApIUserService {
         }
     }
 
+    public UserInfo findByUserName(String userName,String domain){
+        if(StringUtil.isEmpty(domain)){
+            return userInfoMapper.findByUserName(userName);
+        }else{
+            Map<String,String> map=new HashMap<String, String>();
+            map.put("userName",userName);
+            map.put("domain", domain);
+
+            return userInfoMapper.selectByDomainUserName(map);
+        }
+    }
+
     public UserInfo findByUserName(String userName){
         return  userInfoMapper.findByUserName(userName);
     }

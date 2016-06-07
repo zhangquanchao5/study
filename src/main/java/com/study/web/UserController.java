@@ -87,7 +87,7 @@ public class UserController extends BaseController {
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
             if(!StringUtil.isEmpty(userInfoModel.getUserName())){
-                if ( iUserService.findByUserName(userInfoModel.getUserName()) != null) {
+                if ( iUserService.findByUserName(userInfoModel.getUserName(),userInfoModel.getDomain()) != null) {
                     message.setSuccess(false);
                     message.setCode(ErrorCode.USER_EXITS);
                     ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
@@ -245,7 +245,7 @@ public class UserController extends BaseController {
                     message.put("success", true);
                 }
             } else if (!StringUtil.isEmpty(userInfoModel.getMobile())) {
-                if (iUserService.findByUserName(userInfoModel.getMobile()) != null || iUserService.findByMobile(userInfoModel.getMobile(),userInfoModel.getDomain()) != null || iUserService.findByEMail(userInfoModel.getMobile()) != null) {
+                if (iUserService.findByUserName(userInfoModel.getMobile(),userInfoModel.getDomain()) != null || iUserService.findByMobile(userInfoModel.getMobile(),userInfoModel.getDomain()) != null || iUserService.findByEMail(userInfoModel.getMobile()) != null) {
                     message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
                     message.put("success", false);
 

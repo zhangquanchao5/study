@@ -209,7 +209,7 @@ public class ApiPubController extends BaseController {
                 registerMobileResponse.setMsg(messageUtil.getMessage("msg.parameter.notEnough"));
             }else{
                 //判断是否用户名注册
-                UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone());
+                UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone(),mobileRequest.getDomain());
                 //ADD 手机号
                 UserInfo userMobile = iApIUserService.findByMobile(mobileRequest.getUserPhone(),mobileRequest.getDomain());
                 if(isExist!=null||userMobile!=null){

@@ -26,6 +26,8 @@ public interface UserInfoMapper {
 
     UserInfo selectByDomainMobile(Map map);
 
+    UserInfo selectByDomainUserName(Map map);
+
     int updatePwd(UserInfo record);
 
      UserInfo findByToken(String token);

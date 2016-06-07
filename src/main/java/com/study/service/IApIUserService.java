@@ -18,6 +18,9 @@ public interface IApIUserService {
 
     public UserInfo findByUserName(String userName);
 
+    public UserInfo findByUserName(String userName,String mobile);
+
+
     public UserInfo findByEMail(String email);
 
     public UserInfo findByIdCard(String idCard);

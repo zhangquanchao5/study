@@ -49,6 +49,13 @@
     where mobile = #{mobile,jdbcType=VARCHAR} and domain=#{domain} and status!=2
   </select>
 
+  <select id="selectByDomainUserName" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where user_name = #{userName,jdbcType=VARCHAR} and domain=#{domain} and status!=2
+  </select>
+
   <select id="findByEMail" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />

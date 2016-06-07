@@ -45,6 +45,18 @@ public class UserServiceImpl implements IUserService{
         return userInfoMapper.findByUserName(userName);
     }
 
+    public UserInfo findByUserName(String userName,String domain){
+        if(StringUtil.isEmpty(domain)){
+            return userInfoMapper.findByUserName(userName);
+        }else{
+            Map<String,String> map=new HashMap<String, String>();
+            map.put("userName",userName);
+            map.put("domain", domain);
+
+            return userInfoMapper.selectByDomainUserName(map);
+        }
+    }
+
     @Override
     public UserInfo fingById(Integer userId) {
         return userInfoMapper.selectByPrimaryKey(userId);
