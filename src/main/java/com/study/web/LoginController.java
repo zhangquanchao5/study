@@ -7,6 +7,7 @@ import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.bean.AjaxResponseMessage;
+import com.study.common.http.ApiHttpUtil;
 import com.study.common.session.LoginUser;
 import com.study.common.session.SessionInfo;
 import com.study.common.util.PropertiesUtil;
@@ -16,8 +17,10 @@ import com.study.service.IRedisService;
 import com.study.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -35,27 +38,46 @@ public class LoginController extends BaseController {
     @Autowired
     private IRedisService iRedisService;
 
+    @RequestMapping(value ="/{domain}/login",method = RequestMethod.GET)
+    public ModelAndView domainLogin(@PathVariable("domain") String domain) {
+        ModelAndView modelAndView=new ModelAndView();
+        modelAndView.addObject("domain",domain);
+        modelAndView.addObject("light", ApiHttpUtil.executeLight(domain));
+        modelAndView.setViewName("light/login");
+        //根据二级域名获取domain
+
+        return modelAndView;
+    }
+
     @RequestMapping(value ="/loginUp",method = RequestMethod.POST)
     public void login(UserInfo userInfoModel,HttpServletRequest request, HttpServletResponse response) {
 
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
-            UserInfo userInfo = iUserService.findByUserName(userInfoModel.getUserName());
-            if (userInfo == null) {
-                userInfo=iUserService.findByMobile(userInfoModel.getUserName());
-                if(userInfo==null){
-                    userInfo=iUserService.findByEMail(userInfoModel.getUserName());
+            UserInfo userInfo;
+            String domain;
+            if(StringUtil.isEmpty(userInfoModel.getDomain())){
+                domain="www";
+                userInfo= iUserService.findByUserName(userInfoModel.getUserName());
+                if (userInfo == null) {
+                    userInfo=iUserService.findByMobile(userInfoModel.getUserName());
                     if(userInfo==null){
-                        userInfo=iUserService.findByIdcard(userInfoModel.getUserName());
+                        userInfo=iUserService.findByEMail(userInfoModel.getUserName());
                         if(userInfo==null){
-                            message.setSuccess(false);
-                            message.setCode(ErrorCode.USER_NOT_EXITS);
-                            ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-                            return;
+                            userInfo=iUserService.findByIdcard(userInfoModel.getUserName());
                         }
-
                     }
                 }
+            }else{
+                domain=userInfoModel.getDomain();
+                userInfo=iUserService.findByMobile(userInfoModel.getUserName(),userInfoModel.getDomain());
+            }
+
+            if(userInfo==null){
+                message.setSuccess(false);
+                message.setCode(ErrorCode.USER_NOT_EXITS);
+                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                return;
             }
 
             //判断密码是否正确
@@ -72,13 +94,23 @@ public class LoginController extends BaseController {
 
             iRedisService.setObject(PrefixCode.API_COOKIE_PRE + ticketKey, changeUser(userInfo), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
 
+
             Cookie cookie = new Cookie(PropertiesUtil.getString("sso.cookieName"), encodedticketKey);
             StudyLogger.recSysLog("sso.cookieName[Header-Authorization]:" + encodedticketKey);
             cookie.setSecure(Boolean.parseBoolean(PropertiesUtil.getString("sso.secure")));// 为true时用于https
             cookie.setMaxAge(7 * 24 * 3600);
             cookie.setDomain(PropertiesUtil.getString("sso.domainName"));
             cookie.setPath("/");
+
+            Cookie cookieDomain = new Cookie("ssodomain", domain);
+            cookieDomain.setSecure(Boolean.parseBoolean(PropertiesUtil.getString("sso.secure")));// 为true时用于https
+            cookieDomain.setMaxAge(7 * 24 * 3600);
+            cookieDomain.setDomain(PropertiesUtil.getString("sso.domainName"));
+            cookieDomain.setPath("/");
+
             response.addCookie(cookie);
+            response.addCookie(cookieDomain);
+
 
             if(StringUtil.isEmpty(userInfo.getUserName())){
                 userInfo.setUserName(userInfo.getMobile());
@@ -96,6 +128,10 @@ public class LoginController extends BaseController {
             {
                message.setCode(StringUtil.getFromBASE64(gotoURL));
             }
+            if(!StringUtil.isEmpty(userInfoModel.getDomain())){
+                message.setMsg(userInfo.getDomain()+PropertiesUtil.getString("sso.domainName"));
+            }
+
         } catch (Exception e) {
             message.setSuccess(false);
             message.setCode(ErrorCode.SYS_ERROR);

@@ -9,36 +9,28 @@
        <%--<a href="${pageContext.request.contextPath}/account/accountManagement" target="_blank">${sessionScope.user_session_info.userInfo.userName}</a>--%>
     <%--</c:if>--%>
             <c:if test="${sessionScope.user_session_info==null}">
-                <a href="${pageContext.request.contextPath}/login">请登录</a>
+                <a href="${pageContext.request.contextPath}/${domain}/login">请登录</a>
             </c:if>
            <span>
                <%--|</span> <span><img src="${pageContext.request.contextPath}/resources/images/icon_1.png" /></span><a href="#">消息</a> <span><img src="${pageContext.request.contextPath}/resources/images/icon_2.png" /></span><a href="#">通知</a>--%>
         </div>
         <div class="rfloat top_right">
             <ul>
-                <li><a href="${basePath}">有你学首页</a></li>
-     <c:if test="${sessionScope.user_session_info!=null}">
-         <li><a  href="${basePath}/#/myyouni.html">我的有你学</a><!-- <img src="images/bottom.png" /> -->
-             <ul>
-                 <li><a href="#"style="color: #ED7171;" class="lfloat">我的有你学<img src="${pageContext.request.contextPath}/resources/images/icon_31.png"  style="margin-left:5px"/></a></li>
-                 <li><a href="#">我的课程</a></li>
-                 <li><a href="#">我的关注</a></li>
-                 <li><a href="#">我的钱包</a></li>
-                 <li><a href="#">订单管理</a></li>
-                 <li><a href="#">我的评价</a></li>
-                 <li><a href="#">我要赚钱</a></li>
-             </ul>
-         </li>
-         <li><a href="#">我的收藏</a></li>
-
-    </c:if>
-                <li><a href="#">机构中心</a><!-- <img src="images/bottom.png" /> -->
-                    <ul>
-                        <li><a href="${basePath}/manage" style="color: #ED7171;" class="lfloat">机构中心<img src="${pageContext.request.contextPath}/resources/images/icon_31.png"  style="margin-left:5px"/></a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/registerOrg">机构入驻</a></li>
-                        <li><a href="${basePath}/xin.html" target="_blank">入驻流程</a></li>
-                    </ul>
-                </li>
+                <li><a href="http://${domain}${shortPath}">轻校网首页</a></li>
+<c:if test="${sessionScope.user_session_info!=null}">
+                <li><a href="http://${domain}${shortPath}/#/personalCenter.html?showListType=personalCenter">我的轻校网</a></li>
+</c:if>
+                <%--<li><a  href="http://www.unixue.com/#/myyouni.html">我的轻校网</a><!-- <img src="images/bottom.png" /> -->--%>
+                    <%--<ul>--%>
+                        <%--<li><a href="#"style="color: #ED7171;" class="lfloat">我的轻校网<img src="${pageContext.request.contextPath}/resources/images/icon_31.png"  style="margin-left:5px"/></a></li>--%>
+                        <%--<li><a href="#">我的课程</a></li>--%>
+                        <%--<li><a href="#">我的关注</a></li>--%>
+                        <%--<li><a href="#">我的钱包</a></li>--%>
+                        <%--<li><a href="#">订单管理</a></li>--%>
+                        <%--<li><a href="#">我的评价</a></li>--%>
+                        <%--<li><a href="#">我要赚钱</a></li>--%>
+                    <%--</ul>--%>
+                <%--</li>--%>
 
             </ul>
         </div>

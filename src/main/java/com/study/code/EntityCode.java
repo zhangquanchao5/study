@@ -17,6 +17,9 @@ public class EntityCode {
 
     public static final byte USER_SOURCE_APP=0;
     public static final byte USER_SOURCE_SYS=1;
+    public static final byte USER_SOURCE_DOMAIN=2;
+
+
 
     public static final Integer MOBILE_REGESITER=1;
     public static final Integer MOBILE_GET_PASSWORD=2;

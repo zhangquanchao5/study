@@ -4,9 +4,18 @@ package com.study.common.apibean.request;
  * Created by huichao on 2015/7/14.
  */
 public class PwdResetRequest {
+    private String domain;
     private String userPhone;
     private String verifyCode;
     private String newPassword;
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
     public String getUserPhone() {
         return userPhone;

@@ -15,9 +15,13 @@ public interface IUserService {
 
     UserInfo findByIdcard(String card);
 
+    UserInfo findByMobile(String mobile);
+
+    UserInfo findByMobile(String mobile,String domain);
+
     UserInfo fingById(Integer userId);
 
-    public UserInfo findByMobile(String mobile);
+
 
     void saveUserInfo(UserInfo userInfo,UserInfoFrom from);
 

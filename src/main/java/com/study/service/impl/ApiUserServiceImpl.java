@@ -24,7 +24,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by huichao on 2015/7/7.
@@ -45,6 +47,18 @@ public class ApiUserServiceImpl implements IApIUserService {
 
     public UserInfo findByMobile(String mobile){
         return userInfoMapper.selectByMobile(mobile);
+    }
+
+    public UserInfo findByMobile(String mobile,String domain){
+        if(StringUtil.isEmpty(domain)){
+            return userInfoMapper.selectByMobile(mobile);
+        }else{
+            Map<String,String> map=new HashMap<String, String>();
+            map.put("mobile",mobile);
+            map.put("domain", domain);
+
+            return userInfoMapper.selectByDomainMobile(map);
+        }
     }
 
     public UserInfo findByUserName(String userName){
@@ -75,11 +89,41 @@ public class ApiUserServiceImpl implements IApIUserService {
         UserInfo userInfo=new UserInfo();
         userInfo.setCreateTime(new Date());
         userInfo.setMobile(apiUserBean.getMobile());
-        userInfo.setSource(EntityCode.USER_SOURCE_APP);
         userInfo.setPassword(StringUtil.getMD5Str(apiUserBean.getPassword()));
         userInfo.setIdCard(apiUserBean.getIdCard());
         userInfo.setStatus(EntityCode.USER_VALIDATE);
-        userInfoMapper.insert(userInfo);
+
+        if(StringUtil.isEmpty(apiUserBean.getDomain())){
+            userInfo.setSource(EntityCode.USER_SOURCE_APP);
+            userInfoMapper.insert(userInfo);
+        }else{
+            //判断是否存在主用户
+            UserInfo userInfoParent=userInfoMapper.selectByMobile(apiUserBean.getMobile());
+            if(userInfoParent!=null){
+                userInfo.setSource(EntityCode.USER_SOURCE_DOMAIN);
+                userInfo.setDomain(apiUserBean.getDomain());
+                userInfo.setParentId(userInfoParent.getId());
+
+                userInfoMapper.insert(userInfo);
+            }else{
+                userInfoParent=new UserInfo();
+                userInfoParent.setCreateTime(new Date());
+                userInfoParent.setMobile(apiUserBean.getMobile());
+                userInfoParent.setSource(EntityCode.USER_SOURCE_APP);
+                userInfoParent.setPassword(StringUtil.getMD5Str(apiUserBean.getPassword()));
+                userInfoParent.setIdCard(apiUserBean.getIdCard());
+                userInfoParent.setStatus(EntityCode.USER_VALIDATE);
+                userInfoMapper.insert(userInfoParent);
+
+                userInfo.setSource(EntityCode.USER_SOURCE_DOMAIN);
+                userInfo.setDomain(apiUserBean.getDomain());
+                userInfo.setParentId(userInfoParent.getId());
+
+                userInfoMapper.insert(userInfo);
+
+            }
+        }
+
 
         UserInfoFrom userInfoFrom=new UserInfoFrom();
         userInfoFrom.setUserId(userInfo.getId());
@@ -103,6 +147,7 @@ public class ApiUserServiceImpl implements IApIUserService {
         UserInfo userInfo=new UserInfo();
         userInfo.setPassword(StringUtil.getMD5Str(pwdResetRequest.getNewPassword()));
         userInfo.setMobile(pwdResetRequest.getUserPhone());
+        userInfo.setDomain(pwdResetRequest.getDomain());
 
         userInfoMapper.updatePwd(userInfo);
     }

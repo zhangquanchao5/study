@@ -8,8 +8,17 @@ public class LoginRequest {
     private String userPassword;
     private String userEmail;
     private String userPhone;
+    private String domain;
     private String idCard;
     private String code;
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
     public String getCode() {
         return code;

@@ -5,9 +5,18 @@ package com.study.common.apibean.request;
  */
 public class MobileRequest {
     private String userPhone;
+    private String domain;
     private Integer type;
     private String timeStamp;
     private String signature;
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
     public String getTimeStamp() {
         return timeStamp;

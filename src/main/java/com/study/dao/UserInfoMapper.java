@@ -5,6 +5,7 @@ import com.study.common.page.UserPageRequest;
 import com.study.model.UserInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserInfoMapper {
     int deleteByPrimaryKey(Integer id);
@@ -22,6 +23,8 @@ public interface UserInfoMapper {
     UserInfo findByUserName(String userName);
 
     UserInfo selectByMobile(String mobile);
+
+    UserInfo selectByDomainMobile(Map map);
 
     int updatePwd(UserInfo record);
 

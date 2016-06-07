@@ -7,6 +7,15 @@ public class RegisterMobileRequest {
     private String userPhone;
     private String passwd;
     private String verifyCode;
+    private String domain;
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
     public String getUserPhone() {
         return userPhone;

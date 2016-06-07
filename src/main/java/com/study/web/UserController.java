@@ -13,6 +13,7 @@ import com.study.common.StudyLogger;
 import com.study.common.apibean.QqOpenIdBean;
 import com.study.common.apibean.response.CommonResponse;
 import com.study.common.bean.AjaxResponseMessage;
+import com.study.common.http.ApiHttpUtil;
 import com.study.common.http.HttpSendResult;
 import com.study.common.http.HttpUtil;
 import com.study.common.session.LoginUser;
@@ -29,6 +30,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,34 +59,59 @@ public class UserController extends BaseController {
     @Autowired
     private IApIUserService iApIUserService;
 
+    @RequestMapping(value ="/{domain}/register",method = RequestMethod.GET)
+    public ModelAndView domainRegister(@PathVariable("domain") String domain) {
+        ModelAndView modelAndView=new ModelAndView();
+        modelAndView.addObject("domain",domain);
+        modelAndView.addObject("light", ApiHttpUtil.executeLight(domain));
+        modelAndView.setViewName("light/register");
+        //根据二级域名获取domain
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/{domain}/forget",method = RequestMethod.GET)
+    public ModelAndView domainForget(@PathVariable("domain") String domain) {
+
+        ModelAndView modelAndView=new ModelAndView();
+        modelAndView.addObject("domain",domain);
+        modelAndView.addObject("light", ApiHttpUtil.executeLight(domain));
+        modelAndView.setViewName("light/forget_new");
+        //根据二级域名获取domain
+
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/registerUp", method = RequestMethod.POST)
     public void registerUp(UserInfo userInfoModel, @RequestParam String valCode, HttpServletResponse response) {
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
-            UserInfo userInfo = iUserService.findByUserName(userInfoModel.getUserName());
-            if (userInfo != null) {
-                message.setSuccess(false);
-                message.setCode(ErrorCode.USER_EXITS);
-                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-                return;
+            if(!StringUtil.isEmpty(userInfoModel.getUserName())){
+                if ( iUserService.findByUserName(userInfoModel.getUserName()) != null) {
+                    message.setSuccess(false);
+                    message.setCode(ErrorCode.USER_EXITS);
+                    ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                    return;
+                }
             }
 
-            UserInfo userInfoMobile = iUserService.findByMobile(userInfoModel.getMobile());
-            if (userInfoMobile != null) {
-                message.setSuccess(false);
-                message.setCode(ErrorCode.USER_EXITS);
-                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-                return;
+            if(!StringUtil.isEmpty(userInfoModel.getMobile())){
+                if ( iUserService.findByMobile(userInfoModel.getMobile(), userInfoModel.getDomain()) != null) {
+                    message.setSuccess(false);
+                    message.setCode(ErrorCode.USER_EXITS);
+                    ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                    return;
+                }
             }
 
-            UserInfo userInfoMail = iUserService.findByEMail(userInfoModel.getUserMail());
-            if (userInfoMail != null) {
-                message.setSuccess(false);
-                message.setCode(ErrorCode.USER_EXITS);
-                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-                return;
+            if(!StringUtil.isEmpty(userInfoModel.getUserMail())){
+                if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
+                    message.setSuccess(false);
+                    message.setCode(ErrorCode.USER_EXITS);
+                    ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                    return;
+                }
             }
-
 
 
             //判断注册码是否有效
@@ -103,6 +130,10 @@ public class UserController extends BaseController {
                 if(!StringUtils.isEmpty(userInfoModel.getGotoURL())){
                     message.setData(userInfoModel.getGotoURL());
                 }
+                if(!StringUtil.isEmpty(userInfoModel.getDomain())){
+                    message.setMsg(userInfoModel.getDomain());
+                }
+
             } else {
                 message.setSuccess(false);
                 message.setCode(ErrorCode.USER_CODE_ERROR);
@@ -200,6 +231,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/registerValidate")
     public void registerValidate(UserInfo userInfoModel,String type, HttpServletResponse response) {
 
+        System.out.println("json:"+JSON.toJSONString(userInfoModel));
         Map message = new HashMap();
         try {
             if (!StringUtil.isEmpty(userInfoModel.getUserName())) {
@@ -213,7 +245,7 @@ public class UserController extends BaseController {
                     message.put("success", true);
                 }
             } else if (!StringUtil.isEmpty(userInfoModel.getMobile())) {
-                if (iUserService.findByUserName(userInfoModel.getMobile()) != null || iUserService.findByMobile(userInfoModel.getMobile()) != null || iUserService.findByEMail(userInfoModel.getMobile()) != null) {
+                if (iUserService.findByUserName(userInfoModel.getMobile()) != null || iUserService.findByMobile(userInfoModel.getMobile(),userInfoModel.getDomain()) != null || iUserService.findByEMail(userInfoModel.getMobile()) != null) {
                     message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
                     message.put("success", false);
 
@@ -312,7 +344,7 @@ public class UserController extends BaseController {
     public void code(UserInfo userInfoModel, HttpServletResponse response) {
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
-            UserInfo userInfoMobile = iUserService.findByMobile(userInfoModel.getMobile());
+            UserInfo userInfoMobile = iUserService.findByMobile(userInfoModel.getMobile(),userInfoModel.getDomain());
             userInfoMobile.setPassword(StringUtil.getMD5Str(userInfoModel.getPassword()));
 
             iUserService.updateUserInfo(userInfoMobile);

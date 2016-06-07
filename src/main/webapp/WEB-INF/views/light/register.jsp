@@ -1,4 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -12,14 +13,14 @@
 <html lang="en">
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-    <title>有你学</title>
+    <title>轻校网-注册</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta content="" name="description" />
     <meta content="" name="author" />
     <!-- end: META -->
     <!-- start: MAIN CSS -->
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style_new.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/validator/jquery.validator.css">
     <%--<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/bootstrap/css/bootstrap.min.css">--%>
@@ -31,28 +32,31 @@
 
 <body style="background:#fff">
 <div class="main" style="padding-bottom:20px">
-    <jsp:include page="../head.jsp"/>
+    <jsp:include page="head.jsp"/>
     <div class="logo_center">
         <div class="logo_center_left lfloat" >
-            <a href="${basePath}" class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
-            <a href="${pageContext.request.contextPath}/user/register" class="logo_center_left_3">个人注册</a>
-            <span class="lfloat" style="margin: 48px 0 0 10px;float: left;color: #ccc;font-size: 12px;text-decoration: none;">用户系统由有你学统一提供</span>
-            <%--<a href="#" class="logo_center_left_2">111</a>--%>
+            <c:if test="${!empty light.logo}">
+            <a href="http://${domain}${shortPath}" class="logo_center_left_1"><img width="123px" height="52px" src="${light.logo}" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
+           </c:if>
+            <a href="" class="logo_center_left_3"  style="color:${light.color}" >轻校网用户注册</a>
+
         </div>
     </div>
 </div>
 
-<div class="register">
+<div class="register" style="border-top: 2px solid ${light.color}">
     <div class="register_center">
         <form id="registerForm" method="post" autocomplete="off"   data-validator-option="{theme:'yellow_top'}">
             <input type="hidden" name="source" value="0"/>
-            <input type="hidden" id="domain" name="domain" value="">
-            <input type="hidden" name="gotoURL" value="${param.gotoURL}"/>
-         <ul style="margin-top: 15px">
+            <input type="hidden" id="domain" name="domain" value="${domain}">
+            <ul style="margin-top: 15px">
             <li>
                 <label class="lfloat">手机号</label>
-                 <input type="text" name="mobile" id="mobile" placeholder="输入手机号码"   data-tip="手机号码必需输入" data-rule="手机号码:required;mobile;remote[${pageContext.request.contextPath}/user/registerValidate]" onblur="mobileAjax();">
-                 <a href="#"  id="sendMS" class="lfloat" ><img src="${pageContext.request.contextPath}/resources/images/pic-4.png" /></a>
+                 <input type="text" name="mobile" id="mobile" placeholder="输入手机号码"   data-tip="手机号码必需输入" data-rule="手机号码:required;mobile;remote[${pageContext.request.contextPath}/user/registerValidate?domain=${domain}]" onblur="mobileAjax();">
+                 <a href="javascript:"  class="btn btn-default" id="sendMS" class="lfloat" style="width: 137px;height: 42px;font-size: 19px;background-color: ${light.color}" >
+                     获取验证码
+                     <%--<img src="${pageContext.request.contextPath}/resources/images/pic-4.png" />--%>
+                 </a>
                 <span id="sendMSText" style="margin-left: 120px">获取验证码60秒后没有收到短信可以重新获取</span>
             </li>
 
@@ -61,13 +65,8 @@
             <li>
                 <label class="lfloat">验证码</label>
                 <input type="text"  name="valCode" id="valCode" data-rule="验证码:required;length[6];" maxlength="6" data-tip="输入六位验证码" data-msg-length="验证码6位" placeholder="输入验证码" >
-                <%--<div class="lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_13.png" /></div>--%>
             </li>
-            <li>
-                <label class="lfloat">用户名</label>
-                <input type="text" name="userName" id="userName" placeholder="输入用户名" data-rule="required;length[3~15];remote[${pageContext.request.contextPath}/user/registerValidate]" data-tip="用户名3到15位" data-msg-length="用户名3到15位">
 
-            </li>
             <li>
                 <label class="lfloat">密码</label>
                 <input type="password" name="password" id="password" placeholder="输入密码"  data-tip="密码6到15位" data-rule="密码:required;length[6~15]" data-msg-length="密码6到15位">
@@ -85,7 +84,10 @@
         </div>
         <div style="clear: both;"></div>
         <div  class="reguster_button">
-            <a href="#" id="registerUp"><img src="${pageContext.request.contextPath}/resources/images/pic-5.png" /></a>
+            <a href="javascript:"  class="btn btn-default" id="registerUp" role="button" style="width: 204px;height: 42px;font-size: 19px;background-color: ${light.color}">
+                立即注册
+                <%--<img src="${pageContext.request.contextPath}/resources/images/pic-5.png" />--%>
+            </a>
         </div>
 
         </form>

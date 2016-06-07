@@ -3,8 +3,7 @@ $(document).ready(function() {
     $("#step2").css('display','none');
     $("#step3").css('display','none');
     $("#step4").css('display','none');
-    $("#step5").css('display','none');
-    $("#step6").css('display','none');
+
 
     $("#nextStep1").click(function(){
          if(document.getElementById("inputCode").value==null||document.getElementById("inputCode").value==""){
@@ -16,35 +15,12 @@ $(document).ready(function() {
                  $("#step1").css('display','none');
                  $("#step2").css('display','block');
              }else{
-                 $("#step5").css('display','block');
                  $("#step1").css('display','none');
              }
          }else{
              alert("验证码填写错误");
          }
-        //$.ajax({
-        //    url:  $contentPath + "/user/forgetValidate",
-        //    type: "POST",
-        //    data: {"userName":$("#userName").val()},
-        //    timeout: 10000,
-        //    dataType: "json",
-        //    success: function (json) {
-        //        if (json.success) {
-        //            if(json.mobile==null||json.mobile==""){
-        //                bootbox.alert("帐户名注册的用户没有填写手机号，请重新注册!!");
-        //            }else{
-        //                $("#step1").css('display','none');
-        //                $("#step2").css('display','block');
-        //                $("#step3").css('display','none');
-        //                $("#step4").css('display','none');
-        //                $("#mobile").val(json.mobile);
-        //            }
-        //
-        //        } else {
-        //            bootbox.alert("帐户名不存在!");
-        //        }
-        //    }
-        //});
+
     });
 
     $("#sendMS").click(function (){
@@ -92,29 +68,6 @@ $(document).ready(function() {
     });
 
 
-    $("#nextStep4").click(function(){
-        if($("#userMail").val()==null||$("#userMail").val()==""){
-            alert("邮箱不能为空!");
-            return;
-        }
-
-        $.ajax({
-            url:  $contentPath + "/user/userMail",
-            type: "POST",
-            data: {"userMail":$("#userMail").val()},
-            timeout: 10000,
-            dataType: "json",
-            success: function (json) {
-                if (json.success) {
-                    $("#step5").css('display','none');
-                    $("#step6").css('display','block');
-                    $("#emailContent").html($("#userMail").val());
-                } else {
-                    alert("发送邮件失败!");
-                }
-            }
-        });
-    });
 
 
     $("#nextStep3").click(function(){
@@ -133,7 +86,7 @@ $(document).ready(function() {
         $.ajax({
             url:  $contentPath + "/user/updatepwd",
             type: "POST",
-            data: {"mobile":$("#mobile").val(),"password":$("#password").val()},
+            data: {"mobile":$("#mobile").val(),"domain":$("#domain").val(),"password":$("#password").val()},
             timeout: 10000,
             dataType: "json",
             success: function (json) {

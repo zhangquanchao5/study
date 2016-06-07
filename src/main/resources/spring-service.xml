@@ -20,8 +20,15 @@
         <property name="locations">
             <list>
                 <value>classpath:study.properties</value>
+                <value>classpath:link.properties</value>
             </list>
         </property>
+    </bean>
+
+    <!--spring的配置文件-->
+    <bean id="myConfig" class="com.study.common.util.MyConfig">
+        <property name="fullUrl" value="${host.full.url}" />
+        <property name="shortUrl" value="${host.short.url}" />
     </bean>
 
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">

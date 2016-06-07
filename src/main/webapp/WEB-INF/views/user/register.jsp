@@ -34,7 +34,7 @@
     <jsp:include page="../head.jsp"/>
     <div class="logo_center">
         <div class="logo_center_left lfloat" >
-            <a href="http://www.unixue.com" class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
+            <a href="${basePath}" class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
             <a href="${pageContext.request.contextPath}/user/register" class="logo_center_left_3">个人注册</a>
             <span class="lfloat logo_center_left_2">|</span>
             <a href="${pageContext.request.contextPath}/user/registerOrg" class="logo_center_left_2">机构入驻</a>
@@ -111,7 +111,9 @@
     <div class="register_center">
         <form id="registerForm" method="post" autocomplete="off"   data-validator-option="{theme:'yellow_top'}">
             <input type="hidden" name="source" value="0"/>
-         <ul style="margin-top: 15px">
+            <input type="hidden" id="domain" name="domain" value="">
+
+            <ul style="margin-top: 15px">
             <li>
                 <label class="lfloat">手机号</label>
                  <input type="text" name="mobile" id="mobile" placeholder="输入手机号码"   data-tip="手机号码必需输入" data-rule="手机号码:required;mobile;remote[${pageContext.request.contextPath}/user/registerValidate]" onblur="mobileAjax();">

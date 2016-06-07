@@ -37,6 +37,25 @@ public class UserInfo {
 
     private String gotoURL;
 
+    private String domain;
+
+    private Integer parentId;
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
 
     public String getGotoURL() {
         return gotoURL;

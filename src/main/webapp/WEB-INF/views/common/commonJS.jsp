@@ -10,5 +10,12 @@
 <script src="${pageContext.request.contextPath}/resources/js/base64.js"></script>
 <script>
     $contentPath='<%=request.getContextPath()%>';
+    $basepath='<%=request.getRequestURL()%>';
+    var baseUrl='${basePath}';
+//    if(  $basepath.indexOf("unixue")>-1){
+//        baseUrl="http://www.unixue.com";
+//    }else{
+//        baseUrl="http://test1.upuday.com";
+//    }
 </script>
 

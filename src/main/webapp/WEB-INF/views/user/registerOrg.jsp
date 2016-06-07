@@ -32,7 +32,7 @@
     <jsp:include page="../head.jsp"/>
     <div class="logo_center">
         <div class="logo_center_left lfloat" >
-            <a href="http://www.unixue.com"  class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
+            <a href="${basePath}"  class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
             <a  href="${pageContext.request.contextPath}/user/register" class="logo_center_left_2">个人注册</a>
             <span class="lfloat logo_center_left_2">|</span>
             <a href="${pageContext.request.contextPath}/user/registerOrg"  class="logo_center_left_3">机构入驻</a>
@@ -44,7 +44,9 @@
     <div class="register_center">
         <form id="registerForm" method="post" autocomplete="off"   >
             <input type="hidden" name="source" value="1"/>
-         <ul style="margin-top: 15px">
+            <input type="hidden" id="domain" name="domain" value="">
+
+            <ul style="margin-top: 15px">
              <li>
                  <label class="lfloat">联系邮箱</label>
                  <input type="text" name="userMail" id="userMail" placeholder="输入联系邮箱"   data-tip="企业联系必需输入" data-rule="联系邮箱:required;email;remote[${pageContext.request.contextPath}/user/registerValidate]" >

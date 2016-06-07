@@ -13,21 +13,23 @@ $(document).ready(function() {
                 if(responseJson.success){
                     alert("注册成功，请登录!");
                     if(responseJson.data==null||responseJson.data==""){
-                        window.location.href = $contentPath+"/login";
+                        if(responseJson.msg!=null&&responseJson.msg!=""){
+                            window.location.href = $contentPath+"/"+responseJson.msg+"/login";
+                        }else{
+                            window.location.href = $contentPath+"/login";
+                        }
                     }else{
-                        window.location.href = $contentPath+"/login?gotoURL="+responseJson.data;
+                        if(responseJson.msg!=null&&responseJson.msg!=""){
+                            window.location.href = $contentPath+"/"+responseJson.msg+"/login?gotoURL="+responseJson.data;
+                        }else{
+                            window.location.href = $contentPath+"/login?gotoURL="+responseJson.data;
+                        }
                     }
-
-                    //bootbox.alert("注册成功，请登录!",function(){
-                    //    window.location.href = $contentPath+"/login";
-                    //});
                 }else{
                     if(responseJson.code=="2003"){
                         alert("存在此账号!");
-                        //bootbox.alert("存在此账号!");
                     }else if(responseJson.code=="2005"){
                         alert("验证码错误!");
-                       // bootbox.alert("验证码错误!");
                     }else{
                         alert("系统出现未知错误!");
                         //bootbox.alert("系统出现未知错误!");
@@ -48,19 +50,9 @@ $(document).ready(function() {
         alert("测试");
     });
 
-    //$("#sendMS").click(function (){
-    //
-    //
-    //});
 
 });
 
-//$('#registerForm').validator({
-//    focusCleanup : true
-//    //msgMaker: false,    //不要自动生成消息
-//    //stopOnError:true
-//
-//});
 var parent=null;
 $("#registerForm").on("validation", function(e, current){
     // 表单全部字段验证通过则返回 true
@@ -79,13 +71,9 @@ $("#registerForm").on("validation", function(e, current){
         setTimeout(function(){
             $("#pre"+current.key).remove();
         },500);
-
-      //  console.log(  $("#pre"+current.key).html());
-
     }
 })
 
-//$('#registerForm').validator().trigger("showtip");
 var isSendMobile=true;
 var send = {
     node:null,
@@ -118,7 +106,7 @@ function mobileAjax(){
         utils.ajaxRequest(
             {
                 "url":$contentPath +"/user/registerValidate",
-                "data":{"mobile":$("#mobile").val()},
+                "data":{"mobile":$("#mobile").val(),"domain":$("#domain").val()},
                 "successCallBack":function(json){
                    // console.log("--------"+json)
 
@@ -126,7 +114,7 @@ function mobileAjax(){
                     $('#sendMS').bind("click",sendCode);
                 },
                 "errorCallBack":function(json){
-                     alert("手机号已存在!");
+                     alert("帐号已存在!");
                 //    bootbox.alert("手机号已存在!");
                     $('#sendMS').unbind("click",sendCode);
                 }
@@ -154,7 +142,7 @@ function sendCode(){
 
     isSendMobile=false;
     var timestmp=new Date().getTime();
-    var obj={"userPhone":$("#mobile").val(),"type":"1","timeStamp":timestmp,"signature":BASE64.encoder("unixue"+timestmp)+"|"+timestmp};
+    var obj={"userPhone":$("#mobile").val(),"domain":$("#domain").val(),"type":"1","timeStamp":timestmp,"signature":BASE64.encoder("unixue"+timestmp)+"|"+timestmp};
     send.init(document.getElementById("sendMSText"));
     $.ajax({
         url:  $contentPath + "/pub/getCode",

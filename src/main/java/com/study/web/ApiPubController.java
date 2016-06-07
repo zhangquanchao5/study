@@ -79,7 +79,7 @@ public class ApiPubController extends BaseController {
                 return;
             }
             if(mobileRequest.getType()== EntityCode.MOBILE_REGESITER){
-                UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
+                UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone(),mobileRequest.getDomain());
                 if(userInfo!=null){
                     mobileBean.setCode(ErrorCode.USER_EXITS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
@@ -99,7 +99,7 @@ public class ApiPubController extends BaseController {
                     }
                 }
             }else if(mobileRequest.getType()== EntityCode.MOBILE_BIND_UPDATE){
-                UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
+                UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone(),mobileRequest.getDomain());
                 if(userInfo!=null){
                     mobileBean.setCode(ErrorCode.USER_EXITS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.USER_EXITS_CN"));
@@ -118,7 +118,7 @@ public class ApiPubController extends BaseController {
                     }
                 }
             }else if(mobileRequest.getType()== EntityCode.MOBILE_GET_PASSWORD){
-                UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone());
+                UserInfo userInfo=iApIUserService.findByMobile(mobileRequest.getUserPhone(),mobileRequest.getDomain());
                 if(userInfo==null){
                     mobileBean.setCode(ErrorCode.USER_NOT_EXITS);
                     mobileBean.setMessage(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
@@ -211,7 +211,7 @@ public class ApiPubController extends BaseController {
                 //判断是否用户名注册
                 UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone());
                 //ADD 手机号
-                UserInfo userMobile = iApIUserService.findByMobile(mobileRequest.getUserPhone());
+                UserInfo userMobile = iApIUserService.findByMobile(mobileRequest.getUserPhone(),mobileRequest.getDomain());
                 if(isExist!=null||userMobile!=null){
                     registerMobileResponse.setCode(ErrorCode.USER_EXITS);
                     registerMobileResponse.setMsg(messageUtil.getMessage("MSG.USER_EXITS_CN"));
@@ -220,7 +220,7 @@ public class ApiPubController extends BaseController {
                     String code=iRedisService.get(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
                     if(code!=null&&!"".equals(code)&&code.equals(mobileRequest.getVerifyCode())){
                         iApIUserService.saveUser(apiUserBean);
-                        UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile());
+                        UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile(),apiUserBean.getDomain());
                         registerMobileResponse.setCode(ErrorCode.SUCCESS);
                         registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
 
@@ -361,7 +361,7 @@ public class ApiPubController extends BaseController {
             LoginRequest loginRequest= JSON.parseObject(json, LoginRequest.class);
             UserInfo userInfo=null;
             if(!StringUtil.isEmpty(loginRequest.getUserPhone())){
-                userInfo = iApIUserService.findByMobile(loginRequest.getUserPhone());
+                userInfo = iApIUserService.findByMobile(loginRequest.getUserPhone(),loginRequest.getDomain());
                 if (userInfo == null) {
                     commonResponse.setCode(ErrorCode.USER_NOT_EXITS);
                     commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));

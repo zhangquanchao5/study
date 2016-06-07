@@ -14,6 +14,8 @@ public interface IApIUserService {
 
     public UserInfo findByMobile(String mobile);
 
+    public UserInfo findByMobile(String mobile,String domain);
+
     public UserInfo findByUserName(String userName);
 
     public UserInfo findByEMail(String email);

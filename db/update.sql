@@ -31,3 +31,6 @@ CREATE TABLE `bank` (
 alter table account_withdrawal_history add left_amount bigint(50) NOT NULL COMMENT '当时剩下金额';
 alter table account_deposit_history add left_amount bigint(50) NOT NULL COMMENT '当时剩下金额';
 
+alter table user_info add domain varchar(64) DEFAULT NULL COMMENT '二级域名';
+alter table user_info add parent_id int(11) DEFAULT NULL COMMENT '主用户编号';
+

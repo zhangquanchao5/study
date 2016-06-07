@@ -16,7 +16,12 @@ $(document).ready(function() {
                         }else if(responseJson.code!=null&&responseJson.code!=""){
                             window.location.href =responseJson.code;
                         }else{
-                            window.location.href =$contentPath+"/account/accountManagement";
+                            if(responseJson.msg!=null&&responseJson.msg!=""){
+                               // console.log("domain:"+responseJson.msg);
+                                window.location.href ="http://"+responseJson.msg;
+                            }else{
+                                window.location.href =baseUrl;
+                            }
                         }
                 }else{
                     if(responseJson.code=="2002"){
