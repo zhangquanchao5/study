@@ -304,6 +304,9 @@
     <if test="username!= null" >
       and (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
     </if>
+    <if test="mobile!= null" >
+      and mobile like  "%"#{mobile}"%"
+    </if>
   </select>
 
   <select id="findPage" resultType="userResponse" parameterType="userPageRequest" >
@@ -325,6 +328,9 @@
     </choose>
     <if test="username!= null" >
       and  (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
+    </if>
+    <if test="mobile!= null" >
+      and mobile like  "%"#{mobile}"%"
     </if>
     order by create_time desc
 
