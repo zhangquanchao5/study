@@ -97,7 +97,7 @@
 
 <div style="clear: both;"></div>
 <div class="login_bottom">
-    <jsp:include page="../footer_new.jsp"/>
+    <%--<jsp:include page="../footer_new.jsp"/>--%>
 </div>
 
 <jsp:include page="../common/commonJS.jsp"/>

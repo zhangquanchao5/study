@@ -40,20 +40,32 @@ public class UserServiceImpl implements IUserService{
     @Autowired
     private UserSecurityMapper userSecurityMapper;
 
-    @Override
-    public UserInfo findByUserName(String userName) {
-        return userInfoMapper.findByUserName(userName);
-    }
+//    @Override
+//    public UserInfo findByUserName(String userName) {
+//        return userInfoMapper.findByUserName(userName);
+//    }
+//
+//    public UserInfo findByUserName(String userName,String domain){
+//        if(StringUtil.isEmpty(domain)){
+//            return userInfoMapper.findByUserName(userName);
+//        }else{
+//            Map<String,String> map=new HashMap<String, String>();
+//            map.put("userName",userName);
+//            map.put("domain", domain);
+//
+//            return userInfoMapper.selectByDomainUserName(map);
+//        }
+//    }
 
-    public UserInfo findByUserName(String userName,String domain){
+    public UserInfo findLoad(String login,String domain){
         if(StringUtil.isEmpty(domain)){
-            return userInfoMapper.findByUserName(userName);
+            return userInfoMapper.findLoad(login);
         }else{
             Map<String,String> map=new HashMap<String, String>();
-            map.put("userName",userName);
+            map.put("login",login);
             map.put("domain", domain);
 
-            return userInfoMapper.selectByDomainUserName(map);
+            return userInfoMapper.findDomainLoad(map);
         }
     }
 
@@ -62,21 +74,21 @@ public class UserServiceImpl implements IUserService{
         return userInfoMapper.selectByPrimaryKey(userId);
     }
 
-    public UserInfo findByMobile(String mobile){
-        return userInfoMapper.selectByMobile(mobile);
-    }
-
-    public UserInfo findByMobile(String mobile,String domain){
-        if(StringUtil.isEmpty(domain)){
-            return userInfoMapper.selectByMobile(mobile);
-        }else{
-            Map<String,String> map=new HashMap<String, String>();
-            map.put("mobile",mobile);
-            map.put("domain", domain);
-
-            return userInfoMapper.selectByDomainMobile(map);
-        }
-    }
+//    public UserInfo findByMobile(String mobile){
+//        return userInfoMapper.selectByMobile(mobile);
+//    }
+//
+//    public UserInfo findByMobile(String mobile,String domain){
+//        if(StringUtil.isEmpty(domain)){
+//            return userInfoMapper.selectByMobile(mobile);
+//        }else{
+//            Map<String,String> map=new HashMap<String, String>();
+//            map.put("mobile",mobile);
+//            map.put("domain", domain);
+//
+//            return userInfoMapper.selectByDomainMobile(map);
+//        }
+//    }
 
     public void saveUserInfo(UserInfo userInfo,UserInfoFrom from){
 
@@ -126,9 +138,9 @@ public class UserServiceImpl implements IUserService{
 
 
 
-    public UserInfo findByEMail(String email){
-       return  userInfoMapper.findByEMail(email);
-    }
+//    public UserInfo findByEMail(String email){
+//       return  userInfoMapper.findByEMail(email);
+//    }
 
     public UserInfo findByIdcard(String card){
         return  userInfoMapper.findByIdCard(card);

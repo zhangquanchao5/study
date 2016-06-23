@@ -44,3 +44,10 @@ $(document).ready(function() {
     });
 
 });
+
+document.onkeydown=function(event){
+   var e = event ? event :(window.event ? window.event : null);
+    if(e.keyCode==13){
+        $("#loginUp").click();
+    }
+}

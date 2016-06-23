@@ -58,19 +58,10 @@ public class LoginController extends BaseController {
             String domain;
             if(StringUtil.isEmpty(userInfoModel.getDomain())){
                 domain="www";
-                userInfo= iUserService.findByUserName(userInfoModel.getUserName());
-                if (userInfo == null) {
-                    userInfo=iUserService.findByMobile(userInfoModel.getUserName());
-                    if(userInfo==null){
-                        userInfo=iUserService.findByEMail(userInfoModel.getUserName());
-                        if(userInfo==null){
-                            userInfo=iUserService.findByIdcard(userInfoModel.getUserName());
-                        }
-                    }
-                }
+                userInfo= iUserService.findLoad(userInfoModel.getUserName(),null);
             }else{
                 domain=userInfoModel.getDomain();
-                userInfo=iUserService.findByMobile(userInfoModel.getUserName(),userInfoModel.getDomain());
+                userInfo=iUserService.findLoad(userInfoModel.getUserName(),userInfoModel.getDomain());
             }
 
             if(userInfo==null){

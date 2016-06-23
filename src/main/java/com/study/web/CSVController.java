@@ -58,13 +58,13 @@ public class CSVController {
                                  if (info.length == 3 || info.length == 2) {
                                      UserInfo userInfo = null;
                                      if (!StringUtil.isEmpty(info[1].trim())) {
-                                         userInfo = iUserService.findByUserName(info[1].trim());
+                                         userInfo = iUserService.findLoad(info[1].trim(),null);
                                      }
                                      if (userInfo != null) {
                                          existsList.add(org + "[登录名存在]");
                                      } else {
                                          if (info.length == 3 && !StringUtil.isEmpty(info[2].trim())) {
-                                             userInfo = iUserService.findByMobile(info[2].trim());
+                                             userInfo = iUserService.findLoad(info[2].trim(),null);
                                          }
                                          if (userInfo != null) {
                                              existsList.add(org + "[手机号存在]");

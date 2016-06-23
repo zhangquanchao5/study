@@ -86,31 +86,25 @@ public class UserController extends BaseController {
     public void registerUp(UserInfo userInfoModel, @RequestParam String valCode, HttpServletResponse response) {
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
-            if(!StringUtil.isEmpty(userInfoModel.getUserName())){
-                if ( iUserService.findByUserName(userInfoModel.getUserName(),userInfoModel.getDomain()) != null) {
+            if(!StringUtil.isEmpty(userInfoModel.getUserName())&&iUserService.findLoad(userInfoModel.getUserName(), userInfoModel.getDomain()) != null) {
                     message.setSuccess(false);
                     message.setCode(ErrorCode.USER_EXITS);
                     ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
                     return;
-                }
             }
 
-            if(!StringUtil.isEmpty(userInfoModel.getMobile())){
-                if ( iUserService.findByMobile(userInfoModel.getMobile(), userInfoModel.getDomain()) != null) {
+            if(!StringUtil.isEmpty(userInfoModel.getMobile())&&iUserService.findLoad(userInfoModel.getMobile(), userInfoModel.getDomain()) != null) {
                     message.setSuccess(false);
                     message.setCode(ErrorCode.USER_EXITS);
                     ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
                     return;
-                }
             }
 
-            if(!StringUtil.isEmpty(userInfoModel.getUserMail())){
-                if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
+            if(!StringUtil.isEmpty(userInfoModel.getUserMail())&&iUserService.findLoad(userInfoModel.getUserMail(),userInfoModel.getDomain()) != null) {
                     message.setSuccess(false);
                     message.setCode(ErrorCode.USER_EXITS);
                     ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
                     return;
-                }
             }
 
 
@@ -166,7 +160,7 @@ public class UserController extends BaseController {
 
         AjaxResponseMessage ajaxResponseMessage = new AjaxResponseMessage();
         try {
-            UserInfo userInfo=iUserService.findByEMail(userInfoModel.getUserMail());
+            UserInfo userInfo=iUserService.findLoad(userInfoModel.getUserMail(), null);
             if(userInfo!=null){
                 String random = RandomStringUtils.randomAlphanumeric(32);
                 String actUrl = PropertiesUtil.getString("MAIL.PASSWORD.RECOVER.VERTIFY.URL") +
@@ -204,7 +198,7 @@ public class UserController extends BaseController {
                     modelAndView.setViewName("email/fail");
                 } else {
                     if (obj.toString().equals(sid)) {
-                        UserInfo u=iApIUserService.findByEMail(Encrypt.doDecrypt(mid));
+                        UserInfo u=iApIUserService.findLoad(Encrypt.doDecrypt(mid), null);
                         if(u!=null){
                             iRedisService.deleteOneKey(PrefixCode.API_MAIL_CONNACT + Encrypt.doDecrypt(uid));
                             modelAndView.addObject("mobile", u.getMobile());
@@ -236,7 +230,7 @@ public class UserController extends BaseController {
         try {
             if (!StringUtil.isEmpty(userInfoModel.getUserName())) {
 
-                if (iUserService.findByUserName(userInfoModel.getUserName()) != null || iUserService.findByMobile(userInfoModel.getUserName()) != null || iUserService.findByEMail(userInfoModel.getUserName()) != null) {
+                if (iUserService.findLoad(userInfoModel.getUserName(),userInfoModel.getDomain()) != null ) {
                     message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
                     message.put("success", false);
 
@@ -245,7 +239,7 @@ public class UserController extends BaseController {
                     message.put("success", true);
                 }
             } else if (!StringUtil.isEmpty(userInfoModel.getMobile())) {
-                if (iUserService.findByUserName(userInfoModel.getMobile(),userInfoModel.getDomain()) != null || iUserService.findByMobile(userInfoModel.getMobile(),userInfoModel.getDomain()) != null || iUserService.findByEMail(userInfoModel.getMobile()) != null) {
+                if (iUserService.findLoad(userInfoModel.getMobile(),userInfoModel.getDomain()) != null) {
                     message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
                     message.put("success", false);
 
@@ -256,7 +250,7 @@ public class UserController extends BaseController {
                 }
             }else if (!StringUtil.isEmpty(userInfoModel.getUserMail())) {
                 if(!StringUtil.isEmpty(type)){
-                    if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
+                    if ( iUserService.findLoad(userInfoModel.getUserMail(), null) != null) {
                         message.put("ok", messageUtil.getMessage("msg.mail.success"));
                         message.put("success", true);
                     } else {
@@ -264,7 +258,7 @@ public class UserController extends BaseController {
                         message.put("success", false);
                     }
                 }else{
-                    if ( iUserService.findByEMail(userInfoModel.getUserMail()) != null) {
+                    if (  iUserService.findLoad(userInfoModel.getUserMail(),null)  != null) {
                         message.put("error", messageUtil.getMessage("MSG.USER_EXITS_CN"));
                         message.put("success", false);
 
@@ -291,14 +285,7 @@ public class UserController extends BaseController {
         Map message = new HashMap();
         try {
             if (!StringUtil.isEmpty(userInfoModel.getUserName())) {
-                UserInfo user=iUserService.findByUserName(userInfoModel.getUserName());
-                if(user==null){
-                    user=iUserService.findByMobile(userInfoModel.getUserName());
-                    if(user==null){
-                        user=iUserService.findByEMail(userInfoModel.getUserName());
-                    }
-                }
-
+                UserInfo user=iUserService.findLoad(userInfoModel.getUserName(),userInfoModel.getDomain());
                 if (user != null) {
                     message.put("ok", messageUtil.getMessage("MSG.FORGET_PWD_OK_CN"));
                     message.put("success", true);
@@ -344,7 +331,7 @@ public class UserController extends BaseController {
     public void code(UserInfo userInfoModel, HttpServletResponse response) {
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
-            UserInfo userInfoMobile = iUserService.findByMobile(userInfoModel.getMobile(),userInfoModel.getDomain());
+            UserInfo userInfoMobile = iUserService.findLoad(userInfoModel.getMobile(),userInfoModel.getDomain());
             userInfoMobile.setPassword(StringUtil.getMD5Str(userInfoModel.getPassword()));
 
             iUserService.updateUserInfo(userInfoMobile);
@@ -363,7 +350,7 @@ public class UserController extends BaseController {
             response.sendRedirect(url);
         } catch (Exception e) {
             printLogger(e);
-            return "login_old";
+            return "login";
         }
 
         return null;
@@ -375,7 +362,7 @@ public class UserController extends BaseController {
         String code = request.getParameter("code");
         try {
             if (code == null || code.equals("")) {
-                return "login_old";
+                return "login";
             } else {
                 //第一步获取TOKE
                 String codeUrl = PropertiesUtil.getString("accessTokenURL") + "?grant_type=authorization_code&client_id=" + PropertiesUtil.getString("app_ID") + "&client_secret=" + PropertiesUtil.getString("app_KEY") + "&code=" + code + "&redirect_uri=" + PropertiesUtil.getString("redirect_URI");
@@ -413,7 +400,7 @@ public class UserController extends BaseController {
                                 userInfoFromTemp = new UserInfoFrom();
                                 userInfoFromTemp.setOpenId(qqOpenIdBean.getOpenid());
 //                            userInfoFromTemp.setEx1(accessToken);
-//                            userInfoFromTemp.setEx2(tokenExpireIn + "");
+
                                 userInfoFromTemp.setFrom(EntityCode.USER_FROM_QQ);
                                 iUserService.saveUserInfo(userInfo, userInfoFromTemp);
                                 userId = userInfo.getId().toString();
@@ -442,16 +429,18 @@ public class UserController extends BaseController {
                     SessionInfo sessionInfo = new SessionInfo(realUser);
                     LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
                     iUserService.updateUserTime(realUser.getId());
+
+                    response.sendRedirect("http://www" + PropertiesUtil.getString("sso.domainName"));
                 } else {
-                    return "login_old";
+                    return "login";
                 }
             }
         } catch (Exception e) {
             printLogger(e);
-            return "login_old";
+            return "login";
         }
 
-        return "account/accountManagement";
+        return null;
     }
 
 

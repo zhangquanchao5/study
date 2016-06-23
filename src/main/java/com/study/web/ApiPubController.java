@@ -202,17 +202,18 @@ public class ApiPubController extends BaseController {
           //  apiUserBean.setUserName(mobileRequest.getUserPhone());
             apiUserBean.setMobile(mobileRequest.getUserPhone());
             apiUserBean.setPassword(mobileRequest.getPasswd());
+            apiUserBean.setDomain(mobileRequest.getDomain());
             //HEADER是否存在
             String header=getPlatformHeader(request);
             if(StringUtil.isEmpty(header)){
                 registerMobileResponse.setCode(ErrorCode.PARAMETER_NOT_ENOUGH);
                 registerMobileResponse.setMsg(messageUtil.getMessage("msg.parameter.notEnough"));
             }else{
-                //判断是否用户名注册
-                UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone(),mobileRequest.getDomain());
+//                //判断是否用户名注册
+//                UserInfo isExist=iApIUserService.findByUserName(mobileRequest.getUserPhone(),mobileRequest.getDomain());
                 //ADD 手机号
-                UserInfo userMobile = iApIUserService.findByMobile(mobileRequest.getUserPhone(),mobileRequest.getDomain());
-                if(isExist!=null||userMobile!=null){
+                UserInfo userMobile = iApIUserService.findLoad(mobileRequest.getUserPhone(), mobileRequest.getDomain());
+                if(userMobile!=null){
                     registerMobileResponse.setCode(ErrorCode.USER_EXITS);
                     registerMobileResponse.setMsg(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                 }else{
@@ -220,7 +221,7 @@ public class ApiPubController extends BaseController {
                     String code=iRedisService.get(PrefixCode.API_MOBILE_REGISTER + mobileRequest.getUserPhone());
                     if(code!=null&&!"".equals(code)&&code.equals(mobileRequest.getVerifyCode())){
                         iApIUserService.saveUser(apiUserBean);
-                        UserInfo userInfo=iApIUserService.findByMobile(apiUserBean.getMobile(),apiUserBean.getDomain());
+                        UserInfo userInfo=iApIUserService.findLoad(apiUserBean.getMobile(), apiUserBean.getDomain());
                         registerMobileResponse.setCode(ErrorCode.SUCCESS);
                         registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
 
@@ -291,16 +292,14 @@ public class ApiPubController extends BaseController {
             }
 
             //如果手机号不为空
-            if (!StringUtil.isEmpty(remoteRegReq.getUserPhone())) {
-                if (iApIUserService.findByMobile(remoteRegReq.getUserPhone()) != null || iApIUserService.findByUserName(remoteRegReq.getUserPhone()) != null) {
+            if (!StringUtil.isEmpty(remoteRegReq.getUserPhone())&&iApIUserService.findLoad(remoteRegReq.getUserPhone(),null) != null) {
                     registerMobileResponse.setCode(ErrorCode.USER_EXITS);
                     registerMobileResponse.setMsg(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                     ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(registerMobileResponse).toString());
                     return;
-                }
             }
             //证件号不为空
-            if (!StringUtil.isEmpty(remoteRegReq.getIdCard()) && iApIUserService.findByIdCard(remoteRegReq.getIdCard()) != null) {
+            if (!StringUtil.isEmpty(remoteRegReq.getIdCard()) && iApIUserService.findLoad(remoteRegReq.getIdCard(),null) != null) {
                 registerMobileResponse.setCode(ErrorCode.USER_EXITS);
                 registerMobileResponse.setMsg(messageUtil.getMessage("MSG.USER_EXITS_CN"));
                 ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(registerMobileResponse).toString());
@@ -308,37 +307,10 @@ public class ApiPubController extends BaseController {
             }
 
             Integer userID=iApIUserService.saveUser(apiUserBean);
-//            UserInfo userInfo = null;
-//            if (!StringUtil.isEmpty(apiUserBean.getIdCard())) {
-//                userInfo = iApIUserService.findByIdCard(apiUserBean.getIdCard());
-//            } else if (!StringUtil.isEmpty(apiUserBean.getMobile())) {
-//                userInfo = iApIUserService.findByMobile(apiUserBean.getMobile());
-//            }
-
 
             registerMobileResponse.setCode(ErrorCode.SUCCESS);
             registerMobileResponse.setData(userID);
             registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
-
-
-//            long endTime = +Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")) * 60 * 1000 + System.currentTimeMillis();
-//            String token = StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_EQULE + header + SplitCode.SPLIT_SHU + userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
-//
-//            //update
-//            LoginResponse loginResponse = new LoginResponse();
-//            loginResponse.setToken(token);
-//            loginResponse.setInvalidTime(Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")));
-//            UserResponse userResponse = changeUser(userInfo);
-//            loginResponse.setUser(userResponse);
-//
-//            registerMobileResponse.setData(loginResponse);
-//            if (!StringUtil.isEmpty(header) && header.equals(PrefixCode.API_HEAD_H5)) {
-//                iRedisService.setMap(PrefixCode.API_H5_TOKEN_MAP, userInfo.getId().toString(), userResponse);
-//            } else {
-//                iRedisService.setMap(PrefixCode.API_TOKEN_MAP, userInfo.getId().toString(), userResponse);
-//            }
-
-
         } catch (Exception e) {
             registerMobileResponse.setCode(ErrorCode.ERROR);
             registerMobileResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
@@ -360,31 +332,17 @@ public class ApiPubController extends BaseController {
             StudyLogger.recBusinessLog("/pub/login:" + json);
             LoginRequest loginRequest= JSON.parseObject(json, LoginRequest.class);
             UserInfo userInfo=null;
+            //兼容旧的app api请求
             if(!StringUtil.isEmpty(loginRequest.getUserPhone())){
-                userInfo = iApIUserService.findByMobile(loginRequest.getUserPhone(),loginRequest.getDomain());
-                if (userInfo == null) {
-                    commonResponse.setCode(ErrorCode.USER_NOT_EXITS);
-                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
-                }
+                userInfo = iApIUserService.findLoad(loginRequest.getUserPhone(), loginRequest.getDomain());
             }else if(!StringUtil.isEmpty(loginRequest.getUserName())){
-                userInfo=iApIUserService.findByUserName(loginRequest.getUserName());
-                if (userInfo == null) {
-                    commonResponse.setCode(ErrorCode.USER_NOT_EXITS);
-                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
-                }
+                userInfo=iApIUserService.findLoad(loginRequest.getUserName(), loginRequest.getDomain());
             }else if(!StringUtil.isEmpty(loginRequest.getUserEmail())){
-                userInfo=iApIUserService.findByEMail(loginRequest.getUserEmail());
-                if (userInfo == null) {
-                    commonResponse.setCode(ErrorCode.USER_NOT_EXITS);
-                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
-                }
+                userInfo=iApIUserService.findLoad(loginRequest.getUserEmail(), loginRequest.getDomain());
             }else if(!StringUtil.isEmpty(loginRequest.getIdCard())){
-                userInfo=iApIUserService.findByIdCard(loginRequest.getIdCard());
-                if (userInfo == null) {
-                    commonResponse.setCode(ErrorCode.USER_NOT_EXITS);
-                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
-                }
+                userInfo=iApIUserService.findLoad(loginRequest.getIdCard(), loginRequest.getDomain());
             }
+
             //获取请求头
             String header=getPlatformHeader(request);
             if(userInfo!=null){
@@ -458,6 +416,9 @@ public class ApiPubController extends BaseController {
                     commonResponse.setCode(ErrorCode.PARAMETER_NOT_ENOUGH);
                     commonResponse.setMsg(messageUtil.getMessage("msg.parameter.notEnough"));
                 }
+            }else{
+                    commonResponse.setCode(ErrorCode.USER_NOT_EXITS);
+                    commonResponse.setMsg(messageUtil.getMessage("MSG.USER_NOT_EXITS_CN"));
             }
         } catch (Exception e) {
             commonResponse.setCode(ErrorCode.ERROR);

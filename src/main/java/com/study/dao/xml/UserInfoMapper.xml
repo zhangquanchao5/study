@@ -25,6 +25,25 @@
     id, user_name, password, mobile, user_mail, icon, source, gender, token, status, 
     create_time, name, nick, address,update_time,id_card,domain,parent_id
   </sql>
+
+  <select id="findLoad" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where 1=1
+          and ( mobile = #{login,jdbcType=VARCHAR} or user_name= #{login,jdbcType=VARCHAR}  or user_mail= #{login,jdbcType=VARCHAR} or id_card= #{login,jdbcType=VARCHAR})
+          and status!=2 and parent_id is null
+  </select>
+
+  <select id="findDomainLoad" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where 1=1
+          and ( mobile = #{login,jdbcType=VARCHAR} or user_name= #{login,jdbcType=VARCHAR}  or user_mail= #{login,jdbcType=VARCHAR} or id_card= #{login,jdbcType=VARCHAR})
+          and domain=#{domain} and status!=2
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />

@@ -21,7 +21,7 @@ public class ConfigInterceptor extends HandlerInterceptorAdapter  {
         HttpSession session = request.getSession();
        // System.out.println("===============in ru");
         if(StringUtil.isEmpty(session.getAttribute("basePath"))){
-            System.out.println("===============config==============");
+          //  System.out.println("===============config==============");
             session.setAttribute("basePath", myConfig.getFullUrl()); // 每个页面，都设置一下基础路径
             session.setAttribute("shortPath", myConfig.getShortUrl()); // 每个页面，都设置一下基础路径
         }

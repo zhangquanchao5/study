@@ -42,4 +42,8 @@ public interface UserInfoMapper {
     int findPageCount(UserPageRequest userPageRequest);
 
     List<UserResponse> findPage(UserPageRequest userPageRequest);
+
+    UserInfo findLoad(String login);
+
+    UserInfo findDomainLoad(Map map);
 }

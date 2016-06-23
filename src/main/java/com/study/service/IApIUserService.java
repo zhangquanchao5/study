@@ -15,15 +15,15 @@ public interface IApIUserService {
     public UserInfo findByMobile(String mobile);
 
     public UserInfo findByMobile(String mobile,String domain);
-
-    public UserInfo findByUserName(String userName);
-
-    public UserInfo findByUserName(String userName,String mobile);
-
-
-    public UserInfo findByEMail(String email);
-
-    public UserInfo findByIdCard(String idCard);
+//
+//    public UserInfo findByUserName(String userName);
+//
+//    public UserInfo findByUserName(String userName,String mobile);
+//
+//
+//    public UserInfo findByEMail(String email);
+//
+//    public UserInfo findByIdCard(String idCard);
 
     public UserInfo findById(Integer userId);
 
@@ -38,6 +38,9 @@ public interface IApIUserService {
     public void updateUserTime(Integer userId);
 
     public Account findAccountByUserId(Integer userId);
+
+    UserInfo findLoad(String login,String domain);
+
 
     public UserPageResponse findPageResponse(UserPageRequest userPageRequest);
 

@@ -61,29 +61,41 @@ public class ApiUserServiceImpl implements IApIUserService {
         }
     }
 
-    public UserInfo findByUserName(String userName,String domain){
+//    public UserInfo findByUserName(String userName,String domain){
+//        if(StringUtil.isEmpty(domain)){
+//            return userInfoMapper.findByUserName(userName);
+//        }else{
+//            Map<String,String> map=new HashMap<String, String>();
+//            map.put("userName",userName);
+//            map.put("domain", domain);
+//
+//            return userInfoMapper.selectByDomainUserName(map);
+//        }
+//    }
+
+    public UserInfo findLoad(String login,String domain){
         if(StringUtil.isEmpty(domain)){
-            return userInfoMapper.findByUserName(userName);
+            return userInfoMapper.findLoad(login);
         }else{
             Map<String,String> map=new HashMap<String, String>();
-            map.put("userName",userName);
+            map.put("login",login);
             map.put("domain", domain);
 
-            return userInfoMapper.selectByDomainUserName(map);
+            return userInfoMapper.findDomainLoad(map);
         }
     }
+//
+//    public UserInfo findByUserName(String userName){
+//        return  userInfoMapper.findByUserName(userName);
+//    }
+//
+//    public UserInfo findByEMail(String email){
+//       return userInfoMapper.findByEMail(email);
+//    }
 
-    public UserInfo findByUserName(String userName){
-        return  userInfoMapper.findByUserName(userName);
-    }
-
-    public UserInfo findByEMail(String email){
-       return userInfoMapper.findByEMail(email);
-    }
-
-    public UserInfo findByIdCard(String idCard){
-        return userInfoMapper.findByIdCard(idCard);
-    }
+//    public UserInfo findByIdCard(String idCard){
+//        return userInfoMapper.findByIdCard(idCard);
+//    }
 
     @Override
     public UserInfo findById(Integer userId) {

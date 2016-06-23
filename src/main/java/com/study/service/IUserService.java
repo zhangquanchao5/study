@@ -9,17 +9,17 @@ import com.study.model.UserInfoFrom;
  */
 public interface IUserService {
 
-    UserInfo findByUserName(String userName);
-
-    UserInfo findByUserName(String userName,String mobile);
-
-    UserInfo findByEMail(String email);
-
-    UserInfo findByIdcard(String card);
-
-    UserInfo findByMobile(String mobile);
-
-    UserInfo findByMobile(String mobile,String domain);
+//    UserInfo findByUserName(String userName);
+//
+//    UserInfo findByUserName(String userName,String mobile);
+//
+//    UserInfo findByEMail(String email);
+//
+//    UserInfo findByIdcard(String card);
+//
+//    UserInfo findByMobile(String mobile);
+//
+//    UserInfo findByMobile(String mobile,String domain);
 
     UserInfo fingById(Integer userId);
 
@@ -29,8 +29,9 @@ public interface IUserService {
 
     void updateUserInfo(UserInfo userInfo);
 
-    public void updateUserTime(Integer userId);
+     void updateUserTime(Integer userId);
 
+    UserInfo findLoad(String login,String domain);
 
 
 

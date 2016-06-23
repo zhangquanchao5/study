@@ -531,7 +531,7 @@ public class ApiUserController extends BaseController {
                         commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
                     } else {
                         if (obj.toString().equals(sid)) {
-                            UserInfo u=iApIUserService.findByEMail(Encrypt.doDecrypt(mid));
+                            UserInfo u=iApIUserService.findLoad(Encrypt.doDecrypt(mid),null);
                             if(u!=null){
                                 UserInfo userInfo = new UserInfo();
                                 userInfo.setId(Integer.parseInt(Encrypt.doDecrypt(uid)));
@@ -586,7 +586,7 @@ public class ApiUserController extends BaseController {
                     String decodedTicket = DESUtils.decrypt(auth, PropertiesUtil.getString("sso.secretKey"));
                     Integer userId = ((UserResponse)iRedisService.getObject(PrefixCode.API_COOKIE_PRE + decodedTicket)).getId();
 
-                    UserInfo userInfo = iApIUserService.findByEMail(emailRequest.getEmail());
+                    UserInfo userInfo = iApIUserService.findLoad(emailRequest.getEmail(),null);
                     if (userInfo != null) {
                         if (userInfo.getId().intValue() == userId.intValue()) {
                             String random = RandomStringUtils.randomAlphanumeric(32);

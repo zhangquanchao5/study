@@ -83,7 +83,7 @@
 </div>
 
 <div class="bottom">
-    <jsp:include page="footer.jsp"/>
+    <jsp:include page="footer_new.jsp"/>
 </div>
 <div class="clear"></div>
 <jsp:include page="common/commonJS.jsp"/>
