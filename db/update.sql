@@ -34,3 +34,15 @@ alter table account_deposit_history add left_amount bigint(50) NOT NULL COMMENT 
 alter table user_info add domain varchar(64) DEFAULT NULL COMMENT '二级域名';
 alter table user_info add parent_id int(11) DEFAULT NULL COMMENT '主用户编号';
 
+
+
+#用户收入卖课程区分有你学和轻校网收入
+alter table account_deposit_history add `source_user_id` int(11) DEFAULT NULL COMMENT '课程收入来源用户';
+
+alter table bank add `bank_person` tinyint(2) DEFAULT '0'  COMMENT '0 个人账户 1企业账户';
+alter table bank add `phone` varchar(64) DEFAULT NULL   COMMENT '预留手机号';
+alter table bank add `company_name` varchar(64) DEFAULT NULL  COMMENT '企业注册名称';
+alter table bank add `company_code` varchar(64) DEFAULT NULL  COMMENT '纳税人编号';
+alter table bank add `company_address` varchar(255) DEFAULT NULL  COMMENT '公司注册地址';
+
+alter table user_info add remark varchar(1000);

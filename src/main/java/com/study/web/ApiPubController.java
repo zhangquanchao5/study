@@ -479,8 +479,7 @@ public class ApiPubController extends BaseController {
     public void login(HttpServletRequest request, HttpServletResponse response) {
         CommonResponse commonResponse = new CommonResponse();
         try {
-
-            //判断mobile死否为空
+            System。            //判断mobile死否为空
             String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/pub/login:" + json);
             LoginRequest loginRequest = JSON.parseObject(json, LoginRequest.class);
