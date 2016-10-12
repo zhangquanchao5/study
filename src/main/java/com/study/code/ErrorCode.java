@@ -94,6 +94,8 @@ public class ErrorCode {
      */
     public static final String RED_RECHARGE_SEND_ERROR="3006";
 
+
+
     /**
      * 无效的绑定ID
      */
@@ -102,6 +104,11 @@ public class ErrorCode {
      * 重复绑定
      */
     public static final String BANK_DUPLICATE_BINDING = "4001";
+    /**
+     * 银行提现3000以下不能超过2次
+     */
+    public static final String BANKWITHDRAWALS_MORE_NUMS = "4006";
+
     /**
      * 银行提现记录不存在
      */

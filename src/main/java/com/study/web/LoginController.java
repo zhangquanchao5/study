@@ -1,6 +1,7 @@
 package com.study.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.study.code.ErrorCode;
 import com.study.code.PrefixCode;
 import com.study.code.SplitCode;
@@ -8,6 +9,8 @@ import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.bean.AjaxResponseMessage;
 import com.study.common.http.ApiHttpUtil;
+import com.study.common.http.HttpSendResult;
+import com.study.common.http.HttpUtil;
 import com.study.common.session.LoginUser;
 import com.study.common.session.SessionInfo;
 import com.study.common.util.PropertiesUtil;
@@ -38,10 +41,10 @@ public class LoginController extends BaseController {
     @Autowired
     private IRedisService iRedisService;
 
-    @RequestMapping(value ="/{domain}/login",method = RequestMethod.GET)
+    @RequestMapping(value = "/{domain}/login", method = RequestMethod.GET)
     public ModelAndView domainLogin(@PathVariable("domain") String domain) {
-        ModelAndView modelAndView=new ModelAndView();
-        modelAndView.addObject("domain",domain);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("domain", domain);
         modelAndView.addObject("light", ApiHttpUtil.executeLight(domain));
         modelAndView.setViewName("light/login");
         //根据二级域名获取domain
@@ -49,22 +52,22 @@ public class LoginController extends BaseController {
         return modelAndView;
     }
 
-    @RequestMapping(value ="/loginUp",method = RequestMethod.POST)
-    public void login(UserInfo userInfoModel,HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/loginUp", method = RequestMethod.POST)
+    public void login(UserInfo userInfoModel, HttpServletRequest request, HttpServletResponse response) {
 
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
             UserInfo userInfo;
             String domain;
-            if(StringUtil.isEmpty(userInfoModel.getDomain())){
-                domain="www";
-                userInfo= iUserService.findLoad(userInfoModel.getUserName(),null);
-            }else{
-                domain=userInfoModel.getDomain();
-                userInfo=iUserService.findLoad(userInfoModel.getUserName(),userInfoModel.getDomain());
+            if (StringUtil.isEmpty(userInfoModel.getDomain())) {
+                domain = "www";
+                userInfo = iUserService.findLoad(userInfoModel.getUserName(), null);
+            } else {
+                domain = userInfoModel.getDomain();
+                userInfo = iUserService.findLoad(userInfoModel.getUserName(), userInfoModel.getDomain());
             }
 
-            if(userInfo==null){
+            if (userInfo == null) {
                 message.setSuccess(false);
                 message.setCode(ErrorCode.USER_NOT_EXITS);
                 ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
@@ -72,16 +75,16 @@ public class LoginController extends BaseController {
             }
 
             //判断密码是否正确
-            if(!StringUtil.getMD5Str(userInfoModel.getPassword()).equals(userInfo.getPassword())) {
+            if (!StringUtil.getMD5Str(userInfoModel.getPassword()).equals(userInfo.getPassword())) {
                 message.setSuccess(false);
                 message.setCode(ErrorCode.USER_PWD_ERROR);
                 ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
                 return;
             }
-            long endTime=+Long.parseLong(PropertiesUtil.getString("TOKEN.TIME"))*60*1000+System.currentTimeMillis();
-            String ticketKey=userInfo.getId()+SplitCode.SPLIT_EQULE+StringUtil.getBASE64(userInfo.getId()+SplitCode.SPLIT_EQULE+PrefixCode.API_HEAD_WEB+SplitCode.SPLIT_SHU +userInfo.getId()+  SplitCode.SPLIT_SHU+endTime);
-        //    String encodedticketKey = DESUtils.encrypt(ticketKey, PropertiesUtil.getString("sso.secretKey"));
-            String encodedticketKey=StringUtil.getBASE64(ticketKey);
+            long endTime = +Long.parseLong(PropertiesUtil.getString("TOKEN.TIME")) * 60 * 1000 + System.currentTimeMillis();
+            String ticketKey = userInfo.getId() + SplitCode.SPLIT_EQULE + StringUtil.getBASE64(userInfo.getId() + SplitCode.SPLIT_EQULE + PrefixCode.API_HEAD_WEB + SplitCode.SPLIT_SHU + userInfo.getId() + SplitCode.SPLIT_SHU + endTime);
+            //    String encodedticketKey = DESUtils.encrypt(ticketKey, PropertiesUtil.getString("sso.secretKey"));
+            String encodedticketKey = StringUtil.getBASE64(ticketKey);
 
             iRedisService.setObject(PrefixCode.API_COOKIE_PRE + ticketKey, changeUser(userInfo), Integer.parseInt(PropertiesUtil.getString("sso.ticketTimeout")) * 60);
 
@@ -103,24 +106,42 @@ public class LoginController extends BaseController {
             response.addCookie(cookieDomain);
 
 
-            if(StringUtil.isEmpty(userInfo.getUserName())){
+            if (StringUtil.isEmpty(userInfo.getUserName())) {
                 userInfo.setUserName(userInfo.getMobile());
             }
-            SessionInfo sessionInfo=new SessionInfo(userInfo);
+            SessionInfo sessionInfo = new SessionInfo(userInfo);
             LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
 
             iUserService.updateUserTime(userInfo.getId());
-            if(userInfo.getSource()==1){
+            if (userInfo.getSource() == 1) {
+                HttpSendResult httpSendResult = HttpUtil.executeGet(PropertiesUtil.getString("ORG.USER.API"), encodedticketKey, "web");
+                if (httpSendResult.getStatusCode() == 200) {
+                    StudyLogger.recSysLog("login.json org" + httpSendResult.getResponse());
+                    JSONObject jsonObject = JSON.parseObject(httpSendResult.getResponse());
+                    if (jsonObject.getInteger("code") == 200 && jsonObject.getString("msg").toLowerCase().equals("ok")) {
+                        JSONObject data=jsonObject.getJSONObject("data");
+                        String isOrg=data.getString("is_org");
+                        String orgType=data.getString("org_type");
+                        String domainoOrg=data.getString("domain");
+                        if(!StringUtil.isEmpty(domainoOrg)&&isOrg.equals("Y")&&(orgType.equals("VIP-")||orgType.equals("SVIP")||orgType.equals("VIP"))){
+                            message.setCode(ErrorCode.SUCCESS);
+                            message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT.NEW"));
+                            StudyLogger.recSysLog("login.json" + JSON.toJSON(message).toString());
+                            ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                            return;
+                        }
+                    }
+                }
                 message.setCode(ErrorCode.SUCCESS);
                 message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT"));
             }
+
             String gotoURL = request.getParameter("gotoURL");
-            if (!StringUtil.isEmpty(gotoURL))
-            {
-               message.setCode(StringUtil.getFromBASE64(gotoURL));
+            if (!StringUtil.isEmpty(gotoURL)) {
+                message.setCode(StringUtil.getFromBASE64(gotoURL));
             }
-            if(!StringUtil.isEmpty(userInfoModel.getDomain())){
-                message.setMsg(userInfo.getDomain()+PropertiesUtil.getString("sso.domainName"));
+            if (!StringUtil.isEmpty(userInfoModel.getDomain())) {
+                message.setMsg(userInfo.getDomain() + PropertiesUtil.getString("sso.domainName"));
             }
 
         } catch (Exception e) {
@@ -128,18 +149,18 @@ public class LoginController extends BaseController {
             message.setCode(ErrorCode.SYS_ERROR);
             printLogger(e);
         }
-        StudyLogger.recSysLog("login.json"+ JSON.toJSON(message).toString());
+        StudyLogger.recSysLog("login.json" + JSON.toJSON(message).toString());
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 
-    @RequestMapping(value ="/logout")
+    @RequestMapping(value = "/logout")
     public String loginOut(HttpServletRequest request, HttpServletResponse response) {
-        try{
+        try {
             Cookie[] cookies = request.getCookies();
             if (cookies != null)
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals(PropertiesUtil.getString("sso.cookieName"))) {
-                        String decodedTicket =StringUtil.getFromBASE64(cookie.getValue());
+                        String decodedTicket = StringUtil.getFromBASE64(cookie.getValue());
                         iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + decodedTicket);
                         LoginUser.getCurrentSession().invalidate();
                         Cookie cookied = new Cookie(PropertiesUtil.getString("sso.cookieName"), cookie.getValue());
@@ -150,17 +171,16 @@ public class LoginController extends BaseController {
                         cookied.setPath("/");
                         response.addCookie(cookied);
 
-                       // LoginUser.getCurrentSession().invalidate();
+                        // LoginUser.getCurrentSession().invalidate();
                         break;
                     }
                 }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             printLogger(e);
         }
         return "login";
     }
-
 
 
 }

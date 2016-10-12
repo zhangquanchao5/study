@@ -8,6 +8,15 @@ public class AccountQueryVo {
     private Long outAmount=0l;
     private Long inAmount=0l;
     private Long withdramAmount=0l;
+    private Long unixueAmount=0l;
+
+    public Long getUnixueAmount() {
+        return unixueAmount;
+    }
+
+    public void setUnixueAmount(Long unixueAmount) {
+        this.unixueAmount = unixueAmount;
+    }
 
     public Long getAmount() {
         return amount;

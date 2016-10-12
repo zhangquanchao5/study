@@ -4,7 +4,10 @@ import com.study.common.apibean.ApiResponseMessage;
 import com.study.common.apibean.request.AccountInfoPageReq;
 import com.study.common.apibean.request.BankBindReq;
 import com.study.common.apibean.request.BankWithdrawReq;
+import com.study.common.apibean.response.ApplyPlusResponse;
 import com.study.common.apibean.response.BankWithDrawResp;
+import com.study.exception.BankDuplicateBindingException;
+import com.study.exception.BusinessException;
 import com.study.model.Bank;
 import com.sun.org.apache.bcel.internal.generic.INEG;
 
@@ -31,7 +34,7 @@ public interface IBankService {
      * @return the bank
      * @throws Exception the exception
      */
-    Bank saveForBindBank(BankBindReq req) throws Exception;
+    Bank saveForBindBank(BankBindReq req) throws BusinessException,BankDuplicateBindingException;
 
     /**
      * Find page account query.
@@ -58,4 +61,6 @@ public interface IBankService {
      * @throws Exception the exception
      */
     List findAllBanks(Integer userId) throws Exception;
+
+    ApplyPlusResponse findByUserIdSurplus(Integer useriId);
 }

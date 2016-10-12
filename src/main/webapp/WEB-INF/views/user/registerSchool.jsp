@@ -17,6 +17,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta content="" name="description" />
     <meta content="" name="author" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- end: META -->
     <!-- start: MAIN CSS -->
 

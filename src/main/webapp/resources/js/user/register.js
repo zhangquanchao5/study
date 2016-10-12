@@ -12,19 +12,36 @@ $(document).ready(function() {
             success : function(responseJson) {
                 if(responseJson.success){
                     alert("注册成功，请登录!");
-                    if(responseJson.data==null||responseJson.data==""){
-                        if(responseJson.msg!=null&&responseJson.msg!=""){
-                            window.location.href = $contentPath+"/"+responseJson.msg+"/login";
+                    if(responseJson.source=="1"){
+                        if(responseJson.data==null||responseJson.data==""){
+                            if(responseJson.msg!=null&&responseJson.msg!=""){
+                                window.location.href = $contentPath+"/"+responseJson.msg+"/orgLogin";
+                            }else{
+                                window.location.href = $contentPath+"/orgLogin";
+                            }
                         }else{
-                            window.location.href = $contentPath+"/login";
+                            if(responseJson.msg!=null&&responseJson.msg!=""){
+                                window.location.href = $contentPath+"/"+responseJson.msg+"/orgLogin?gotoURL="+responseJson.data;
+                            }else{
+                                window.location.href = $contentPath+"/orgLogin?gotoURL="+responseJson.data;
+                            }
                         }
                     }else{
-                        if(responseJson.msg!=null&&responseJson.msg!=""){
-                            window.location.href = $contentPath+"/"+responseJson.msg+"/login?gotoURL="+responseJson.data;
+                        if(responseJson.data==null||responseJson.data==""){
+                            if(responseJson.msg!=null&&responseJson.msg!=""){
+                                window.location.href = $contentPath+"/"+responseJson.msg+"/login";
+                            }else{
+                                window.location.href = $contentPath+"/login";
+                            }
                         }else{
-                            window.location.href = $contentPath+"/login?gotoURL="+responseJson.data;
+                            if(responseJson.msg!=null&&responseJson.msg!=""){
+                                window.location.href = $contentPath+"/"+responseJson.msg+"/login?gotoURL="+responseJson.data;
+                            }else{
+                                window.location.href = $contentPath+"/login?gotoURL="+responseJson.data;
+                            }
                         }
                     }
+
                 }else{
                     if(responseJson.code=="2003"){
                         alert("存在此账号!");
@@ -34,13 +51,14 @@ $(document).ready(function() {
                         alert("系统出现未知错误!");
                         //bootbox.alert("系统出现未知错误!");
                     }
-
+                    $("#registerUp").attr("disabled", false);
                 }
             }
         };
 
         $('#registerForm').isValid(function(v){
             if(v){
+                $("#registerUp").attr("disabled", true);
                 $("#registerForm").ajaxSubmit(ajaxOptions);
             }
         });

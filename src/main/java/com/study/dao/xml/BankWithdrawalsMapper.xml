@@ -23,6 +23,16 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="findMonthSums" resultType="java.lang.Integer"  parameterType="java.util.Map" >
+    select
+    count(1)
+    from bank_withdrawals
+    where user_id = #{userId}
+    and amount &lt;=#{amount}
+    and status!=3
+    and DATE_FORMAT(create_time,'%Y-%m')= DATE_FORMAT(NOW(),'%Y-%m')
+  </select>
+
   <select id="findPageWithDraw" resultType="com.study.common.apibean.response.BankWithDrawResp" parameterType="com.study.common.apibean.request.BankWithdrawReq" >
     select
     bw.id as withdrawNo,bw.bank_type as type,bw.amount as amount,bw.status as status,bw.create_time as  withdrawTime,bw.transfer_time as receiveTime,

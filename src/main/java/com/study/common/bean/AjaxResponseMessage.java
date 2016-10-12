@@ -11,7 +11,15 @@ public class AjaxResponseMessage {
     private Object data;
     private String msg;
     private List datas;
+    private String source;
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public Boolean isSuccess() {
         return success;

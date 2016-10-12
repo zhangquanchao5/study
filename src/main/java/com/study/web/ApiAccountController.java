@@ -6,7 +6,9 @@ import com.study.common.StringUtil;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.AccountDetailResp;
 import com.study.common.apibean.response.AccountInfoResp;
+import com.study.common.apibean.response.ApplyPlusResponse;
 import com.study.common.apibean.response.CommonResponse;
+import com.study.common.bean.AjaxResponseMessage;
 import com.study.common.util.DESUtils;
 import com.study.common.util.EncryptUtil;
 import com.study.common.util.ServletResponseHelper;
@@ -43,6 +45,7 @@ public class ApiAccountController extends BaseController {
 
     /**
      * 账户明细查询
+     *
      * @param req
      * @param request
      * @return
@@ -265,8 +268,8 @@ public class ApiAccountController extends BaseController {
             RechargeReq rechargeReq = JSON.parseObject(json, RechargeReq.class);
             commonResponse.setCode(ErrorCode.SUCCESS);
 
-            commonResponse=apiAccountService.saveRedRecharge(rechargeReq,commonResponse) ;
-            if(commonResponse.getCode().equals(ErrorCode.SUCCESS)){
+            commonResponse = apiAccountService.saveRedRecharge(rechargeReq, commonResponse);
+            if (commonResponse.getCode().equals(ErrorCode.SUCCESS)) {
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             }
         } catch (Exception e) {
@@ -288,12 +291,12 @@ public class ApiAccountController extends BaseController {
             String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/account/orgRecharge:" + json);
             OrgRechargeReq orgRechargeReq = JSON.parseObject(json, OrgRechargeReq.class);
-            String orgId= DESUtils.decrypt(orgRechargeReq.getOrgId(), DESUtils.secretKey);
-            String money =DESUtils.decrypt(orgRechargeReq.getMoney().toString(), DESUtils.secretKey);
+            String orgId = DESUtils.decrypt(orgRechargeReq.getOrgId(), DESUtils.secretKey);
+            String money = DESUtils.decrypt(orgRechargeReq.getMoney().toString(), DESUtils.secretKey);
 
-            if(!EncryptUtil.encrypt(orgId +""+money, EncryptUtil.MD5).equals(orgRechargeReq.getAuthKey())){
+            if (!EncryptUtil.encrypt(orgId + "" + money, EncryptUtil.MD5).equals(orgRechargeReq.getAuthKey())) {
                 message.setCode(ErrorCode.RED_RECHARGE_CODE_ERROR);
-            }else{
+            } else {
                 DepositAndWithdrawReq depositAndWithdrawReq = new DepositAndWithdrawReq();
                 depositAndWithdrawReq.setAccountBIllType(orgRechargeReq.getAccountBIllType());
                 depositAndWithdrawReq.setAmount(Integer.parseInt(money));
@@ -337,13 +340,13 @@ public class ApiAccountController extends BaseController {
         try {
             if (isAuthToken(iRedisService, request)) {
                 req.setUserId(getAuthHeader(request).getUserId());
-                message=bankService.findPageWithDraw(req,message);
+                message = bankService.findPageWithDraw(req, message);
                 message.setCode(ErrorCode.SUCCESS);
             } else {
                 message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
-        }  catch (Exception e) {
+        } catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));
             StudyLogger.recSysLog(e);
@@ -361,18 +364,41 @@ public class ApiAccountController extends BaseController {
         try {
             if (isAuthToken(iRedisService, request)) {
                 req.setId(getAuthHeader(request).getUserId());
-                message=bankService.findPageAccountQuery(req, message);
+                message = bankService.findPageAccountQuery(req, message);
                 message.setCode(ErrorCode.SUCCESS);
             } else {
                 message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
             }
-        }  catch (Exception e) {
+        } catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));
             StudyLogger.recSysLog(e);
         }
 
         return message;
+    }
+
+    @RequestMapping(value = "/user/{id}/surplus", method = RequestMethod.GET)
+    public void orgType(@PathVariable("id") Integer id, HttpServletRequest request, HttpServletResponse response) {
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+            StudyLogger.recBusinessLog("/api/user/{id}/surplus:" + id);
+            if (isAuthToken(iRedisService, request)) {
+                ApplyPlusResponse applyPlusResponse = bankService.findByUserIdSurplus(id);
+                message.setData(applyPlusResponse);
+                message.setCode(ErrorCode.SUCCESS);
+                message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+            } else {
+                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
+
+        } catch (Exception e) {
+            message.setCode(ErrorCode.ERROR);
+            message.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 }

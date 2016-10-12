@@ -11,6 +11,66 @@ public class BankBindReq {
     private String depositBank;
     private String depositBankAddress;
 
+    private String companyCode;
+
+    private String companyName;
+
+    private String companyAddress;
+
+    private String phone;
+
+    private Byte bankPerson;
+
+    private String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Byte getBankPerson() {
+        return bankPerson;
+    }
+
+    public void setBankPerson(Byte bankPerson) {
+        this.bankPerson = bankPerson;
+    }
+
+    public String getCompanyCode() {
+        return companyCode;
+    }
+
+    public void setCompanyCode(String companyCode) {
+        this.companyCode = companyCode;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyAddress() {
+        return companyAddress;
+    }
+
+    public void setCompanyAddress(String companyAddress) {
+        this.companyAddress = companyAddress;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     /**
      * Gets user id.
      *

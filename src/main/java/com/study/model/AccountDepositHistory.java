@@ -26,6 +26,16 @@ public class AccountDepositHistory {
 
     private String tradeNo;
 
+    private Integer sourceUserId;
+
+    public Integer getSourceUserId() {
+        return sourceUserId;
+    }
+
+    public void setSourceUserId(Integer sourceUserId) {
+        this.sourceUserId = sourceUserId;
+    }
+
     public Long getLeftAmount() {
         return leftAmount;
     }

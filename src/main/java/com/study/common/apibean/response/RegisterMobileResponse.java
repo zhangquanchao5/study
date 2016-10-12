@@ -8,7 +8,15 @@ public class RegisterMobileResponse {
     private String code;
     private String msg;
     private Object data;
+    private String source;
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public String getCode() {
         return code;

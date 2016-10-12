@@ -1,7 +1,10 @@
 package com.study.service;
 
 import com.study.common.apibean.ApiUserBean;
+import com.study.common.apibean.request.OrgRemarkReq;
 import com.study.common.apibean.request.PwdResetRequest;
+import com.study.common.apibean.response.UserResponse;
+import com.study.common.apibean.response.UserStatisticsResponse;
 import com.study.common.page.UserPageRequest;
 import com.study.common.page.UserPageResponse;
 import com.study.model.Account;
@@ -18,7 +21,7 @@ public interface IApIUserService {
 //
 //    public UserInfo findByUserName(String userName);
 //
-//    public UserInfo findByUserName(String userName,String mobile);
+    public UserInfo findByUserName(String userName,String domain);
 //
 //
 //    public UserInfo findByEMail(String email);
@@ -33,11 +36,19 @@ public interface IApIUserService {
 
     public Integer saveUser(ApiUserBean apiUserBean);
 
+    public Integer updateRemoteUser(ApiUserBean apiUserBean,Integer userId);
+
+    public UserInfo updateRemarkUser(OrgRemarkReq orgRemarkReq,Integer orgId);
+
+    public void updateUserType(Integer userId,Integer type);
+
     public void updateUserPwd(PwdResetRequest pwdResetRequest);
 
     public void updateUserTime(Integer userId);
 
     public Account findAccountByUserId(Integer userId);
+
+    public UserStatisticsResponse staticUserDomain(String domain,String dateStr );
 
     UserInfo findLoad(String login,String domain);
 

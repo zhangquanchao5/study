@@ -96,7 +96,7 @@ $(document).ready(function() {
                     $("#step3").css('display','none');
                     $("#step4").css('display','block');
                 } else {
-                    alert("系统异常错误!");
+                    alert("帐号不存在!");
                 }
             }
         });

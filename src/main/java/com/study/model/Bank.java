@@ -21,6 +21,56 @@ public class Bank {
 
     private Date createTime;
 
+    private String companyCode;
+
+    private String companyName;
+
+    private String companyAddress;
+
+    private String phone;
+
+    private Byte bankPerson;
+
+    public String getCompanyCode() {
+        return companyCode;
+    }
+
+    public void setCompanyCode(String companyCode) {
+        this.companyCode = companyCode;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyAddress() {
+        return companyAddress;
+    }
+
+    public void setCompanyAddress(String companyAddress) {
+        this.companyAddress = companyAddress;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Byte getBankPerson() {
+        return bankPerson;
+    }
+
+    public void setBankPerson(Byte bankPerson) {
+        this.bankPerson = bankPerson;
+    }
+
     public Integer getId() {
         return id;
     }

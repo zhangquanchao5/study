@@ -19,11 +19,12 @@
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="id_card" property="idCard" jdbcType="VARCHAR" />
     <result column="domain" property="domain" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_name, password, mobile, user_mail, icon, source, gender, token, status, 
-    create_time, name, nick, address,update_time,id_card,domain,parent_id
+    create_time, name, nick, address,update_time,id_card,domain,parent_id,remark
   </sql>
 
   <select id="findLoad" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -67,6 +68,22 @@
     from user_info
     where mobile = #{mobile,jdbcType=VARCHAR} and domain=#{domain} and status!=2
   </select>
+
+  <select id="countAllByDomain" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select
+    count(1)
+    from user_info
+    where  domain=#{domain} and status!=2
+  </select>
+
+  <select id="countMonthByDomain" resultType="java.lang.Integer" parameterType="java.util.Map">
+    select
+    count(1)
+    from user_info
+    where  domain=#{domain} and status!=2
+           and create_time >= str_to_date(#{date},'%Y-%m-%d')
+  </select>
+
 
   <select id="selectByDomainUserName" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
@@ -269,6 +286,9 @@
       <if test="idCard != null and idCard != ''" >
         id_card = #{idCard,jdbcType=VARCHAR},
       </if>
+      <if test="remark != null and remark != ''" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
       <if test="domain != null and domain != ''" >
         domain = #{domain,jdbcType=VARCHAR},
       </if>
@@ -315,7 +335,7 @@
     select count(1)
     from user_info
     where  status!=2
-    and parent_id is null
+
     <if test="id!= null and id!=''" >
       and id =#{id}
     </if>
@@ -331,16 +351,29 @@
       and (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
     </if>
     <if test="mobile!= null" >
-      and mobile like  "%"#{mobile}"%"
+      and( mobile like  "%"#{mobile}"%" or user_mail  like  "%"#{mobile}"%")
     </if>
+    <choose>
+      <when test="domain!= null">
+        and domain=#{domain}
+      </when>
+     <otherwise>
+       and parent_id is null
+     </otherwise>
+    </choose>
+    <if test="startDate!=null and startDate!='' and endDate!=null and endDate!=''" >
+      and create_time between str_to_date(concat(#{startDate}," 00:00:00"),'%Y-%m-%d %H:%i:%s')
+                           and str_to_date(concat(#{endDate}," 23:59:59"),'%Y-%m-%d %H:%i:%s')
+    </if>
+
+
   </select>
 
   <select id="findPage" resultType="userResponse" parameterType="userPageRequest" >
     select id as id,name as name,nick as nick,icon as icon,gender as gender,mobile as mobile,
-          address as address,user_name as userName,create_time as ct
+          address as address,user_name as userName,create_time as ct,remark
     from user_info
     where   status!=2
-    and parent_id is null
     <if test="id!= null and id!=''" >
       and id =#{id}
     </if>
@@ -356,7 +389,19 @@
       and  (user_name like "%"#{username}"%" or mobile like  "%"#{username}"%")
     </if>
     <if test="mobile!= null" >
-      and mobile like  "%"#{mobile}"%"
+      and( mobile like  "%"#{mobile}"%" or user_mail  like  "%"#{mobile}"%")
+    </if>
+    <choose>
+      <when test="domain!= null">
+        and domain=#{domain}
+      </when>
+      <otherwise>
+        and parent_id is null
+      </otherwise>
+    </choose>
+    <if test="startDate!=null and startDate!='' and endDate!=null and endDate!=''" >
+      and create_time between str_to_date(concat(#{startDate}," 00:00:00"),'%Y-%m-%d %H:%i:%s')
+      and str_to_date(concat(#{endDate}," 23:59:59"),'%Y-%m-%d %H:%i:%s')
     </if>
     order by create_time desc
 

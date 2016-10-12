@@ -56,6 +56,11 @@ public class PrefixCode {
      * mobile login code
      */
     public static final String API_MOBILE_LOGIN_ON="MLOGIN";
+
+    /**
+     * mobile login code
+     */
+    public static final String API_MOBILE_BANK="BANK";
     /**
      * h5 head
      */

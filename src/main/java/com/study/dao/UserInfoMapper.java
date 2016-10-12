@@ -46,4 +46,9 @@ public interface UserInfoMapper {
     UserInfo findLoad(String login);
 
     UserInfo findDomainLoad(Map map);
+
+    int countAllByDomain(String domain);
+
+    int countMonthByDomain(Map<String,String> map);
+
 }

@@ -17,7 +17,25 @@ public class UserResponse implements Serializable {
     private Date ct;
     private String userName;
     private String idCard;
+    private String domain;
     private Date lastLoginTime;
+    private String remark="";
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
     public Date getLastLoginTime() {
         return lastLoginTime;

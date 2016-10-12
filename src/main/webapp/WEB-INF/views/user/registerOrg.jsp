@@ -16,6 +16,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta content="" name="description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta content="" name="author" />
     <!-- end: META -->
     <!-- start: MAIN CSS -->
@@ -29,12 +30,12 @@
 
 <body style="background:#fff">
 <div class="main" style="padding-bottom:20px">
-    <jsp:include page="../head.jsp"/>
+    <jsp:include page="../headOrg.jsp"/>
     <div class="logo_center">
         <div class="logo_center_left lfloat" >
             <a href="${basePath}"  class="logo_center_left_1"><img src="${pageContext.request.contextPath}/resources/images/logo.png" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
-            <a  href="${pageContext.request.contextPath}/user/register" class="logo_center_left_2">个人注册</a>
-            <span class="lfloat logo_center_left_2">|</span>
+            <%--<a  href="${pageContext.request.contextPath}/user/register" class="logo_center_left_2">个人注册</a>--%>
+            <%--<span class="lfloat logo_center_left_2">|</span>--%>
             <a href="${pageContext.request.contextPath}/user/registerOrg"  class="logo_center_left_3">机构入驻</a>
         </div>
     </div>
@@ -55,7 +56,7 @@
                 <label class="lfloat">手机号</label>
                  <input type="text" name="mobile" id="mobile" placeholder="输入手机号码"   data-tip="手机号码必需输入" data-rule="手机号码:required;mobile;remote[${pageContext.request.contextPath}/user/registerValidate]" onblur="mobileAjax();">
                  <a href="#" id="sendMS" class="lfloat"><img src="${pageContext.request.contextPath}/resources/images/pic-4.png" /></a>
-                <span id="sendMSText" style="margin-left: 120px">获取验证码60秒后没有收到短信可以重新获取</span>
+                <span id="sendMSText" class="huoqu" >获取验证码60秒后没有收到短信可以重新获取</span>
 
             </li>
             <li>

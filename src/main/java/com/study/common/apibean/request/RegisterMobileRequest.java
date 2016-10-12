@@ -8,6 +8,15 @@ public class RegisterMobileRequest {
     private String passwd;
     private String verifyCode;
     private String domain;
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getDomain() {
         return domain;

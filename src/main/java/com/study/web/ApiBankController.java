@@ -5,6 +5,7 @@ import com.study.common.StudyLogger;
 import com.study.common.apibean.ApiResponseMessage;
 import com.study.common.apibean.request.BankBindReq;
 import com.study.exception.BankDuplicateBindingException;
+import com.study.exception.BusinessException;
 import com.study.model.Bank;
 import com.study.service.IBankService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,11 @@ public class ApiBankController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        } catch (Exception e) {
+        } catch (BusinessException e){
+            message.setCode(e.getCode());
+            message.setMsg(messageUtil.getMessage("MSG.USER_CODE_ERROR_CN"));
+            StudyLogger.recSysLog(e);
+        }catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));
             StudyLogger.recSysLog(e);

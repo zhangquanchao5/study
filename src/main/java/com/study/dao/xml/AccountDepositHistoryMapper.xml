@@ -12,9 +12,11 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
     <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="source_user_id" property="sourceUserId" jdbcType="BIGINT" />
+
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, account_id, account_bill_id, bill_type_code, amount,left_amount, create_time, create_user, trade_no
+    id, user_id, account_id, account_bill_id, bill_type_code, amount,left_amount, create_time, create_user, trade_no,source_user_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -38,10 +40,10 @@
     </selectKey>
     insert into account_deposit_history (id, user_id, account_id,
       account_bill_id, bill_type_code, amount,  left_amount,
-      create_time, create_user, trade_no)
+      create_time, create_user, trade_no,source_user_id)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER},
       #{accountBillId,jdbcType=INTEGER}, #{billTypeCode,jdbcType=VARCHAR}, #{amount,jdbcType=BIGINT},  #{leftAmount,jdbcType=BIGINT},
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{tradeNo,jdbcType=VARCHAR})
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{tradeNo,jdbcType=VARCHAR},#{sourceUserId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.study.model.AccountDepositHistory" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
@@ -75,7 +77,10 @@
         create_user,
       </if>
       <if test="tradeNo != null" >
-        trade_no
+        trade_no,
+      </if>
+      <if test="sourceUserId != null" >
+        source_user_id
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -105,7 +110,10 @@
         #{createUser,jdbcType=INTEGER},
       </if>
       <if test="tradeNo != null" >
-        #{tradeNo,jdbcType=VARCHAR}
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceUserId != null" >
+        #{sourceUserId,jdbcType=BIGINT}
       </if>
     </trim>
   </insert>
@@ -137,7 +145,10 @@
         create_user = #{createUser,jdbcType=INTEGER},
       </if>
       <if test="tradeNo != null" >
-        trade_no = #{tradeNo,jdbcType=VARCHAR}
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceUserId != null" >
+        source_user_id = #{sourceUserId,jdbcType=BIGINT}
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -150,6 +161,7 @@
       bill_type_code = #{billTypeCode,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=BIGINT},
       left_amount = #{leftAmount,jdbcType=BIGINT},
+      source_user_id = #{sourceUserId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=INTEGER},
       trade_no = #{tradeNo,jdbcType=VARCHAR}

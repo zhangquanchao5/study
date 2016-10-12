@@ -9,12 +9,11 @@ import com.study.common.Encrypt;
 import com.study.common.StringUtil;
 import com.study.common.StudyLogger;
 import com.study.common.apibean.ApiResponseMessage;
+import com.study.common.apibean.ApiUserBean;
 import com.study.common.apibean.AuthHeaderBean;
 import com.study.common.apibean.request.*;
-import com.study.common.apibean.response.CommonResponse;
-import com.study.common.apibean.response.UserInfoUpdateResponse;
-import com.study.common.apibean.response.UserResponse;
-import com.study.common.apibean.response.ValidateResponse;
+import com.study.common.apibean.response.*;
+import com.study.common.bean.AjaxResponseMessage;
 import com.study.common.oss.DESUtils;
 import com.study.common.page.UserPageRequest;
 import com.study.common.page.UserPageResponse;
@@ -82,7 +81,11 @@ public class ApiUserController extends BaseController {
             message.setCode(e.getCode());
             message.setMsg(e.getMessage());
             StudyLogger.recSysLog(e);
-        } catch (Exception e) {
+        } catch (BankWithDrawalsMoreException b){
+            message.setCode(b.getCode());
+            message.setMsg(b.getMessage());
+            StudyLogger.recSysLog(b);
+        }catch (Exception e) {
             message.setCode(ErrorCode.PROCESS_FAIL);
             message.setMsg(messageUtil.getMessage("msg.process.fail"));
             StudyLogger.recSysLog(e);
@@ -767,6 +770,71 @@ public class ApiUserController extends BaseController {
         ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
     }
 
+
+    /**
+     * 机构对用户备注
+     * @param id
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/org/{id}",method = RequestMethod.POST)
+    public void remoteReg(@PathVariable("id") Integer id,HttpServletRequest request, HttpServletResponse response) {
+        AjaxResponseMessage registerMobileResponse = new AjaxResponseMessage();
+        try {
+            String json = this.getParameter(request);
+            StudyLogger.recBusinessLog("/api/user/org/{id}:" + id +" json:"+json);
+
+            OrgRemarkReq orgRemarkReq = JSON.parseObject(json, OrgRemarkReq.class);
+
+            String header = getPlatformHeader(request);
+            if (StringUtil.isEmpty(header)||StringUtil.isEmpty(orgRemarkReq.getRemark())||orgRemarkReq.getUserId()==null) {
+                registerMobileResponse.setCode(ErrorCode.PARAMETER_NOT_ENOUGH);
+                registerMobileResponse.setMsg(messageUtil.getMessage("msg.parameter.notEnough"));
+                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(registerMobileResponse).toString());
+                return;
+            }
+
+            UserInfo userInfo=iApIUserService.updateRemarkUser(orgRemarkReq, id);
+
+            registerMobileResponse.setCode(ErrorCode.SUCCESS);
+            registerMobileResponse.setData(changeUser(userInfo));
+            registerMobileResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+        } catch (Exception e) {
+            registerMobileResponse.setCode(ErrorCode.ERROR);
+            registerMobileResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(registerMobileResponse).toString());
+    }
+
+    /**
+     * 增级用户类型转换
+     * @param id
+     * @param type
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/user/{id}/{type}",method = RequestMethod.GET)
+    public void orgType(@PathVariable("id") Integer id,@PathVariable("type") Integer type,HttpServletRequest request, HttpServletResponse response) {
+        AjaxResponseMessage message = new AjaxResponseMessage();
+        try {
+            StudyLogger.recBusinessLog("/api/user/{id}/{type}:" + id +" type:"+type);
+//            if (isAuthToken(iRedisService, request)) {
+                iApIUserService.updateUserType(id,type);
+                message.setCode(ErrorCode.SUCCESS);
+                message.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
+//            }else{
+//                message.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+//                message.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+//            }
+
+        } catch (Exception e) {
+            message.setCode(ErrorCode.ERROR);
+            message.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+    }
 
 
 }

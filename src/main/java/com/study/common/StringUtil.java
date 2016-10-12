@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -62,6 +64,18 @@ public final class StringUtil {
 			// str=str+c;
 		}
 		return buf.toString();
+	}
+
+	public static String numberFormat(int count,int month) {
+
+		if(count==0){
+			return "0%";
+		}else{
+			DecimalFormat df=(DecimalFormat) NumberFormat.getInstance();
+			df.applyPattern("##.##%");
+			return df.format((double)month/count);
+		}
+
 	}
 
 	/**

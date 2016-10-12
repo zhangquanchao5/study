@@ -4,8 +4,10 @@ import com.study.code.EntityCode;
 import com.study.code.SplitCode;
 import com.study.common.StringUtil;
 import com.study.common.apibean.ApiUserBean;
+import com.study.common.apibean.request.OrgRemarkReq;
 import com.study.common.apibean.request.PwdResetRequest;
 import com.study.common.apibean.response.UserResponse;
+import com.study.common.apibean.response.UserStatisticsResponse;
 import com.study.common.bean.Mail;
 import com.study.common.page.UserPageRequest;
 import com.study.common.page.UserPageResponse;
@@ -61,17 +63,17 @@ public class ApiUserServiceImpl implements IApIUserService {
         }
     }
 
-//    public UserInfo findByUserName(String userName,String domain){
-//        if(StringUtil.isEmpty(domain)){
-//            return userInfoMapper.findByUserName(userName);
-//        }else{
-//            Map<String,String> map=new HashMap<String, String>();
-//            map.put("userName",userName);
-//            map.put("domain", domain);
-//
-//            return userInfoMapper.selectByDomainUserName(map);
-//        }
-//    }
+    public UserInfo findByUserName(String userName,String domain){
+        if(StringUtil.isEmpty(domain)){
+            return userInfoMapper.findByUserName(userName);
+        }else{
+            Map<String,String> map=new HashMap<String, String>();
+            map.put("userName",userName);
+            map.put("domain", domain);
+
+            return userInfoMapper.selectByDomainUserName(map);
+        }
+    }
 
     public UserInfo findLoad(String login,String domain){
         if(StringUtil.isEmpty(domain)){
@@ -112,7 +114,12 @@ public class ApiUserServiceImpl implements IApIUserService {
     public   Integer saveUser(ApiUserBean apiUserBean){
         UserInfo userInfo=new UserInfo();
         userInfo.setCreateTime(new Date());
-        userInfo.setMobile(apiUserBean.getMobile());
+        if(!StringUtil.isEmpty(apiUserBean.getMobile())){
+            userInfo.setMobile(apiUserBean.getMobile());
+        }
+        if(!StringUtil.isEmpty(apiUserBean.getUserName())){
+            userInfo.setUserName(apiUserBean.getUserName());
+        }
         userInfo.setPassword(StringUtil.getMD5Str(apiUserBean.getPassword()));
         userInfo.setIdCard(apiUserBean.getIdCard());
         userInfo.setStatus(EntityCode.USER_VALIDATE);
@@ -122,7 +129,20 @@ public class ApiUserServiceImpl implements IApIUserService {
             userInfoMapper.insert(userInfo);
         }else{
             //判断是否存在主用户
-            UserInfo userInfoParent=userInfoMapper.selectByMobile(apiUserBean.getMobile());
+            UserInfo userInfoParent=null;
+            //兼容用户名和手机一块注册
+            if(!StringUtil.isEmpty(apiUserBean.getMobile())&&!StringUtil.isEmpty(apiUserBean.getUserName())){
+                userInfoParent=userInfoMapper.selectByMobile(apiUserBean.getMobile());
+                if(userInfoParent==null){
+                    userInfoParent=userInfoMapper.findByUserName(apiUserBean.getUserName());
+                }
+            }else if(!StringUtil.isEmpty(apiUserBean.getMobile())) {
+                userInfoParent=userInfoMapper.selectByMobile(apiUserBean.getMobile());
+            }else if(!StringUtil.isEmpty(apiUserBean.getIdCard())) {
+                userInfoParent=userInfoMapper.findByIdCard(apiUserBean.getIdCard());
+            }else if(!StringUtil.isEmpty(apiUserBean.getUserName())){
+                userInfoParent=userInfoMapper.findByUserName(apiUserBean.getUserName());
+            }
             if(userInfoParent!=null){
                 userInfo.setSource(EntityCode.USER_SOURCE_DOMAIN);
                 userInfo.setDomain(apiUserBean.getDomain());
@@ -132,7 +152,12 @@ public class ApiUserServiceImpl implements IApIUserService {
             }else{
                 userInfoParent=new UserInfo();
                 userInfoParent.setCreateTime(new Date());
-                userInfoParent.setMobile(apiUserBean.getMobile());
+                if(!StringUtil.isEmpty(apiUserBean.getMobile())){
+                    userInfoParent.setMobile(apiUserBean.getMobile());
+                }
+                if(!StringUtil.isEmpty(apiUserBean.getUserName())){
+                    userInfoParent.setUserName(apiUserBean.getUserName());
+                }
                 userInfoParent.setSource(EntityCode.USER_SOURCE_APP);
                 userInfoParent.setPassword(StringUtil.getMD5Str(apiUserBean.getPassword()));
                 userInfoParent.setIdCard(apiUserBean.getIdCard());
@@ -163,6 +188,71 @@ public class ApiUserServiceImpl implements IApIUserService {
         return userInfo.getId();
     }
 
+    public Integer updateRemoteUser(ApiUserBean apiUserBean,Integer userId){
+         UserInfo userInfo=userInfoMapper.selectByPrimaryKey(userId);
+        if(userInfo==null){
+            return 0;//用户不存在
+        }
+        if(!StringUtil.isEmpty(apiUserBean.getDomain())){
+            //判断是否存在手机和域名的账号
+            Map<String,String> map=new HashMap<String, String>();
+            map.put("mobile",userInfo.getMobile());
+            map.put("domain", apiUserBean.getDomain());
+
+            UserInfo temp=userInfoMapper.selectByDomainMobile(map);
+            if(temp==null){
+                //增加新的主用户
+                UserInfo userInfoParent=new UserInfo();
+                userInfoParent.setCreateTime(new Date());
+                userInfoParent.setMobile(userInfo.getMobile());
+                userInfoParent.setSource(EntityCode.USER_SOURCE_APP);
+                userInfoParent.setPassword(userInfo.getPassword());
+                userInfoParent.setStatus(EntityCode.USER_VALIDATE);
+
+                userInfoMapper.insert(userInfoParent);
+
+                //更新userInfo
+                userInfo.setDomain(apiUserBean.getDomain());
+                if(StringUtil.isEmpty(userInfo.getIdCard())){
+                    userInfo.setIdCard("U"+System.currentTimeMillis());
+                }
+                userInfo.setSource(EntityCode.USER_SOURCE_DOMAIN);
+                userInfo.setParentId(userInfoParent.getId());
+
+                userInfoMapper.updateByPrimaryKeySelective(userInfo);
+                return 3;
+            }else{
+                //更新userInfo
+                userInfo.setDomain(apiUserBean.getDomain());
+                if(StringUtil.isEmpty(userInfo.getIdCard())){
+                    userInfo.setIdCard("S"+System.currentTimeMillis());
+                }
+
+                userInfoMapper.updateByPrimaryKeySelective(userInfo);
+                return 4;//已经存在
+            }
+
+        }
+
+        return 2;
+    }
+
+    public UserInfo updateRemarkUser(OrgRemarkReq orgRemarkReq,Integer orgId){
+        UserInfo userInfo=userInfoMapper.selectByPrimaryKey(orgRemarkReq.getUserId());
+        userInfo.setRemark(orgRemarkReq.getRemark());
+
+        userInfoMapper.updateByPrimaryKeySelective(userInfo);
+
+        return userInfo;
+    }
+
+    public void updateUserType(Integer userId,Integer type){
+        UserInfo userInfo=userInfoMapper.selectByPrimaryKey(userId);
+        userInfo.setSource((byte)type.intValue());
+
+        userInfoMapper.updateByPrimaryKeySelective(userInfo);
+    }
+
     public void updateUserTime(Integer userId){
         userInfoMapper.updateUserTime(userId);
     }
@@ -182,6 +272,19 @@ public class ApiUserServiceImpl implements IApIUserService {
 
     public Account findAccountByUserId(Integer userId){
        return accountMapper.selectByUserId(userId);
+    }
+
+    public UserStatisticsResponse staticUserDomain(String domain,String dateStr){
+        UserStatisticsResponse userStatisticsResponse=new UserStatisticsResponse();
+        Map<String,String> map=new HashMap<String, String>();
+        map.put("date",dateStr);
+        map.put("domain", domain);
+        int month=userInfoMapper.countMonthByDomain(map);
+        int all=userInfoMapper.countAllByDomain(domain);
+        userStatisticsResponse.setCurrentMonth(month);
+        userStatisticsResponse.setUserAll(all);
+        userStatisticsResponse.setAddRate(StringUtil.numberFormat(all,month));
+        return userStatisticsResponse;
     }
 
     @Override

@@ -52,6 +52,39 @@ public final class HttpUtil {
     private HttpUtil() {
     }
 
+    public static HttpSendResult executeGet(String url,String auth,String platform) {
+        HttpSendResult sendResult = new HttpSendResult();
+        HttpConnectionManagerParams params = connectionManager.getParams();
+        params.setConnectionTimeout(connectiontimeout);
+        HttpClient hc = new HttpClient();
+        hc.setHttpConnectionManager(connectionManager);
+        GetMethod getMethod = new GetMethod(url);
+        getMethod.setRequestHeader(REQUEST_HEADER_CONNECTION, REQUEST_HEADER_VALUE_CLOSE);
+        getMethod.setRequestHeader(REQUEST_HEADER_PROXYCONNECTION, REQUEST_HEADER_VALUE_CLOSE);
+        getMethod.setRequestHeader("Authorization", auth);
+        getMethod.setRequestHeader("platform", platform);
+        HttpMethodParams httpMethodParams = getMethod.getParams();
+        httpMethodParams.setParameter(HttpMethodParams.SO_TIMEOUT, readtimeout);
+        try {
+            int responseCode = hc.executeMethod(getMethod);
+            InputStream inputStream = getMethod.getResponseBodyAsStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int read = -1;
+            byte[] buffer = new byte[512];
+            while ((read = inputStream.read(buffer)) > 0) {
+                out.write(buffer, 0, read);
+            }
+            String response = new String(out.toByteArray());
+            sendResult.setStatusCode(responseCode);
+            sendResult.setResponse(response);
+        } catch (Exception e) {
+            sendResult.setException(e);
+        }
+        getMethod.releaseConnection();
+        return sendResult;
+    }
+
+
     /**
      * 使用GetMethod方式读取URL数据，读完后自动断开请求
      *

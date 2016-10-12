@@ -128,6 +128,8 @@ public class UserController extends BaseController {
                     message.setMsg(userInfoModel.getDomain());
                 }
 
+                message.setSource(userInfoModel.getSource()+"");
+
             } else {
                 message.setSuccess(false);
                 message.setCode(ErrorCode.USER_CODE_ERROR);

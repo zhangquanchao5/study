@@ -4,6 +4,7 @@ import com.study.code.EntityCode;
 import com.study.common.apibean.request.PreWithdrawReq;
 import com.study.common.apibean.request.WithdrawConfirmReq;
 import com.study.common.util.MessageUtil;
+import com.study.common.util.PropertiesUtil;
 import com.study.dao.*;
 import com.study.exception.*;
 import com.study.model.*;
@@ -48,6 +49,15 @@ public class BankWithdrawalsServiceImpl implements IBankWithdrawalsService {
         if (null == bank) {
             throw new BankNotExitsException(messageUtil.getMessage("msg.bank.notExits"));
         }
+        //如果是大于3000的小额提现，当月不能超过两次
+        Map<String,String> mapBank=new HashMap<String, String>();
+        mapBank.put("userId",bank.getUserId().toString());
+        mapBank.put("amount",PropertiesUtil.getString("bankWithdrawal.amount"));
+        int sums=bankWithdrawalsMapper.findMonthSums(mapBank);
+        if(sums>=Integer.parseInt(PropertiesUtil.getString("bankWithdrawal.nums"))){
+            throw new BankWithDrawalsMoreException(messageUtil.getMessage("msg.bank.more",new String[]{ String.valueOf(Integer.parseInt(PropertiesUtil.getString("bankWithdrawal.amount"))/100),PropertiesUtil.getString("bankWithdrawal.nums")}));
+        }
+
         Account account = accountMapper.selectByUserId(bank.getUserId());
         if (null == account) {
             throw new AccountNotExitsException(messageUtil.getMessage("msg.user.accountNotExits"));

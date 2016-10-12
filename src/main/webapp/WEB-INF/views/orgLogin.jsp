@@ -42,7 +42,7 @@
         <input type="hidden" name="gotoURL" value="${param.gotoURL}" />
         <div class="login_bg1">
         <div class="login_1 rfloat">
-            <div class="login_text">用户登录</div>
+            <div class="login_text">机构登录</div>
             <div class="login_text1 login_mag">
                 <div class="login_kuang lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_10.png" /></div>
                  <input name="userName"  id="userName"  placeholder="输入用户名\手机号码\邮箱" type="text" data-rule="required;" >
@@ -53,13 +53,13 @@
             </div>
             <div class="wangji login_mag">
                 <a  href="${pageContext.request.contextPath}/user/forget" class="lfloat login_col">忘记密码？</a>
-                <a  href="${pageContext.request.contextPath}/user/register" class="rfloat login_co2">立即注册> </a>
+                <a  href="${pageContext.request.contextPath}/user/registerOrg" class="rfloat login_co2">立即注册> </a>
             </div>
             <div style="clear: both;"></div>
             <div class="login_mag1 asdkljda"   ><a href="#" id="loginUp" ><img  src="${pageContext.request.contextPath}/resources/images/pic-3.png" /></a></div>
-            <div class="login_mag2"><span class="lfloat login_left">快捷登录：</span>
-                <a href="#" onclick="redirectQq()" class="lfloat login_left"><img src="${pageContext.request.contextPath}/resources/images/icon_12.png" /></a>
-                <span class="lfloat login_left">qq登录</span></div>
+            <%--<div class="login_mag2"><span class="lfloat login_left">快捷登录：</span>--%>
+                <%--<a href="#" onclick="redirectQq()" class="lfloat login_left"><img src="${pageContext.request.contextPath}/resources/images/icon_12.png" /></a>--%>
+                <%--<span class="lfloat login_left">qq登录</span></div>--%>
         </div>
     </div>
     </form>

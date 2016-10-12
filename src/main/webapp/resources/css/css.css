@@ -229,3 +229,148 @@ body{
 	color:#e77470;
 	text-decoration:none;
 	}
+@media(max-width:750px){
+.kuang{
+	width:95%;
+	background:url(../images/bg.png) no-repeat;
+	height:371px;
+	margin:0px auto 0 auto
+	}
+.kuang-top{
+	width:95%;
+	height:60px;
+	margin:0 auto;
+	border-bottom:2px solid #e77470
+	}
+.kuang-tex11{
+	width:100%;
+	margin:40px 0 0 20px;
+	}
+.kuang-tex11 span{
+	float:left;
+	margin-left:20px;
+	font-size:14px;
+	line-height:28px
+	}
+.kuang-tex13{
+	width:100%;
+	margin:20px 0 0 20px;
+	float:left
+}
+.kuang-tex13 span{
+	float:left;
+	font-size:14px;
+	line-height:28px;
+}
+.kuang-tex13 span input{
+	width:100px;
+	background:#ffff;
+	height:30px;
+	border:1px solid #cac9c9
+}
+.kuang-btn1{
+	width:300px;
+	margin:50px 0 0 40px;
+	float:left
+	}
+.kuang-tex4 span input{
+	width:220px;
+	background:#f8f8f8;
+	height:30px;
+	border:1px solid #cac9c9
+	}
+.kuang-tex4{
+	width:auto;
+	margin:50px 0 0 0px;
+	}
+.kuang-tex1 span input{
+	width:200px;
+	background:#ffff;
+	height:30px;
+	border:1px solid #cac9c9
+	}
+.kuang-tex1{
+	width:auto;
+	margin:40px 0 0 00px;
+	}
+.kuang-tex1 span{
+	float:left;
+	margin-left:20px;
+	font-size:14px;
+	line-height:28px
+	}
+.kuang-tex2{
+	width:auto;
+	margin:20px 0 0 0px;
+	float:left
+	}
+.kuang-tex2 span{
+	float:left;
+	margin-left:20px;
+	font-size:14px;
+	line-height:28px
+	}
+.kuang-tex2 span input{
+	width:200px;
+	background:#fff;
+	height:30px;
+	border:1px solid #cac9c9
+	}
+}
+@media(max-width:375px){
+.kuang-tex11{
+	width:100%;
+	margin:40px 0 0 0px;
+	}
+
+.kuang-tex13{
+	width:100%;
+	margin:20px 0 0 0px;
+	float:left
+}
+.kuang-btn1{
+	width:300px;
+	margin:50px 0 0 20px;
+	float:left
+	}
+}
+@media(max-width:320px){
+.kuang-tex11{
+	width:100%;
+	margin:40px 0 0 0px;
+	}
+
+.kuang-tex13{
+	width:100%;
+	margin:20px 0 0 0px;
+	float:left
+}
+.kuang-btn1{
+	width:300px;
+	margin:50px 0 0 20px;
+	float:left
+	}
+.kuang-btn1 img{
+	width:90%
+	}
+.xl{
+	width:150px;
+	height:30px;
+	}
+.kuandu{
+	width:70px;
+	text-align:right
+	}
+.kuang-tex13 span input{
+	width:80px;
+	background:#ffff;
+	height:30px;
+	border:1px solid #cac9c9
+}
+.kuang-tex4 span input{
+	width:180px;
+	background:#f8f8f8;
+	height:30px;
+	border:1px solid #cac9c9
+	}
+}

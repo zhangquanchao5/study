@@ -13,10 +13,11 @@
 <html lang="en">
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-    <title>轻校网-登录</title>
+    <title>轻网校-登录</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta content="" name="description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta content="" name="author" />
     <!-- end: META -->
     <!-- start: MAIN CSS -->
@@ -46,7 +47,7 @@
         <input type="hidden" name="domain" value="${domain}">
         <div class="login_bg2">
         <div class="login_1 rfloat">
-            <div class="login_text" style="color:${light.color}">轻校网用户登录</div>
+            <div class="login_text" style="color:${light.color}">用户登录/教师登录</div>
             <div class="login_text1 login_mag">
                 <div class="login_kuang lfloat"><img src="${pageContext.request.contextPath}/resources/images/icon_10.png" /></div>
                  <input name="userName"  id="userName"  placeholder="手机号码" type="text" data-rule="required;" >

@@ -11,9 +11,14 @@
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="bank_person" property="bankPerson" jdbcType="TINYINT" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="company_address" property="companyAddress" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, bank_no, bank_type, name, bank_deposit, address, status, create_time
+    id, user_id, bank_no, bank_type, name, bank_deposit, address, status, create_time,company_address,company_code,company_name,phone,bank_person
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -26,7 +31,7 @@
     select
     <include refid="Base_Column_List" />
     from bank
-    where user_id = #{userId,jdbcType=INTEGER} AND bank_no = #{bankNo,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER} AND bank_no = #{bankNo,jdbcType=VARCHAR} and status=1
   </select>
   <select id="findAllByUser" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
@@ -42,11 +47,13 @@
   <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.study.model.Bank" >
     insert into bank (id, user_id, bank_no, 
       bank_type, name, bank_deposit, 
-      address, status, create_time
+      address, status, create_time,company_address,company_code,company_name,phone,bank_person
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{bankNo,jdbcType=VARCHAR}, 
       #{bankType,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{bankDeposit,jdbcType=VARCHAR}, 
-      #{address,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}
+      #{address,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP} ,
+      #{companyAddress,jdbcType=VARCHAR}, #{companyCode,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+      #{bankPerson,jdbcType=TINYINT}
       )
   </insert>
   <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.study.model.Bank" >
@@ -79,6 +86,21 @@
       <if test="createTime != null" >
         create_time,
       </if>
+      <if test="companyAddress != null" >
+        company_address,
+      </if>
+      <if test="companyCode != null" >
+        company_code,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="bankPerson != null" >
+        bank_person,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -108,6 +130,21 @@
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="companyAddress != null" >
+        #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="companyCode != null" >
+        #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="bankPerson != null" >
+        #{bankPerson,jdbcType=TINYINT},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.study.model.Bank" >
@@ -134,6 +171,21 @@
       <if test="status != null" >
         status = #{status,jdbcType=TINYINT},
       </if>
+      <if test="companyAddress != null" >
+        company_address = #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="companyCode != null" >
+        company_code = #{companyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="bankPerson != null" >
+        bank_person = #{bankPerson,jdbcType=TINYINT},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -146,6 +198,11 @@
       bank_no = #{bankNo,jdbcType=VARCHAR},
       bank_type = #{bankType,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
+      company_address = #{companyAddress,jdbcType=VARCHAR},
+      company_code = #{companyCode,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      bank_person = #{bankPerson,jdbcType=TINYINT},
       bank_deposit = #{bankDeposit,jdbcType=VARCHAR},
       address = #{address,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},

@@ -6,6 +6,7 @@ import com.study.common.bean.AccountQueryVo;
 import com.study.model.BankWithdrawals;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BankWithdrawalsMapper {
     int deleteByPrimaryKey(Integer id);
@@ -24,5 +25,10 @@ public interface BankWithdrawalsMapper {
 
     int  findPageWithDrawCount(BankWithdrawReq bankWithdrawReq);
 
-
+    /**
+     * 查询当月提现次数
+     * @param
+     * @return
+     */
+    int findMonthSums(Map<String,String> map);
 }

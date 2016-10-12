@@ -278,6 +278,7 @@ public class ApiAccountService {
                 depositHistory.setCreateTime(new Date());
                 depositHistory.setCreateUser(userId);
                 depositHistory.setTradeNo("U_"+req.getTradeNO());
+                depositHistory.setSourceUserId(userId);
                 depositHistory.setLeftAmount(accountMapper.selectByUserId(userInfoOrg.getId()).getBalance().intValue()-req.getAmount().longValue());
                 accountDepositHistoryMapper.insert(depositHistory);
             }

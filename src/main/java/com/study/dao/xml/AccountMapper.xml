@@ -86,7 +86,7 @@
   </select>
 
   <select id="findAccountQuery" resultType="com.study.common.bean.AccountQueryVo" parameterType="com.study.common.apibean.request.AccountInfoPageReq" >
-    select a.amount,b.inAmount,c.outAmount,d.withdramAmount from
+    select a.amount,b.inAmount,c.outAmount,d.withdramAmount,e.unixueAmount from
 
     (select a.balance as amount from account a where a.user_id=#{id} ) a,
     ( select ifnull(sum(adh.amount),0) as inAmount   from account_deposit_history adh
@@ -104,8 +104,14 @@
     <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
       and bw.create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
     </if>
-    ) d
-
+    ) d,
+    ( select ifnull(sum(adh.amount),0) as unixueAmount   from account_deposit_history adh
+    where adh.user_id=#{id}
+    and adh.source_user_id is not null
+    and EXISTS (select 1 from user_info u where u.id= adh.source_user_id and u.parent_id is null)
+    <if test="beginTime != null and beginTime!='' and endTime!=null and endTime!=''">
+      and adh.create_time between str_to_date(#{beginTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+    </if>) e
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

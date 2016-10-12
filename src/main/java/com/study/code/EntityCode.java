@@ -27,6 +27,7 @@ public class EntityCode {
     public static final Integer MOBILE_YU_YUE=4;
     public static final Integer MOBILE_RESET_PWD=5;
     public static final Integer MOBILE_LOGIN_CODE=6;
+    public static final Integer MOBILE_BANK_CODE=7;
 
 
     public static final Integer EMAIL_PWD=1;

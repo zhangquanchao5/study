@@ -16,9 +16,9 @@
         </div>
         <div class="rfloat top_right">
             <ul>
-                <li><a href="http://${domain}${shortPath}">轻校网首页</a></li>
+                <li><a href="http://${domain}${shortPath}">轻网校首页</a></li>
 <c:if test="${sessionScope.user_session_info!=null}">
-                <li><a href="http://${domain}${shortPath}/#/personalCenter.html?showListType=personalCenter">我的轻校网</a></li>
+                <li><a href="http://${domain}${shortPath}/#/personalCenter.html?showListType=personalCenter">我的轻网校</a></li>
 </c:if>
                 <%--<li><a  href="http://www.unixue.com/#/myyouni.html">我的轻校网</a><!-- <img src="images/bottom.png" /> -->--%>
                     <%--<ul>--%>

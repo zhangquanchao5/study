@@ -9,7 +9,7 @@
        <%--<a href="${pageContext.request.contextPath}/account/accountManagement" target="_blank">${sessionScope.user_session_info.userInfo.userName}</a>--%>
     <%--</c:if>--%>
             <c:if test="${sessionScope.user_session_info==null}">
-                <a href="${pageContext.request.contextPath}/login">请登录</a>
+                <a href="${pageContext.request.contextPath}/orgLogin">请登录</a>
             </c:if>
            <span>
                <%--|</span> <span><img src="${pageContext.request.contextPath}/resources/images/icon_1.png" /></span><a href="#">消息</a> <span><img src="${pageContext.request.contextPath}/resources/images/icon_2.png" /></span><a href="#">通知</a>--%>

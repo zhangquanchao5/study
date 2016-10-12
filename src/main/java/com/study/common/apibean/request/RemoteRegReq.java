@@ -7,6 +7,15 @@ public class RemoteRegReq {
     private String userPhone;
     private String passwd;
     private String idCard;
+    private String domain;
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
     public String getIdCard() {
         return idCard;

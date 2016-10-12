@@ -13,7 +13,7 @@
 <head>
     <jsp:include page="common/commonCss.jsp"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login/login.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body style="background:#f8f8f8">

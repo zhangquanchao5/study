@@ -13,10 +13,11 @@
 <html lang="en">
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-    <title>轻校网-注册</title>
+    <title>轻网校-注册</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta content="" name="description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta content="" name="author" />
     <!-- end: META -->
     <!-- start: MAIN CSS -->
@@ -38,7 +39,7 @@
             <c:if test="${!empty light.logo}">
             <a href="http://${domain}${shortPath}" class="logo_center_left_1"><img width="123px" height="52px" src="${light.logo}" /></a><span class="logo_center_left_sp"><img src="${pageContext.request.contextPath}/resources/images/shu.png" /></span>
            </c:if>
-            <a href="" class="logo_center_left_3"  style="color:${light.color}" >轻校网用户注册</a>
+            <a href="" class="logo_center_left_3"  style="color:${light.color}" >轻网校用户注册</a>
 
         </div>
     </div>
@@ -57,7 +58,7 @@
                      获取验证码
                      <%--<img src="${pageContext.request.contextPath}/resources/images/pic-4.png" />--%>
                  </a>
-                <span id="sendMSText" style="margin-left: 120px">获取验证码60秒后没有收到短信可以重新获取</span>
+                <span id="sendMSText" class="huoqu">获取验证码60秒后没有收到短信可以重新获取</span>
             </li>
 
 
