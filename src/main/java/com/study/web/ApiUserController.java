@@ -14,6 +14,7 @@ import com.study.common.apibean.AuthHeaderBean;
 import com.study.common.apibean.request.*;
 import com.study.common.apibean.response.*;
 import com.study.common.bean.AjaxResponseMessage;
+import com.study.common.http.ApiHttpUtil;
 import com.study.common.oss.DESUtils;
 import com.study.common.page.UserPageRequest;
 import com.study.common.page.UserPageResponse;
@@ -290,7 +291,7 @@ public class ApiUserController extends BaseController {
                 String token=StringUtil.getFromBASE64(encode.substring(encode.split(SplitCode.SPLIT_EQULE)[0].length() + 1, encode.length()));
                 String []head=token.substring(token.split(SplitCode.SPLIT_EQULE)[0].length()+1,token.length()).split(SplitCode.SPLIT_ZHUANYI);
                 //String []head=StringUtil.getFromBASE64(encode.split(SplitCode.SPLIT_EQULE)[1]).split(SplitCode.SPLIT_EQULE)[1].split(SplitCode.SPLIT_ZHUANYI);
-                StudyLogger.recBusinessLog("/user/validate params:" + head[0]+"#######"+token);
+                StudyLogger.recBusinessLog("/user/validate params:" + head[0] + "#######" + token);
                 if(head[0].equals(PrefixCode.API_HEAD_H5)){
                     userInfo= (UserResponse)iRedisService.getObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, encode.split(SplitCode.SPLIT_EQULE)[0]);
                 }else if(head[0].equals(PrefixCode.API_HEAD_WEB)){
@@ -310,6 +311,43 @@ public class ApiUserController extends BaseController {
                 commonResponse.setCode(ErrorCode.SUCCESS);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
                 commonResponse.setData(validateResponse);
+            }else{
+                commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
+            }
+        } catch (Exception e) {
+            commonResponse.setCode(ErrorCode.ERROR);
+            commonResponse.setMsg(messageUtil.getMessage("MSG.ERROR_CN"));
+            printLogger(e);
+        }
+        ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(commonResponse).toString());
+    }
+
+    /**
+     * 用户信息删除
+     */
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public void delete(@PathVariable("id") Integer id,HttpServletRequest request, HttpServletResponse response) {
+        CommonResponse commonResponse = new CommonResponse();
+        try {
+            StudyLogger.recBusinessLog("/user/DELETE:" + id);
+            ApiHttpUtil.addLog(request.getHeader("user-agent"), null, "UserDelete", request.getRequestURL().toString(), id.toString());
+            if(isAuthToken(iRedisService, request)){
+//                AuthHeaderBean authHeaderBean = getAuthHeader(request);
+//                if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
+//                    iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, authHeaderBean.getUserId().toString());
+//                }else  if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_WEB)){
+//                    iRedisService.deleteOneKey(PrefixCode.API_COOKIE_PRE + authHeaderBean.getEncode());
+//                }else{
+//                    iRedisService.deleteObjectFromMap(PrefixCode.API_TOKEN_MAP, authHeaderBean.getUserId().toString());
+//                }
+                //更改用户状态
+                UserInfo userInfo=iApIUserService.findById(id);
+                userInfo.setStatus(EntityCode.USER_DELETE);
+                iApIUserService.updateUser(userInfo);
+
+                commonResponse.setCode(ErrorCode.SUCCESS);
+                commonResponse.setMsg(messageUtil.getMessage("MSG.SUCCESS_CN"));
             }else{
                 commonResponse.setCode(ErrorCode.USER_TOKEN_NO_VAL);
                 commonResponse.setMsg(messageUtil.getMessage("MSG.USER_TOKEN_NO_VAL_CN"));
@@ -744,6 +782,7 @@ public class ApiUserController extends BaseController {
             //现在用户名和手机号一样，直接查找手机号
             AuthHeaderBean authHeaderBean = getAuthHeader(request);
             StudyLogger.recBusinessLog("/user/logout:" + authHeaderBean.toString());
+            ApiHttpUtil.addLog(request.getHeader("user-agent"), null, "UserQuit", request.getRequestURL().toString(), JSON.toJSONString(authHeaderBean));
 
             if(getPlatformHeader(request).equals(PrefixCode.API_HEAD_H5)){
                 iRedisService.deleteObjectFromMap(PrefixCode.API_H5_TOKEN_MAP, authHeaderBean.getUserId().toString());

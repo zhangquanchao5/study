@@ -20,6 +20,15 @@ public class UserResponse implements Serializable {
     private String domain;
     private Date lastLoginTime;
     private String remark="";
+    private Byte schoolSign;
+
+    public Byte getSchoolSign() {
+        return schoolSign;
+    }
+
+    public void setSchoolSign(Byte schoolSign) {
+        this.schoolSign = schoolSign;
+    }
 
     public String getRemark() {
         return remark;

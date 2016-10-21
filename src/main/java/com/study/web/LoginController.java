@@ -54,9 +54,11 @@ public class LoginController extends BaseController {
 
     @RequestMapping(value = "/loginUp", method = RequestMethod.POST)
     public void login(UserInfo userInfoModel, HttpServletRequest request, HttpServletResponse response) {
-
+//        System.out.println("---------------:"+request.getRequestURL());
+//        System.out.println("---------------:"+request.getHeader("user-agent"));
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
+            ApiHttpUtil.addLog(request.getHeader("user-agent"),null,"UserLogin",request.getRequestURL().toString(),JSON.toJSONString(userInfoModel));
             UserInfo userInfo;
             String domain;
             if (StringUtil.isEmpty(userInfoModel.getDomain())) {
@@ -113,36 +115,64 @@ public class LoginController extends BaseController {
             LoginUser.getCurrentSession().setAttribute(LoginUser.USER_SESSION_INFO, sessionInfo);
 
             iUserService.updateUserTime(userInfo.getId());
-            if (userInfo.getSource() == 1) {
-                HttpSendResult httpSendResult = HttpUtil.executeGet(PropertiesUtil.getString("ORG.USER.API"), encodedticketKey, "web");
-                if (httpSendResult.getStatusCode() == 200) {
-                    StudyLogger.recSysLog("login.json org" + httpSendResult.getResponse());
-                    JSONObject jsonObject = JSON.parseObject(httpSendResult.getResponse());
-                    if (jsonObject.getInteger("code") == 200 && jsonObject.getString("msg").toLowerCase().equals("ok")) {
-                        JSONObject data=jsonObject.getJSONObject("data");
-                        String isOrg=data.getString("is_org");
-                        String orgType=data.getString("org_type");
-                        String domainoOrg=data.getString("domain");
-                        if(!StringUtil.isEmpty(domainoOrg)&&isOrg.equals("Y")&&(orgType.equals("VIP-")||orgType.equals("SVIP")||orgType.equals("VIP"))){
-                            message.setCode(ErrorCode.SUCCESS);
-                            message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT.NEW"));
-                            StudyLogger.recSysLog("login.json" + JSON.toJSON(message).toString());
-                            ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
-                            return;
+            if(StringUtil.isEmpty(userInfo.getDomain())&&userInfo.getSchoolSign()==1){
+                //轻网校后台
+                if (userInfo.getSource() == 1) {
+                    HttpSendResult httpSendResult = HttpUtil.executeGet(PropertiesUtil.getString("ORG.USER.API"), encodedticketKey, "web");
+                    if (httpSendResult.getStatusCode() == 200) {
+                        StudyLogger.recSysLog("school admin login.json org" + httpSendResult.getResponse());
+                        JSONObject jsonObject = JSON.parseObject(httpSendResult.getResponse());
+                        if (jsonObject.getInteger("code") == 200 && jsonObject.getString("msg").toLowerCase().equals("ok")) {
+                            JSONObject data=jsonObject.getJSONObject("data");
+                            String isOrg=data.getString("is_org");
+                            String orgType=data.getString("org_type");
+                            String domainoOrg=data.getString("domain");
+                            if(!StringUtil.isEmpty(domainoOrg)&&isOrg.equals("Y")&&(orgType.equals("VIP-")||orgType.equals("SVIP")||orgType.equals("VIP"))){
+                                message.setCode(ErrorCode.SUCCESS);
+                                message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT.NEW"));
+
+                                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                                return;
+                            }
                         }
                     }
                 }
-                message.setCode(ErrorCode.SUCCESS);
-                message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT"));
+                //校园版
+                message.setMsg( PropertiesUtil.getString("SCHOOL.LOGIN.REDIRECT"));
+            }else{
+                if (userInfo.getSource() == 1) {
+                    HttpSendResult httpSendResult = HttpUtil.executeGet(PropertiesUtil.getString("ORG.USER.API"), encodedticketKey, "web");
+                    if (httpSendResult.getStatusCode() == 200) {
+                        StudyLogger.recSysLog("login.json org" + httpSendResult.getResponse());
+                        JSONObject jsonObject = JSON.parseObject(httpSendResult.getResponse());
+                        if (jsonObject.getInteger("code") == 200 && jsonObject.getString("msg").toLowerCase().equals("ok")) {
+                            JSONObject data=jsonObject.getJSONObject("data");
+                            String isOrg=data.getString("is_org");
+                            String orgType=data.getString("org_type");
+                            String domainoOrg=data.getString("domain");
+                            if(!StringUtil.isEmpty(domainoOrg)&&isOrg.equals("Y")&&(orgType.equals("VIP-")||orgType.equals("SVIP")||orgType.equals("VIP"))){
+                                message.setCode(ErrorCode.SUCCESS);
+                                message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT.NEW"));
+                                StudyLogger.recSysLog("login.json" + JSON.toJSON(message).toString());
+                                ServletResponseHelper.outUTF8ToJson(response, JSON.toJSON(message).toString());
+                                return;
+                            }
+                        }
+                    }
+                    message.setCode(ErrorCode.SUCCESS);
+                    message.setData(PropertiesUtil.getString("ORG.LOGIN.REDIRECT"));
+                }
+
+                String gotoURL = request.getParameter("gotoURL");
+                if (!StringUtil.isEmpty(gotoURL)) {
+                    message.setCode(StringUtil.getFromBASE64(gotoURL));
+                }
+                //轻校网首页
+                if (!StringUtil.isEmpty(userInfoModel.getDomain())) {
+                    message.setMsg(userInfo.getDomain() + PropertiesUtil.getString("sso.domainName"));
+                }
             }
 
-            String gotoURL = request.getParameter("gotoURL");
-            if (!StringUtil.isEmpty(gotoURL)) {
-                message.setCode(StringUtil.getFromBASE64(gotoURL));
-            }
-            if (!StringUtil.isEmpty(userInfoModel.getDomain())) {
-                message.setMsg(userInfo.getDomain() + PropertiesUtil.getString("sso.domainName"));
-            }
 
         } catch (Exception e) {
             message.setSuccess(false);

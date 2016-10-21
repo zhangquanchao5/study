@@ -72,7 +72,8 @@ public class BaseController {
         userResponse.setUserName(userInfo.getUserName());
         userResponse.setIdCard(userInfo.getIdCard());
         userResponse.setRemark(userInfo.getRemark());
-        userResponse.setDomain(userInfo.getDomain()==null?"":userInfo.getDomain());
+        userResponse.setSchoolSign(userInfo.getSchoolSign());
+        userResponse.setDomain(userInfo.getDomain() == null?"":userInfo.getDomain());
         userResponse.setLastLoginTime(userInfo.getUpdateTime()==null?userInfo.getCreateTime():userInfo.getUpdateTime());
 
         return  userResponse;

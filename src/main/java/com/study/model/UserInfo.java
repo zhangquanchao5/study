@@ -43,6 +43,16 @@ public class UserInfo {
 
     private String remark;
 
+    private Byte schoolSign;
+
+    public Byte getSchoolSign() {
+        return schoolSign;
+    }
+
+    public void setSchoolSign(Byte schoolSign) {
+        this.schoolSign = schoolSign;
+    }
+
     public String getRemark() {
         return remark;
     }

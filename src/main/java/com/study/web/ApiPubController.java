@@ -16,6 +16,7 @@ import com.study.common.apibean.request.MobileRequest;
 import com.study.common.apibean.request.RegisterMobileRequest;
 import com.study.common.apibean.request.RemoteRegReq;
 import com.study.common.apibean.response.*;
+import com.study.common.http.ApiHttpUtil;
 import com.study.common.sms.SendSm;
 import com.study.common.sms.SmsResponse;
 import com.study.common.util.PropertiesUtil;
@@ -207,6 +208,7 @@ public class ApiPubController extends BaseController {
         try {
             String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/pub/reg:" + json);
+            ApiHttpUtil.addLog(request.getHeader("user-agent"), null, "UserReg", request.getRequestURL().toString(), json);
 
             RegisterMobileRequest mobileRequest = JSON.parseObject(json, RegisterMobileRequest.class);
             ApiUserBean apiUserBean = new ApiUserBean();
@@ -279,8 +281,10 @@ public class ApiPubController extends BaseController {
 
         RegisterMobileResponse registerMobileResponse = new RegisterMobileResponse();
         try {
+
             String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/pub/usernameReg:" + json);
+            ApiHttpUtil.addLog(request.getHeader("user-agent"), null, "UserReg", request.getRequestURL().toString(), json);
 
             RegisterMobileRequest mobileRequest = JSON.parseObject(json, RegisterMobileRequest.class);
             ApiUserBean apiUserBean = new ApiUserBean();
@@ -295,7 +299,7 @@ public class ApiPubController extends BaseController {
                 registerMobileResponse.setMsg(messageUtil.getMessage("msg.parameter.notEnough"));
             } else {
 //                //判断是否用户名注册
-                UserInfo isExist = iApIUserService.findByUserName(mobileRequest.getUserPhone(), mobileRequest.getDomain());
+                UserInfo isExist = iApIUserService.findLoad(mobileRequest.getUsername(), mobileRequest.getDomain());
                 UserInfo userMobile = iApIUserService.findLoad(mobileRequest.getUserPhone(), mobileRequest.getDomain());
                 if (isExist != null||userMobile!=null) {
                     registerMobileResponse.setCode(ErrorCode.USER_EXITS);
@@ -346,6 +350,7 @@ public class ApiPubController extends BaseController {
         try {
             String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/pub/remoteReg:" + json);
+            ApiHttpUtil.addLog(request.getHeader("user-agent"), null, "UserReg", request.getRequestURL().toString(), json);
 
             RemoteRegReq remoteRegReq = JSON.parseObject(json, RemoteRegReq.class);
             ApiUserBean apiUserBean = new ApiUserBean();
@@ -479,9 +484,11 @@ public class ApiPubController extends BaseController {
     public void login(HttpServletRequest request, HttpServletResponse response) {
         CommonResponse commonResponse = new CommonResponse();
         try {
-            System。            //判断mobile死否为空
+
+            //判断mobile死否为空
             String json = this.getParameter(request);
             StudyLogger.recBusinessLog("/pub/login:" + json);
+            ApiHttpUtil.addLog(request.getHeader("user-agent"), null, "UserLogin", request.getRequestURL().toString(), json);
             LoginRequest loginRequest = JSON.parseObject(json, LoginRequest.class);
             UserInfo userInfo = null;
             //兼容旧的app api请求

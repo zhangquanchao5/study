@@ -83,9 +83,11 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/registerUp", method = RequestMethod.POST)
-    public void registerUp(UserInfo userInfoModel, @RequestParam String valCode, HttpServletResponse response) {
+    public void registerUp(UserInfo userInfoModel, @RequestParam String valCode, HttpServletResponse response,HttpServletRequest request) {
         AjaxResponseMessage message = new AjaxResponseMessage();
         try {
+            ApiHttpUtil.addLog(request.getHeader("user-agent"), null, "UserReg", request.getRequestURL().toString(), JSON.toJSONString(userInfoModel));
+
             if(!StringUtil.isEmpty(userInfoModel.getUserName())&&iUserService.findLoad(userInfoModel.getUserName(), userInfoModel.getDomain()) != null) {
                     message.setSuccess(false);
                     message.setCode(ErrorCode.USER_EXITS);

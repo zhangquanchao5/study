@@ -21,10 +21,12 @@
     <result column="domain" property="domain" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="school_sign" property="schoolSign" jdbcType="TINYINT" />
+
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_name, password, mobile, user_mail, icon, source, gender, token, status, 
-    create_time, name, nick, address,update_time,id_card,domain,parent_id,remark
+    create_time, name, nick, address,update_time,id_card,domain,parent_id,school_sign,remark
   </sql>
 
   <select id="findLoad" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -165,6 +167,10 @@
       <if test="status != null" >
         status,
       </if>
+      <if test="schoolSign != null" >
+        school_sign,
+      </if>
+
       <if test="createTime != null" >
         create_time,
       </if>
@@ -218,6 +224,10 @@
       <if test="status != null" >
         #{status,jdbcType=TINYINT},
       </if>
+      <if test="schoolSign != null" >
+        #{schoolSign,jdbcType=TINYINT},
+      </if>
+
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -268,8 +278,12 @@
       <if test="token != null" >
         token = #{token,jdbcType=VARCHAR},
       </if>
+
       <if test="status != null" >
         status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="schoolSign != null" >
+        school_sign = #{schoolSign,jdbcType=TINYINT},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
