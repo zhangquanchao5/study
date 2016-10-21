@@ -46,3 +46,4 @@ alter table bank add `company_code` varchar(64) DEFAULT NULL  COMMENT '纳税人
 alter table bank add `company_address` varchar(255) DEFAULT NULL  COMMENT '公司注册地址';
 
 alter table user_info add remark varchar(1000);
+alter table user_info add school_sign tinyint(2) DEFAULT '0' COMMENT '0 不跳后台 1跳后台';

@@ -56,6 +56,7 @@ public class UserController extends BaseController {
     private IUserFromService iUserFromService;
     @Autowired
     private IRedisService iRedisService;
+
     @Autowired
     private IApIUserService iApIUserService;
 
