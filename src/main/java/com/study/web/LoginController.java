@@ -107,7 +107,7 @@ public class LoginController extends BaseController {
             response.addCookie(cookie);
             response.addCookie(cookieDomain);
 
-
+//
             if (StringUtil.isEmpty(userInfo.getUserName())) {
                 userInfo.setUserName(userInfo.getMobile());
             }
